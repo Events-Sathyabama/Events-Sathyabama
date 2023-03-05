@@ -1,4 +1,4 @@
-"use client"
+'use client'
 import { Button, TextField, Typography } from '@mui/material'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
@@ -20,6 +20,8 @@ export default function LoginForm(): JSX.Element {
     onSubmit: async (values, helpers) => {
       try {
         // TODO values.email, values.password
+        console.log(values.email);
+        console.log(values.password)
       } catch (err) {
         helpers.setStatus({ success: false })
         helpers.setSubmitting(false)
@@ -55,6 +57,7 @@ export default function LoginForm(): JSX.Element {
         onChange={formik.handleChange}
         type='password'
         value={formik.values.password}
+        autoComplete='on'
       />
       {formik.errors.submit && (
         <Typography color='error' sx={{ mt: 3 }} variant='body2'>

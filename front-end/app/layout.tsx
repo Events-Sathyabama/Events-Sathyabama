@@ -1,5 +1,5 @@
 export const metadata = {
-  title: 'Sign-in | Events - SIST',
+  title: 'Sign-in | Events@Sathyabama',
   description:
     'Event Hub is helpful to organize, apply and execute successful events.',
 }
