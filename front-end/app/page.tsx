@@ -1,6 +1,15 @@
+'use client'
 import Link from 'next/link'
+import { useState, useEffect } from 'react'
 import LoginForm from './loginForm'
+
 export default function Login(): JSX.Element {
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    setLoading(false)
+  }, [])
+
   return (
     <div className='flex flex-col flex-grow w-full h-full justify-center items-center relative'>
       <div
@@ -11,16 +20,24 @@ export default function Login(): JSX.Element {
         className='flex flex-col w-11/12 sm:w-10/12 md:w-5/12 bg-white 
       opacity-95 rounded-xl px-8 py-12 shadow-xl z-10 relative'
       >
-        <h1 className='font-roboto text-4xl font-semibold'>Sign-in</h1>
-        <h2 className='font-roboto text-lg'>
-          Don&apos;t have an account? &nbsp;
-          <Link href='/register'>
-            <span className='text-blue-600 -ml-1 hover:underline'>
-              Register
-            </span>
-          </Link>
-        </h2>
-        <LoginForm></LoginForm>
+        {loading ? (
+          <div className='flex justify-center items-center h-40'>
+            <h1>Loading...</h1>
+          </div>
+        ) : (
+          <>
+            <h1 className='font-roboto text-4xl font-semibold'>Sign-in</h1>
+            <h2 className='font-roboto text-lg'>
+              Don&apos;t have an account? &nbsp;
+              <Link href='/register'>
+                <span className='text-blue-600 -ml-1 hover:underline'>
+                  Register
+                </span>
+              </Link>
+            </h2>
+            <LoginForm></LoginForm>
+          </>
+        )}
       </div>
     </div>
   )

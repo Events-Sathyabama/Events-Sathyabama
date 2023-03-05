@@ -2,8 +2,10 @@
 import { Button, TextField, Typography } from '@mui/material'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
+import { useRouter } from 'next/navigation'
 
 export default function LoginForm(): JSX.Element {
+  const router = useRouter()
   const formik = useFormik({
     initialValues: {
       email: '',
@@ -20,8 +22,7 @@ export default function LoginForm(): JSX.Element {
     onSubmit: async (values, helpers) => {
       try {
         // TODO values.email, values.password
-        console.log(values.email);
-        console.log(values.password)
+        router.push('/home')
       } catch (err) {
         helpers.setStatus({ success: false })
         helpers.setSubmitting(false)
