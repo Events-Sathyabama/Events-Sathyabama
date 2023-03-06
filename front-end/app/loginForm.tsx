@@ -22,7 +22,7 @@ export default function LoginForm(): JSX.Element {
     onSubmit: async (values, helpers) => {
       try {
         // TODO values.email, values.password
-        window.location.href = '/home/upcoming';
+        window.location.href = '/home/upcoming'
         // router.push('/home/upcoming')
       } catch (err) {
         helpers.setStatus({ success: false })
@@ -70,9 +70,13 @@ export default function LoginForm(): JSX.Element {
         size='large'
         type='submit'
         variant='contained'
-        style={{ backgroundColor: '#007efc', textTransform: 'none' }}
+        style={{
+          backgroundColor: '#007efc',
+          textTransform: 'none',
+          fontSize: '1.5rem',
+        }}
         color='primary'
-        className='font-roboto text-2xl shadow-md'
+        className='font-roboto shadow-md'
       >
         Sign-in
       </Button>

@@ -1,3 +1,3 @@
-export default function Upcoming(){
-    return (<div>Hello from Upcoming</div>)
+export default function Upcoming() {
+  return <div>Hello from Upcoming</div>
 }

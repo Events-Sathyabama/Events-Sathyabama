@@ -1,7 +1,7 @@
 export const metadata = {
-  title: 'Sign-in | Events@Sathyabama',
+  title: 'Events@Sathyabama',
   description:
-    'Event Hub is helpful to organize, apply and execute successful events.',
+    'Event@Sathyabama is useful for planning, implementing, and carrying out effective events.',
 }
 import './globals.css'
 
