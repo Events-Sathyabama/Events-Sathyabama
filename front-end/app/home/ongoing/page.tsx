@@ -1,3 +1,3 @@
-export default function Ongoing(){
-    return (<div>Hello from Ongoing</div>)
+export default function Ongoing() {
+  return <div>Hello from Ongoing</div>
 }

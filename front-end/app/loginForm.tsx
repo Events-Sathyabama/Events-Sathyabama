@@ -75,9 +75,13 @@ export default function LoginForm(): JSX.Element {
         size='large'
         type='submit'
         variant='contained'
-        style={{ backgroundColor: '#007efc', textTransform: 'none' }}
+        style={{
+          backgroundColor: '#007efc',
+          textTransform: 'none',
+          fontSize: '1.5rem',
+        }}
         color='primary'
-        className='font-roboto text-2xl shadow-md'
+        className='font-roboto shadow-md'
       >
         Sign-in
       </Button>
