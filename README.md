@@ -94,3 +94,6 @@ Admin:
     Can edit event cards (All) (If edited notified to Event Creator)
     Can accept(Passed to higher level admins) or decline approval for any event (Add Comments for 
     Rejection, Approved(Show to Students))
+
+POSTMAN invite link:
+https://app.getpostman.com/join-team?invite_code=db8702ef7a1c76af697d47de794d54be
