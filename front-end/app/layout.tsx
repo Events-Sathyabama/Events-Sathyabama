@@ -4,8 +4,6 @@ export const metadata = {
     'Event Hub is helpful to organize, apply and execute successful events.',
 }
 import './globals.css'
-import LandingNav from './landingNav'
-import Footer from './footer'
 
 export default function RootLayout({
   children,
@@ -15,11 +13,7 @@ export default function RootLayout({
   return (
     <html lang='en'>
       <body>
-        <div className='flex flex-col min-h-screen'>
-          <LandingNav></LandingNav>
-          {children}
-          <Footer></Footer>
-        </div>
+        <div className='flex flex-col'>{children}</div>
       </body>
     </html>
   )

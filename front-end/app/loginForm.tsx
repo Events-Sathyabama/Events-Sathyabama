@@ -27,7 +27,7 @@ export default function LoginForm(): JSX.Element {
         // FIXME login field has to be reg_no not email_id
         axios.login('admin', 'admin');
         // axios.login(values.username, values.password);
-        router.push('/home')
+        window.location.href = '/home/upcoming';
       } catch (err) {
         // FIXME add the error message in the form err.response.data
         helpers.setStatus({ success: false })
