@@ -22,7 +22,8 @@ export default function LoginForm(): JSX.Element {
     onSubmit: async (values, helpers) => {
       try {
         // TODO values.email, values.password
-        router.push('/home')
+        window.location.href = '/home/upcoming';
+        // router.push('/home/upcoming')
       } catch (err) {
         helpers.setStatus({ success: false })
         helpers.setSubmitting(false)
