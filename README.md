@@ -97,3 +97,6 @@ Admin:
 
 POSTMAN invite link:
 https://app.getpostman.com/join-team?invite_code=db8702ef7a1c76af697d47de794d54be
+
+venv/Scripts/activate
+python manage.py runserver
