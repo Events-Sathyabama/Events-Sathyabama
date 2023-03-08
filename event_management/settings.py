@@ -30,7 +30,8 @@ ALLOWED_HOSTS = []
 INTERNAL_IPS  = ['127.0.0.1']
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
-    "https://localhost:3000"
+    "https://localhost:3000",
+    "http://192.168.67.144:3000"
 ]
 CORS_URLS_REGEX = r"^/api/.*"
 
