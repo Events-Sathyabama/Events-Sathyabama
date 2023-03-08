@@ -6,14 +6,16 @@ from django.utils import timezone
 
 
 class UserManager(BaseUserManager):
-    def create_user(self, email, password=None):
+    def create_user(self, college_id, email=None, password=None):
         """
         Creates and saves a User with the given email and password.
         """
+        if not college_id:
+            raise ValueError('Users must have College id')
         if not email:
-            raise ValueError('Users must have an email address')
-
+            raise ValueError('User must have a email id')
         user = self.model(
+            college_id=college_id,
             email=self.normalize_email(email),
         )
 
@@ -21,27 +23,28 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-    def create_staffuser(self, email, password):
+    def create_staffuser(self, college_id, email, password):
         """
         Creates and saves a staff user with the given email and password.
         """
         user = self.create_user(
-            email,
+            college_id=college_id,
+            email=email,
             password=password,
         )
         user.staff = True
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, password):
+    def create_superuser(self, college_id, email, password):
         """
         Creates and saves a superuser with the given email and password.
         """
         user = self.create_user(
-            email,
+            college_id=college_id,
+            email=email,
             password=password,
         )
-        user.staff = True
         user.admin = True
         user.save(using=self._db)
         return user
@@ -50,7 +53,7 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser):
-    college_id = models.EmailField(
+    college_id = models.CharField(
         verbose_name='Register/Emp Number',
         max_length=10,
         unique=True,
@@ -69,7 +72,7 @@ class User(AbstractBaseUser):
 
     EMAIL_FIELD = "email"
     USERNAME_FIELD = 'college_id'
-    REQUIRED_FIELDS = ['first_name'] # Email & Password are required by default.
+    REQUIRED_FIELDS = ['email'] # Email & Password are required by default.
 
     def get_full_name(self):
         # The user is identified by their email address

@@ -1,13 +1,9 @@
 from django.db import models
+from .Branch import Branch
 from .User import User
 
 
 class Student(models.Model):
-    branch = (
-        (0, 'CSE'),
-        (1, 'IT'),
-        (2, 'CSE-AI'),
-    )
     current_year = (
         (1, '1st'),
         (2, '2nd'),
@@ -23,10 +19,9 @@ class Student(models.Model):
         full_name
     '''
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     roll_no = models.CharField(max_length=11)
-    reg_no = models.CharField(max_length=9, blank=False, null=False)
-    branch = models.PositiveIntegerField(choices=branch, blank=False, null=False)
+    branch = models.OneToOneField(Branch, on_delete=models.CASCADE)
     admission_year = models.PositiveIntegerField()
     passing_year = models.PositiveIntegerField()
     year = models.PositiveIntegerField(choices=current_year)
