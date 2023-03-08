@@ -32,6 +32,10 @@ function Student(): JSX.Element {
             <span className='text-lg'>Register Number</span>
             <span className='text-lg font-semibold ml-auto'>40110156</span>
           </li>
+          <li className='flex items-center py-3'>
+            <span className='text-lg'>Branch</span>
+            <span className='text-lg font-semibold ml-auto'>BE CSE</span>
+          </li>
         </ul>
       </div>
     </div>

@@ -31,7 +31,7 @@ export default function Navbar() {
     }
   }, [navigator])
   return (
-    <Disclosure as='div' className='bg-white border-b-2 border-gray-100'>
+    <Disclosure as='div' className='border-b-2 border-gray-200 sticky top-0 z-10 backdrop-filter backdrop-blur-md'>
       {({ open }) => (
         <>
           <div className='mx-auto max-w-7xl px-2 sm:px-6 lg:px-8'>

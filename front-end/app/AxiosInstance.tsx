@@ -72,7 +72,7 @@ class AxiosInstance {
         'access_expiry',
         String(expiryTime + 5 * 1000)
       )
-      const role = 1 // TODO role here
+      const role = 0 // TODO role here
       window.localStorage.setItem('role', String(role))
       window.localStorage.setItem('role_name', hierarchy[role])
       window.localStorage.setItem(
