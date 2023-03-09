@@ -83,8 +83,12 @@ class User(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = 'college_id'
     REQUIRED_FIELDS = ['email', 'role'] # Email & Password are required by default.
 
-    def __str__(self):
-        return f"{self.first_name} {self.last_name} ({self.email})"
 
     class Meta(AbstractUser.Meta):
         swappable = "AUTH_USER_MODEL"
+
+    def __str__(self):
+        return f"{self.first_name} {self.last_name} ({self.email})"
+
+    def full_name(self):
+        return f"{self.first_name} {self.last_name}"

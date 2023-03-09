@@ -156,5 +156,5 @@ SIMPLE_JWT = {
     "ALGORITHM": "HS256",
     "SIGNING_KEY": SECRET_KEY,
     "VERIFYING_KEY": "",
-    "LEEWAY": timedelta(seconds=30)
+    "LEEWAY": timedelta(seconds=10)
 }

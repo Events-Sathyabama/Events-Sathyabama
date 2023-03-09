@@ -1,6 +1,7 @@
 from django.db import models
-from user.models import Teacher
 # Create your models here.
+from django.contrib.auth import get_user_model
+User = get_user_model()
 
 
 class Event(models.Model):
@@ -13,7 +14,7 @@ class Event(models.Model):
         (6, 'Certified'),
         (7, 'Ongoing'),
     )
-    organizer = models.ForeignKey(Teacher, on_delete=models.DO_NOTHING, null=True)
+    organizer = models.ForeignKey(User, on_delete=models.DO_NOTHING, null=True)
     status = models.PositiveIntegerField(choices=STATUS_CHOICES)
 
     image = models.ImageField()

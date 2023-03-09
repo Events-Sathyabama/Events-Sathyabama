@@ -3,9 +3,9 @@ import { Button, TextField, Typography } from '@mui/material'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import { useRouter } from 'next/navigation'
-import AxiosInstance from './AxiosInstance'
+import API from './API'
 
-const axios = new AxiosInstance()
+const axios = new API.Axios()
 
 export default function LoginForm(): JSX.Element {
   const router = useRouter()
@@ -25,7 +25,7 @@ export default function LoginForm(): JSX.Element {
     onSubmit: async (values, helpers) => {
       try {
         // FIXME login field has to be reg_no not email_id
-        await axios.login('admin', 'admin')
+        await axios.login('0', 'admin')
         // await axios.login(values.username, values.password);
         if (typeof window !== 'undefined') {
           window.location.href = '/home/upcoming'
