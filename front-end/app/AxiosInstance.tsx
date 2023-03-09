@@ -24,6 +24,7 @@ const instance = axios.create({
         ) {
           return window.localStorage.access
         }
+        return '';
       })(),
   },
 })
@@ -62,7 +63,7 @@ class AxiosInstance {
   async login(username: string, password: string) {
     if (typeof window !== 'undefined') {
       const bodyFormData = new FormData()
-      bodyFormData.append('username', username)
+      bodyFormData.append('college_id', username)
       bodyFormData.append('password', password)
       const request = await instance.post('token/', bodyFormData)
       window.localStorage.setItem('access', request.data.access)

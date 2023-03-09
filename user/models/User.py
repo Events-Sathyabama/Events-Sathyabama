@@ -1,8 +1,11 @@
 from django.contrib.auth.models import (
-    BaseUserManager, AbstractBaseUser
+    BaseUserManager, AbstractBaseUser, PermissionsMixin, AbstractUser
 )
 from django.db import models
 from django.utils import timezone
+from .Role import Role
+from .Branch import Branch
+from django.utils.translation import gettext_lazy as _
 
 
 class UserManager(BaseUserManager):
@@ -32,7 +35,7 @@ class UserManager(BaseUserManager):
             email=email,
             password=password,
         )
-        user.staff = True
+        user.is_staff = True
         user.save(using=self._db)
         return user
 
@@ -45,14 +48,15 @@ class UserManager(BaseUserManager):
             email=email,
             password=password,
         )
-        user.admin = True
+        user.is_staff = True
+        user.is_superuser = True
         user.save(using=self._db)
         return user
 
 # hook in the New Manager to our Model
 
 
-class User(AbstractBaseUser):
+class User(AbstractBaseUser, PermissionsMixin):
     college_id = models.CharField(
         verbose_name='Register/Emp Number',
         max_length=10,
@@ -61,48 +65,26 @@ class User(AbstractBaseUser):
     first_name = models.CharField("First Name", max_length=150, blank=True)
     last_name = models.CharField("Last Name", max_length=150, blank=True)
     email = models.EmailField("Email Address", blank=True)
+    date_joined = models.DateTimeField(_("date joined"), default=timezone.now)
 
     is_active = models.BooleanField(default=True)
-    staff = models.BooleanField(default=False) # a admin user; non super-user
-    admin = models.BooleanField(default=False) # a superuser
+    is_staff = models.BooleanField(default=False)
+
+    role = models.ForeignKey(Role, on_delete=models.CASCADE, blank=True, null=True)
+
+    branch = models.ForeignKey(Branch, on_delete=models.CASCADE, blank=True, null=True)
+
+    joining_year = models.CharField(max_length=4, blank=True, null=True)
+    leaving_year = models.CharField(max_length=4, blank=True, null=True)
 
     objects = UserManager()
 
-    # notice the absence of a "Password field", that is built in.
-
     EMAIL_FIELD = "email"
     USERNAME_FIELD = 'college_id'
-    REQUIRED_FIELDS = ['email'] # Email & Password are required by default.
-
-    def get_full_name(self):
-        # The user is identified by their email address
-        full_name = "%s %s" % (self.first_name, self.last_name)
-        return full_name.strip()
-
-    def get_short_name(self):
-        # The user is identified by their email address
-        return self.first_name
+    REQUIRED_FIELDS = ['email', 'role'] # Email & Password are required by default.
 
     def __str__(self):
-        return self.college_id
+        return f"{self.first_name} {self.last_name} ({self.email})"
 
-    def has_perm(self, perm, obj=None):
-        "Does the user have a specific permission?"
-        # Simplest possible answer: Yes, always
-        return True
-
-    def has_module_perms(self, app_label):
-        "Does the user have permissions to view the app `app_label`?"
-        # Simplest possible answer: Yes, always
-        return True
-
-    @property
-    def is_staff(self):
-        "Is the user a member of staff?"
-        return self.staff
-
-    @property
-    def is_admin(self):
-        "Is the user a admin member?"
-        return self.admin
-
+    class Meta(AbstractUser.Meta):
+        swappable = "AUTH_USER_MODEL"
