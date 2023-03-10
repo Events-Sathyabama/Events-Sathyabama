@@ -22,4 +22,6 @@ app_name = 'event_management'
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('user.urls')),
-    ]
+    path('__debug__/', include('debug_toolbar.urls')),
+
+]
