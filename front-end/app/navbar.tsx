@@ -9,8 +9,15 @@ function classNames(...classes: any) {
   return classes.filter(Boolean).join(' ')
 }
 
+function signOut() {
+  localStorage.clear()
+  if (typeof window !== 'undefined') {
+    window.location.href = '/'
+  }
+}
+
 export default function Navbar() {
-  const [currentPage, setCurrentPage] = useState(1) //initially to Upcoming
+  const [currentPage, setCurrentPage] = useState(0) //initially to Upcoming
   const navigator = usePathname()
   useEffect(() => {
     if (navigator === '/home/upcoming') {
@@ -24,7 +31,7 @@ export default function Navbar() {
     }
   }, [navigator])
   return (
-    <Disclosure as='div' className='bg-white border-b-2 border-gray-100'>
+    <Disclosure as='div' className='border-b-2 border-gray-200 sticky top-0 z-10 backdrop-filter backdrop-blur-md'>
       {({ open }) => (
         <>
           <div className='mx-auto max-w-7xl px-2 sm:px-6 lg:px-8'>
@@ -50,7 +57,7 @@ export default function Navbar() {
                     Events@Sathyabama
                   </h1>
                 </Link>
-                <div className='hidden sm:ml-6 sm:block'>
+                <div className='hidden sm:ml-6 sm:flex justify-center flex-grow'>
                   <div className='flex h-full items-center space-x-4'>
                     <Link
                       href='/home/upcoming'
@@ -89,13 +96,22 @@ export default function Navbar() {
                 {/* Profile dropdown */}
                 <Menu as='div' className='relative ml-3'>
                   <div>
-                    <Menu.Button className='flex rounded-full bg-gray-800 text-sm'>
+                    <Menu.Button className='flex rounded-full text-sm'>
                       <span className='sr-only'>Open user menu</span>
-                      <img
-                        className='h-8 w-8 rounded-md border border-gray-400 shadow-md'
-                        src='/Profile.png'
-                        alt=''
-                      />
+                      <svg
+                        xmlns='http://www.w3.org/2000/svg'
+                        fill='none'
+                        viewBox='0 0 24 24'
+                        strokeWidth={1.5}
+                        stroke='currentColor'
+                        className='w-10 h-10'
+                      >
+                        <path
+                          strokeLinecap='round'
+                          strokeLinejoin='round'
+                          d='M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z'
+                        />
+                      </svg>
                     </Menu.Button>
                   </div>
                   <Transition
@@ -123,15 +139,15 @@ export default function Navbar() {
                       </Menu.Item>
                       <Menu.Item>
                         {({ active }) => (
-                          <Link
-                            href='/'
+                          <button
+                            onClick={() => signOut()}
                             className={classNames(
                               active ? 'bg-gray-100' : '',
-                              'block px-4 py-2 text-lg text-gray-700'
+                              'block px-4 py-2 text-lg text-gray-700 w-full text-left'
                             )}
                           >
                             Sign out
-                          </Link>
+                          </button>
                         )}
                       </Menu.Item>
                     </Menu.Items>
