@@ -1,6 +1,6 @@
 export default function Footer(): JSX.Element {
   return (
-    <div className='flex flex-col w-full h-auto my-3 justify-center items-center'>
+    <div className='flex flex-col w-full h-auto my-3 px-2 justify-center items-center'>
       <h1 className='text-sm text-center font-roboto text-gray-600 font-semibold'>
         © Developed for Sathyabama University by
         <a

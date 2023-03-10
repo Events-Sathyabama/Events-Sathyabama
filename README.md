@@ -10,13 +10,13 @@ Student's View:
     Upcoming events: This section will list all the events that are going to happen in the future.
     Ongoing events: This section will list all the events that are currently happening.    
     It should include the following information:
-        Event poster: An image of the event poster in a standard format.
-        Event name: The name of the event.
-        Event sub-heading/caption: A brief description of the event.
-        Event date: The date on which the event is going to happen.
+        Event poster: An image of the event poster in a standard format.  //
+        Event name: The name of the event.                            //
+        Event sub-heading/caption: A brief description of the event.  //
+        Event date: The date on which the event is going to happen.   
         Event duration: The duration of the event.
         Event venue: The venue of the event.
-        Event organizer details: The contact details of the student coordinators or faculty coordinators 
+        Event organizer details: The contact details of the student coordinators or faculty coordinators  //
         who are organizing the event.
         Event application method: The method by which students are selected for the event (FCFS 
             or based on criteria).
