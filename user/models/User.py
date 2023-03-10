@@ -57,6 +57,13 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
+    ROLE_CHOICE = (
+        (0, 'Student'),
+        (1, 'Teacher'),
+        (2, 'HOD'),
+        (3, 'Dean'),
+        (4, 'Vice-Chancellor'),
+    )
     college_id = models.CharField(
         verbose_name='Register/Emp Number',
         max_length=10,
@@ -70,7 +77,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 
-    role = models.ForeignKey(Role, on_delete=models.CASCADE, blank=True, null=True)
+    role = models.PositiveIntegerField(choices=ROLE_CHOICE)
 
     branch = models.ForeignKey(Branch, on_delete=models.CASCADE, blank=True, null=True)
 

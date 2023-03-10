@@ -34,7 +34,8 @@ const hierarchy = {
   0: 'Student',
   1: 'Teacher',
   2: 'HOD',
-  3: 'Vice-Chancellor',
+  3: 'Dean',
+  4: 'Vice-Chancellor',
 }
 
 class AxiosInstance {

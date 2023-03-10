@@ -1,7 +1,17 @@
 from django.db import models
 # Create your models here.
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
+
+from user.models import Branch
+
 User = get_user_model()
+
+
+def confirm_organizer(value):
+    user = User.objects.get(pk=value)
+    # if user.role.name == 'student':
+    #     raise ValidationError("The User Dosen't Have access to create Event")
 
 
 class Event(models.Model):
@@ -14,19 +24,30 @@ class Event(models.Model):
         (6, 'Certified'),
         (7, 'Ongoing'),
     )
-    organizer = models.ForeignKey(User, on_delete=models.DO_NOTHING, null=True)
+    organizer = models.ForeignKey(User, on_delete=models.DO_NOTHING, validators=[confirm_organizer])
     status = models.PositiveIntegerField(choices=STATUS_CHOICES)
 
-    image = models.ImageField()
+    image = models.ImageField(blank=True)
     title = models.CharField(max_length=250)
-    description = models.TextField()
-    venue = models.CharField(max_length=100)
+    short_description = models.CharField(max_length=30)
+    long_description = models.TextField()
+    club = models.CharField(max_length=70)
+    venue = models.CharField(blank=True, max_length=100)
 
-    duration = models.PositiveIntegerField(default=1)
-    event_date = models.JSONField()
+    date = models.TextField()
+    time = models.TextField()
+    """
+    [
+        {date:'', start_time:'', end_time: ''}
+    ]
+    """
 
-    branch = models.CharField()
+    branch = models.ForeignKey(Branch, on_delete=models.DO_NOTHING)
 
+    messages = models.JSONField(blank=True, null=True)   # [{'message':'', from:'', datetime:'', status:'Rejected}]
     hod_verified = models.BooleanField(default=False)
     dean_verified = models.BooleanField(default=False)
     vc_verified = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.title

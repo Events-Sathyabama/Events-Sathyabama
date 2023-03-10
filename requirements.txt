@@ -6,6 +6,7 @@ django-cors-headers==3.14.0
 django_debug_toolbar==3.8.1
 djangorestframework==3.14.0
 djangorestframework-simplejwt==5.2.2
+Pillow==9.4.0
 pycparser==2.21
 PyJWT==2.6.0
 pytz==2022.7.1
