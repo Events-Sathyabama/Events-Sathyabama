@@ -10,7 +10,7 @@ const dummyData = [
     imageUrl: '/eventPosters/Madhugai.jpg',
     description:
       "Outreach Program on the eve of Women's day at Sathyabama Adopted Schools. Health and Hygiene Kit Distribution to Girl Students.",
-    date: "7 Mar '23 - 8 Mar '23",
+    date: "31 Mar '23 - 31 Mar '23",
     learnMoreLink: '/details',
   },
   {

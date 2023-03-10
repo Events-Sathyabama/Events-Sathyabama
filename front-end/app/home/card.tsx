@@ -75,7 +75,7 @@ export default function HomeCard(props: HomeCardProps) {
           </svg>
           <p className='text-md font-semibold'>{date}</p>
         </div>
-        <Button size='small' variant='outlined' href={learnMoreLink}>
+        <Button size='small' variant='contained' href={learnMoreLink}>
            More Info
         </Button>
       </CardContent>
