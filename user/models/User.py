@@ -9,7 +9,7 @@ from django.utils.translation import gettext_lazy as _
 
 
 class UserManager(BaseUserManager):
-    def create_user(self, college_id, email=None, password=None):
+    def create_user(self, college_id, email=None, password=None, role=0):
         """
         Creates and saves a User with the given email and password.
         """
@@ -17,16 +17,19 @@ class UserManager(BaseUserManager):
             raise ValueError('Users must have College id')
         if not email:
             raise ValueError('User must have a email id')
+        if role is None:
+            raise ValueError('Role is Required')
         user = self.model(
             college_id=college_id,
             email=self.normalize_email(email),
+            role=role
         )
 
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_staffuser(self, college_id, email, password):
+    def create_staffuser(self, college_id, email, password, role):
         """
         Creates and saves a staff user with the given email and password.
         """
@@ -34,12 +37,13 @@ class UserManager(BaseUserManager):
             college_id=college_id,
             email=email,
             password=password,
+            role=role
         )
         user.is_staff = True
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, college_id, email, password):
+    def create_superuser(self, college_id, email, password, role):
         """
         Creates and saves a superuser with the given email and password.
         """
@@ -47,6 +51,7 @@ class UserManager(BaseUserManager):
             college_id=college_id,
             email=email,
             password=password,
+            role=role
         )
         user.is_staff = True
         user.is_superuser = True
