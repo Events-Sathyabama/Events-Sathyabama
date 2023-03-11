@@ -37,7 +37,7 @@ class Event(models.Model):
     # ]
     image = models.ImageField(upload_to='poster/')
     title = models.CharField(max_length=250)
-    short_description = models.CharField(max_length=30)
+    short_description = models.CharField(max_length=100)
     long_description = models.TextField(null=True, blank=True)
     club = models.CharField(max_length=70)
     venue = models.CharField(blank=True, null=True, max_length=100)
@@ -50,7 +50,7 @@ class Event(models.Model):
 
     branch = models.ForeignKey(Branch, on_delete=models.DO_NOTHING, blank=True, null=True)
 
-    messages = models.JSONField(blank=True, null=True)   # [{'message':'', from:'', datetime:'', status:'Rejected}]
+    messages = models.JSONField(blank=True, null=True)  # [{'message':'', from:'', datetime:'', status:'Rejected}]
     hod_verified = models.BooleanField(default=False)
     dean_verified = models.BooleanField(default=False)
     vc_verified = models.BooleanField(default=False)
