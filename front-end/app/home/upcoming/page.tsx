@@ -6,67 +6,67 @@ import API from '../../API';
 const axios = new API.Axios();
 
 const dummyData = [
-	{
-		title: 'Madhugai - The Strength',
-		subheader: 'SDC - Community Development Club',
-		imageUrl: '/eventPosters/Madhugai.jpg',
-		description:
-			"Outreach Program on the eve of Women's day at Sathyabama Adopted Schools. Health and Hygiene Kit Distribution to Girl Students.",
-		date: "7 Mar '23 - 8 Mar '23",
-		learnMoreLink: '/details',
-	},
-	{
-		title: 'Winovate',
-		subheader: 'Microsoft Club and AICTE Innovation Club',
-		imageUrl: '/eventPosters/Winovate.jpg',
-		description: 'Windows Customisation Battle',
-		date: "9 Mar '23",
-		learnMoreLink: 'https://google.com',
-	},
-	{
-		title: 'Madhugai - The Strength',
-		subheader: 'SDC - Community Development Club',
-		imageUrl: '/eventPosters/Madhugai.jpg',
-		description:
-			"Outreach Program on the eve of Women's day at Sathyabama Adopted Schools. Health and Hygiene Kit Distribution to Girl Students.",
-		date: "7 Mar '23 - 8 Mar '23",
-		learnMoreLink: 'https://google.com',
-	},
-	{
-		title: 'Winovate',
-		subheader: 'Microsoft Club and AICTE Innovation Club',
-		imageUrl: '/eventPosters/Winovate.jpg',
-		description: 'Windows Customisation Battle',
-		date: "9 Mar '23",
-		learnMoreLink: 'https://google.com',
-	},
-	{
-		title: 'Madhugai - The Strength',
-		subheader: 'SDC - Community Development Club',
-		imageUrl: '/eventPosters/Madhugai.jpg',
-		description:
-			"Outreach Program on the eve of Women's day at Sathyabama Adopted Schools. Health and Hygiene Kit Distribution to Girl Students.",
-		date: "7 Mar '23 - 8 Mar '23",
-		learnMoreLink: 'https://google.com',
-	},
-	{
-		title: 'Winovate',
-		subheader: 'Microsoft Club and AICTE Innovation Club',
-		imageUrl: '/eventPosters/Winovate.jpg',
-		description: 'Windows Customisation Battle',
-		date: "9 Mar '23",
-		learnMoreLink: 'https://google.com',
-	},
-	{
-		title: 'Madhugai - The Strength',
-		subheader: 'SDC - Community Development Club',
-		imageUrl: '/eventPosters/Madhugai.jpg',
-		description:
-			"Outreach Program on the eve of Women's day at Sathyabama Adopted Schools. Health and Hygiene Kit Distribution to Girl Students.",
-		date: "7 Mar '23 - 8 Mar '23",
-		learnMoreLink: 'https://google.com',
-	},
-];
+  {
+    title: 'Madhugai - The Strength',
+    subheader: 'SDC - Community Development Club',
+    imageUrl: '/eventPosters/Madhugai.jpg',
+    description:
+      "Outreach Program on the eve of Women's day at Sathyabama Adopted Schools. Health and Hygiene Kit Distribution to Girl Students.",
+    date: "31 Mar '23 - 31 Mar '23",
+    learnMoreLink: '/details',
+  },
+  {
+    title: 'Winovate',
+    subheader: 'Microsoft Club and AICTE Innovation Club',
+    imageUrl: '/eventPosters/Winovate.jpg',
+    description: 'Windows Customisation Battle',
+    date: "9 Mar '23",
+    learnMoreLink: 'https://google.com',
+  },
+  {
+    title: 'Madhugai - The Strength',
+    subheader: 'SDC - Community Development Club',
+    imageUrl: '/eventPosters/Madhugai.jpg',
+    description:
+      "Outreach Program on the eve of Women's day at Sathyabama Adopted Schools. Health and Hygiene Kit Distribution to Girl Students.",
+    date: "7 Mar '23 - 8 Mar '23",
+    learnMoreLink: 'https://google.com',
+  },
+  {
+    title: 'Winovate',
+    subheader: 'Microsoft Club and AICTE Innovation Club',
+    imageUrl: '/eventPosters/Winovate.jpg',
+    description: 'Windows Customisation Battle',
+    date: "9 Mar '23",
+    learnMoreLink: 'https://google.com',
+  },
+  {
+    title: 'Madhugai - The Strength',
+    subheader: 'SDC - Community Development Club',
+    imageUrl: '/eventPosters/Madhugai.jpg',
+    description:
+      "Outreach Program on the eve of Women's day at Sathyabama Adopted Schools. Health and Hygiene Kit Distribution to Girl Students.",
+    date: "7 Mar '23 - 8 Mar '23",
+    learnMoreLink: 'https://google.com',
+  },
+  {
+    title: 'Winovate',
+    subheader: 'Microsoft Club and AICTE Innovation Club',
+    imageUrl: '/eventPosters/Winovate.jpg',
+    description: 'Windows Customisation Battle',
+    date: "9 Mar '23",
+    learnMoreLink: 'https://google.com',
+  },
+  {
+    title: 'Madhugai - The Strength',
+    subheader: 'SDC - Community Development Club',
+    imageUrl: '/eventPosters/Madhugai.jpg',
+    description:
+      "Outreach Program on the eve of Women's day at Sathyabama Adopted Schools. Health and Hygiene Kit Distribution to Girl Students.",
+    date: "7 Mar '23 - 8 Mar '23",
+    learnMoreLink: 'https://google.com',
+  },
+]
 
 export default function Upcoming() {
 	let abc: {
