@@ -1,7 +1,7 @@
 export default function Venues() {
   return (
     <ol className='flex flex-col md:flex-row my-3 mx-2'>
-      <li className='relative mb-6 sm:mb-0'>
+      <li className='mb-6 sm:mb-0'>
         <div className='flex items-center sm:mt-2'>
           <div className='flex items-center justify-center w-10 h-10 bg-blue-100 rounded-full ring-8 ring-gray-100 shrink-0'>
             <svg
@@ -28,7 +28,7 @@ export default function Venues() {
           </p>
         </div>
       </li>
-      <li className='relative mb-6 sm:mb-0'>
+      <li className='mb-6 sm:mb-0'>
         <div className='flex items-center sm:mt-2'>
           <div className='flex items-center justify-center w-10 h-10 bg-blue-100 rounded-full ring-8 ring-gray-100 shrink-0'>
             <svg
@@ -53,7 +53,7 @@ export default function Venues() {
           <p className='font-normal text-lg text-gray-600'>10AM - 4PM (5 hours)</p>
         </div>
       </li>
-      <li className='relative mb-6 sm:mb-0'>
+      <li className='mb-6 sm:mb-0'>
         <div className='flex items-center sm:mt-2'>
           <div className='flex items-center justify-center w-10 h-10 bg-blue-100 rounded-full ring-8 ring-gray-100 shrink-0'>
             <svg
