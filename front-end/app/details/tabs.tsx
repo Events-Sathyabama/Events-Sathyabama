@@ -123,10 +123,11 @@ export default function Tabs(props: {
 					<Coordinators coordinators={props.coordinator}></Coordinators>
 				</TabPanel>
 				<TabPanel value="3">
-					<Applications 
-            applications={dummyApplications} 
-            showSuccessPopup={props.showSuccessPopup}
-						showFailurePopup={props.showFailurePopup} />
+					<Applications
+						applications={dummyApplications}
+						showSuccessPopup={props.showSuccessPopup}
+						showFailurePopup={props.showFailurePopup}
+					/>
 				</TabPanel>
 			</TabContext>
 		</Box>

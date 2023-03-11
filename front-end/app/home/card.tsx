@@ -47,7 +47,7 @@ export default function HomeCard(props: HomeCardProps) {
 					title={<div className="w-80 truncate">{title}</div>}
 					subheader={<div className="w-80 truncate">{subheader}</div>}
 				/>
-				<div className='flex w-full justify-center items-center'>
+				<div className="flex w-full justify-center items-center">
 					<img
 						src={imageUrl}
 						alt="Event Poster"

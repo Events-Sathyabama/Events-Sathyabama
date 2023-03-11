@@ -104,11 +104,14 @@ export default function Create() {
 							helperText="Double check for typos while entering your club/organiser name in the list above. If you still can't find it, proceed by manually entering your club/organiser name."
 						/>
 					) : null}
-					<Button variant="outlined" component="label" className='w-auto max-w-xl'>
+					<Button variant="outlined" component="label" className="w-auto max-w-xl">
 						Upload your Event Poster
 						<input hidden accept="image/*" multiple type="file" required />
 					</Button>
-					<p className='-mt-2 text-xs text-gray-500 ml-3'>Event Poster will be displayed on both the homepage cards and the event's details page.</p>
+					<p className="-mt-2 text-xs text-gray-500 ml-3">
+						Event Poster will be displayed on both the homepage cards and the event's
+						details page.
+					</p>
 				</div>
 				<div className="hidden lg:block">
 					<div className="flex flex-col gap-2 items-center justify-center bg-blue-50 p-3 rounded-md">
