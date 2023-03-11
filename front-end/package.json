@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "compile":"next build && next start",
+    "compile": "next build && next start",
     "format": "prettier --write .",
     "export": "next build && next export"
   },
