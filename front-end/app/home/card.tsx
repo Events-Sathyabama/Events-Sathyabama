@@ -1,6 +1,5 @@
 import * as React from 'react';
 import {styled} from '@mui/material/styles';
-import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
 import IconButton, {IconButtonProps} from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
@@ -40,8 +39,7 @@ export default function HomeCard(props: HomeCardProps) {
 
 	return (
 		<Link href={learnMoreLink}>
-			<Card
-				sx={{maxWidth: 345}}
+			<div
 				className="border border-gray-200 hover:scale-105 hover:shadow-lg hover:border-blue-500 hover:my-2 hover:mx-1 transition-all duration-300">
 				<CardHeader
 					title={<div className="w-80 truncate">{title}</div>}
@@ -66,7 +64,7 @@ export default function HomeCard(props: HomeCardProps) {
 						{description}
 					</Typography>
 				</div>
-			</Card>
+			</div>
 		</Link>
 	);
 }
