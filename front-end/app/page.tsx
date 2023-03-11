@@ -46,15 +46,12 @@ export default function Login(): JSX.Element {
 					) : (
 						<>
 							<h1 className="font-roboto text-4xl font-semibold">Sign-in</h1>
-							<h2 className="font-roboto text-lg">
-								Don&apos;t have an account? &nbsp;
-								<Link href="/register">
-									<span className="text-blue-600 -ml-1 hover:underline">
-										Register
-									</span>
-								</Link>
-							</h2>
 							<LoginForm></LoginForm>
+							<Link href="/forgot" className='mt-2'>
+								<span className="text-blue-600 font-roboto text-sm hover:underline">
+									Forgot Password?
+								</span>
+							</Link>
 						</>
 					)}
 				</div>
