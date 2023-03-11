@@ -5,22 +5,22 @@ import Tabs from '../tabs';
 import Venues from '../venue';
 import {useEffect, useState} from 'react';
 import API from '../../API';
+import Popup from '../../popup';
 
 const axios = new API.Axios();
 
 export default function details(props: {params: {id: number}}) {
-	let abc: {
-		title: string | null;
-		pk: string | null;
-		club: string | null;
-		date: string | null;
-		time: string | null;
-		venue: string | null;
-		long_description: string | null;
-		short_description: string | null;
-		organizer: {name: string; role: string}[];
-		image: string | null;
-	} = {
+	const [Spopup, setSpopup] = useState(false);
+	const [Fpopup, setFpopup] = useState(false);
+
+	function showSuccessPopup() {
+		setSpopup(true);
+	}
+
+	function showFailurePopup() {
+		setFpopup(true);
+	}
+	const [data, setData] = useState({
 		title: null,
 		pk: null,
 		club: null,
@@ -31,8 +31,8 @@ export default function details(props: {params: {id: number}}) {
 		short_description: null,
 		organizer: [],
 		image: null,
-	};
-	const [data, setData] = useState(abc);
+	});
+
 	useEffect(() => {
 		(async () => {
 			const request = await axios.get(
@@ -46,6 +46,18 @@ export default function details(props: {params: {id: number}}) {
 	}, []);
 	return (
 		<div className="flex flex-col w-full h-auto items-center justify-center">
+			<div className="flex flex-col w-full items-end">
+				{Spopup ? (
+					<Popup.Success
+						showpopup={setSpopup}
+						message="Applications successfully updated!"></Popup.Success>
+				) : null}
+				{Fpopup ? (
+					<Popup.Error
+						showpopup={setFpopup}
+						message="Applications not updated!"></Popup.Error>
+				) : null}
+			</div>
 			<div className="flex flex-col w-11/12 h-auto">
 				<Header
 					club={data.club}
@@ -56,7 +68,12 @@ export default function details(props: {params: {id: number}}) {
 					<Poster image={data.image} />
 					<div className="flex flex-col w-full justify-center items-center">
 						<Venues venue={data.venue} dates={data.date} time={data.time} />
-						<Tabs long_desc={data.long_description} coordinator={data.organizer} />
+						<Tabs
+							long_desc={data.long_description}
+							coordinator={data.organizer}
+							showSuccessPopup={showSuccessPopup}
+							showFailurePopup={showFailurePopup}
+						/>
 					</div>
 				</div>
 			</div>
