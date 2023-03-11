@@ -9,3 +9,4 @@ from rest_framework import permissions
 class UserListView(generics.RetrieveAPIView):
     queryset = get_user_model().objects.all()
     serializer_class = serializers.UserProfile
+    lookup_field = 'pk'

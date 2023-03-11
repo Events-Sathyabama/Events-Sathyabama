@@ -5,7 +5,6 @@ from . import models
 from django.utils.translation import gettext_lazy as _
 
 admin.site.register(models.Branch)
-admin.site.register(models.Role)
 #
 #
 # from django.contrib import admin
@@ -27,7 +26,7 @@ class CustomUserAdmin(UserAdmin):
     add_form = UserAdminCreationForm
     fieldsets = (
         (None, {"fields": ("college_id", "password")}),
-        (_("Personal info"), {"fields": ("first_name", "last_name", "email", 'role')}),
+        (_("Personal info"), {"fields": ("first_name", "last_name", "email", 'role', 'branch')}),
         (
             _("Permissions"),
             {
