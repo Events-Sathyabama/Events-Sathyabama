@@ -155,15 +155,17 @@ function get_url(key:string, params?:Array<string>){
 }
 
 const API:{[key:string]: any} = {
-  Axios:AxiosInstance,
+  'Axios':AxiosInstance,
   'jwt': parseJwt,
   'get_url': get_url
 }
 
 const url:{[key:string]: Function} = {
-  'login': ()=> {return 'token/'},
+  'login': ()=> {return 'user/token/'},
   'profile_detail': (id:Number)=>{ return `user/detail/${id}/`},
-  'token_refresh': ()=>{ return `token/refresh/`},
+  'token_refresh': ()=>{ return `user/token/refresh/`},
+  'event:completed_list': ()=>{return 'event/completed/list/'},
+  'event:detail': (id:Number)=>{return `event/detail/${id}`}
 }
 
 export default API;

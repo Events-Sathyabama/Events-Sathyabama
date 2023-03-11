@@ -32,6 +32,8 @@ const dummyApplications = [
 ];
 
 export default function Tabs(props: {
+	long_desc: string | null;
+	coordinator: {name: string; role: string}[];
 	showSuccessPopup: Function;
 	showFailurePopup: Function;
 }) {
@@ -116,23 +118,15 @@ export default function Tabs(props: {
 						/>
 					</TabList>
 				</Box>
-				<TabPanel value="1">
-					Description of the Event... Lorem ipsum dolor sit amet consectetur
-					adipisicing elit. Nihil vero ab vel optio, illo et esse? Error repellendus
-					enim corrupti deserunt, ipsam earum suscipit magnam ipsa dignissimos
-					temporibus quisquam inventore, labore culpa nostrum mollitia similique eos
-					libero accusantium necessitatibus dolor quibusdam cupiditate. Excepturi,
-					quos nulla aliquam fugiat asperiores architecto corrupti.
-				</TabPanel>
+				<TabPanel value="1">{props.long_desc}</TabPanel>
 				<TabPanel value="2">
-					<Coordinators coordinators={coordinators}></Coordinators>
+					<Coordinators coordinators={props.coordinator}></Coordinators>
 				</TabPanel>
 				<TabPanel value="3">
-					<Applications
-						applications={dummyApplications}
-						showSuccessPopup={props.showSuccessPopup}
-						showFailurePopup={props.showFailurePopup}
-					/>
+					<Applications 
+            applications={dummyApplications} 
+            showSuccessPopup={props.showSuccessPopup}
+						showFailurePopup={props.showFailurePopup} />
 				</TabPanel>
 			</TabContext>
 		</Box>
