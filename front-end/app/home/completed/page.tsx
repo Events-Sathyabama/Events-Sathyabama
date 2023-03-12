@@ -2,9 +2,14 @@
 import HomeCard from '../card';
 import {useEffect, useState} from 'react';
 import API from '../../API';
-import Login from '@/app/login';
+import CircularProgress from '@mui/material/CircularProgress';
 
 const axios = new API.Axios();
+// TODO Card Data Render Format Here
+// TODO Fetch and Update Dummy Data to Real Data Here
+const dummyData = [
+	// ...dummy data
+];
 
 export default function Completed() {
 	let abc: {
@@ -16,23 +21,27 @@ export default function Completed() {
 		date: string;
 	}[] = [];
 	const [data, setData] = useState(abc);
+	const [isLoading, setIsLoading] = useState(true);
 
 	useEffect(() => {
 		(async () => {
 			const request = await axios.get(API.get_url('event:completed_list'));
 			if (request.status === 200) {
 				setData(request.data);
-				console.log(request.data);
+				setIsLoading(false);
 			}
 		})();
 	}, []);
 	return (
-		<div className='flex flex-col w-full h-full'>
-			<Login />
-			<h1 className='text-2xl text-center underline mt-3'>Completed Events</h1>
-			<div className='flex flex-row flex-wrap m-3 justify-center gap-3'>
-				{data
-					? data.map((card) => (
+		<div className="flex flex-col w-full h-full">
+			<h1 className="text-2xl text-center underline mt-3">Completed Events</h1>
+			{isLoading ? (
+				<div className="flex flex-col justify-center items-center w-full min-h-[79vh]">
+					<CircularProgress />
+				</div>
+			) : (
+				<div className="flex flex-row flex-wrap m-3 justify-center gap-3">
+					{data.map((card) => (
 						<HomeCard
 							key={card.pk}
 							title={card.title}
@@ -42,9 +51,9 @@ export default function Completed() {
 							date={card.date}
 							learnMoreLink={'/details/' + card.pk}
 						/>
-					))
-					: ''}
-			</div>
+					))}
+				</div>
+			)}
 		</div>
 	);
 }

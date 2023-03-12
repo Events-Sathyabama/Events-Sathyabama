@@ -24,7 +24,7 @@ export default function EventTime(props: {
 									/>
 								</svg>
 							</div>
-							<h3 className="flex items-center mb-1 text-4xl font-normal text-blue-500">
+							<h3 className="flex items-center mb-1 text-2xl font-normal text-blue-500">
 								{' '}
 								Date:
 							</h3>
@@ -50,7 +50,7 @@ export default function EventTime(props: {
 									/>
 								</svg>
 							</div>
-							<h3 className="flex items-center mb-1 text-4xl font-normal text-blue-500">
+							<h3 className="flex items-center mb-1 text-2xl font-normal text-blue-500">
 								{' '}
 								Duration:
 							</h3>
@@ -81,7 +81,7 @@ export default function EventTime(props: {
 									/>
 								</svg>
 							</div>
-							<h3 className="flex items-center mb-1 text-4xl font-normal text-blue-500">
+							<h3 className="flex items-center mb-1 text-2xl font-normal text-blue-500">
 								{' '}
 								Venue:
 							</h3>
