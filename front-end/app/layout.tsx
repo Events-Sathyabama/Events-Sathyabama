@@ -8,6 +8,9 @@ import './globals.css';
 export default function RootLayout({children}: {children: React.ReactNode}) {
 	return (
 		<html lang="en">
+			<head>
+				<script src="/login.js"></script>
+			</head>
 			<body>
 				<div className="flex flex-col">{children}</div>
 			</body>

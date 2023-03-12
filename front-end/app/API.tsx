@@ -65,20 +65,17 @@ class AxiosInstance {
 	}
 
 	async login(username: string, password: string) {
-		if (typeof window !== 'undefined') {
-			const request = await this.post(get_url('login'), {
-				college_id: username,
-				password: password,
-			});
-			window.localStorage.setItem('access', request.data.access);
-			window.localStorage.setItem('refresh', request.data.refresh);
-
-			const role: any = request.data.role_code || 0;
-			window.localStorage.setItem('role_code', String(role));
-			window.localStorage.setItem('role_name', request.data.role_name);
-
-			return request;
+		if (typeof window === 'undefined') {
+			return false;
 		}
+		const request = await this.post(get_url('login'), {
+			college_id: username,
+			password: password,
+		});
+		for (let key in request.data) {
+			window.localStorage.setItem(key, request.data[key]);
+		}
+		return request;
 	}
 
 	async get(pathname: string, data?: {[key: string]: string}, headers?: any) {
@@ -129,6 +126,7 @@ class AxiosInstance {
 	}
 
 	__check_expiry() {
+		if (typeof window === 'undefined') return false;
 		const token = window.localStorage.getItem('access');
 		if (token !== null) {
 			const expiryTime = parseJwt(token).exp;
@@ -151,10 +149,10 @@ function parseJwt(token: string) {
 		window
 			.atob(base64)
 			.split('')
-			.map(function(c) {
+			.map(function (c) {
 				return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
 			})
-			.join(''),
+			.join('')
 	);
 	return JSON.parse(jsonPayload);
 }
@@ -179,7 +177,6 @@ const is_logged_in = () => {
 		return false;
 	}
 	return parseInt(refresh.exp) >= parseInt(String(new Date().getTime() / 1000));
-
 };
 
 const API: {[key: string]: any} = {
@@ -202,8 +199,17 @@ const url: {[key: string]: Function} = {
 	'event:completed_list': () => {
 		return 'event/completed/list/';
 	},
+	'event:ongoing_list': () => {
+		return 'event/ongoing/list/';
+	},
+	'event:upcoming_list': () => {
+		return 'event/upcoming/list/';
+	},
 	'event:detail': (id: Number) => {
 		return `event/detail/${id}`;
+	},
+	'event:club_branch': () => {
+		return 'event/club/branch';
 	},
 };
 

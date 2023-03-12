@@ -3,20 +3,21 @@ import {Fragment, useState, useEffect} from 'react';
 import {Disclosure, Menu, Transition} from '@headlessui/react';
 import {Bars3Icon, XMarkIcon} from '@heroicons/react/24/outline';
 import Link from 'next/link';
-import {usePathname} from 'next/navigation';
+import {usePathname, useRouter} from 'next/navigation';
 
 function classNames(...classes: any) {
 	return classes.filter(Boolean).join(' ');
 }
 
-function signOut() {
-	localStorage.clear();
-	if (typeof window !== 'undefined') {
-		window.location.href = '/';
-	}
-}
-
 export default function Navbar() {
+	const router = useRouter();
+	function signOut() {
+		if (typeof window === 'undefined') {
+			return;
+		}
+		window.localStorage.clear();
+		router.push('/');
+	}
 	const [currentPage, setCurrentPage] = useState(0); //initially to Upcoming
 	const navigator = usePathname();
 	useEffect(() => {

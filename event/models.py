@@ -13,6 +13,7 @@ def confirm_organizer(value):
     if user.role == 0:
         raise ValidationError("The User Doesn't Have access to create Event")
 
+CLUB_LENGTH = 70
 
 class Event(models.Model):
     STATUS_CHOICES = (
@@ -24,7 +25,7 @@ class Event(models.Model):
         (6, 'Certified'),
         (7, 'Ongoing'),
     )
-    organizer = models.ManyToManyField(User, limit_choices_to={'role__in': [0, 1, 2]})
+    organizer = models.ManyToManyField(User, limit_choices_to={'role__in': [0, 1, 2]}, null=True, blank=True)
     status = models.PositiveIntegerField(choices=STATUS_CHOICES, default=1)
 
     participant = models.JSONField(blank=True, null=True)
@@ -39,7 +40,7 @@ class Event(models.Model):
     title = models.CharField(max_length=250)
     short_description = models.CharField(max_length=100)
     long_description = models.TextField(null=True, blank=True)
-    club = models.CharField(max_length=70)
+    club = models.CharField(max_length=CLUB_LENGTH)
     venue = models.CharField(blank=True, null=True, max_length=100)
 
     start_date = models.DateField(blank=True, null=True)
@@ -57,3 +58,12 @@ class Event(models.Model):
 
     def __str__(self):
         return self.title
+
+
+
+class Club(models.Model):
+    abbreviation = models.CharField(max_length=10, null=True, blank=True)
+    name = models.CharField(max_length=CLUB_LENGTH)
+
+    def __str__(self):
+        return self.name

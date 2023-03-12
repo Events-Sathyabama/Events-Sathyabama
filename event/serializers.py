@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Event
+from .models import Event, Club
 
 
 class EventCardSerializers(serializers.ModelSerializer):
@@ -18,6 +18,8 @@ class EventCardSerializers(serializers.ModelSerializer):
 
     def get_date(self, obj):
         format = "%d %b '%y"
+        if obj.start_date is None or obj.end_date is None:
+            return ''
         return f"{obj.start_date.strftime(format)} - {obj.start_date.strftime(format)}"
 
 
@@ -58,4 +60,39 @@ class EventDetailSerializers(serializers.ModelSerializer):
 
     def get_date(self, obj):
         format = "%d %b '%y"
+        if obj.start_date is None or obj.end_date is None:
+            return ''
         return f"{obj.start_date.strftime(format)} - {obj.start_date.strftime(format)}"
+
+
+class EventCreateSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = Event
+        fields = [
+            'organizer',
+            'participant',
+            'image',
+            'title',
+            'short_description',
+            'long_description',
+            'club',
+            'venue',
+            'start_date',
+            'end_date',
+            'date',
+            'time',
+            'branch',
+        ]
+    
+    def validate_title(self, value):
+        value = value.strip()
+        value = value.title()
+        if value == '':
+            raise serializers.ValidationError('Title Cannot be Blank')
+        return value
+    
+
+class ClubSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Club
+        fields = ['abbreviation', 'name']
