@@ -102,7 +102,7 @@ export default function Create() {
 	const fixedOptions = [top100Films[6]];
 	const [coval, setCoval] = React.useState([...fixedOptions, top100Films[13]]);
 	return (
-		<div className="flex flex-col w-full justify-center items-center gap-4">
+		<div className="flex flex-col w-full justify-center items-center gap-4 px-2">
 			<h1 className="text-2xl text-center underline mt-3">Create/Edit your Event</h1>
 			<div className="flex flex-col md:flex-row w-full sm:px-4 gap-2 items-center md:items-start">
 				<div className="flex flex-col w-full mx-5 gap-4 max-w-sm md:max-w-full">
