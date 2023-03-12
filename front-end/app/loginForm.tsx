@@ -7,7 +7,7 @@ import API from './API';
 
 const axios = new API.Axios();
 
-export default function LoginForm(): JSX.Element {
+export default function LoginForm(props: {showPopUp: Function}): JSX.Element {
 	const router = useRouter();
 	const formik = useFormik({
 		initialValues: {
@@ -26,67 +26,72 @@ export default function LoginForm(): JSX.Element {
 		}),
 		onSubmit: async (values, helpers) => {
 			try {
-				// FIXME login field has to be reg_no not email_id
-				await axios.login(values.id, values.password);
-				// await axios.login(values.username, values.password);
+				const request = await axios.login(values.id, values.password);
 				if (typeof window !== 'undefined') {
-					window.location.href = '/home/upcoming';
+					router.push('/home/upcoming');
 				}
-			} catch (err) {
-				// FIXME add the error message in the form err.response.data
+			} catch (err: any) {
+				console.log(err);
+				props.showPopUp(true, err.response.data.detail);
 				helpers.setStatus({success: false});
 				helpers.setSubmitting(false);
 			}
 		},
 	});
 
+
 	return (
-		<form
-			noValidate
-			onSubmit={formik.handleSubmit}
-			className="flex flex-col gap-4 mt-3"
-			autoComplete="off">
-			<TextField
-				error={!!(formik.touched.id && formik.errors.id)}
-				fullWidth
-				helperText={formik.touched.id && formik.errors.id}
-				label="Registration Number/ Employee ID"
-				name="id"
-				onBlur={formik.handleBlur}
-				onChange={formik.handleChange}
-				type="text"
-				value={formik.values.id}
-			/>
-			<TextField
-				error={!!(formik.touched.password && formik.errors.password)}
-				fullWidth
-				helperText={formik.touched.password && formik.errors.password}
-				label="Your Password"
-				name="password"
-				onBlur={formik.handleBlur}
-				onChange={formik.handleChange}
-				type="password"
-				value={formik.values.password}
-				autoComplete="on"
-			/>
-			{formik.errors.submit && (
-				<Typography color="error" sx={{mt: 3}} variant="body2">
-					{formik.errors.submit}
-				</Typography>
-			)}
-			<Button
-				size="large"
-				type="submit"
-				variant="contained"
-				style={{
-					backgroundColor: '#007efc',
-					textTransform: 'none',
-					fontSize: '1.5rem',
+		<>
+			<form
+				noValidate
+				onSubmit={(e) => {
+					formik.handleSubmit(e);
+					props.showPopUp(false);
 				}}
-				color="primary"
-				className="font-roboto shadow-md">
-				Sign-in
-			</Button>
-		</form>
+				className='flex flex-col gap-4 mt-3'
+				autoComplete='off'>
+				<TextField
+					error={!!(formik.touched.id && formik.errors.id)}
+					fullWidth
+					helperText={formik.touched.id && formik.errors.id}
+					label='Registration Number/ Employee ID'
+					name='id'
+					onBlur={formik.handleBlur}
+					onChange={formik.handleChange}
+					type='text'
+					value={formik.values.id}
+				/>
+				<TextField
+					error={!!(formik.touched.password && formik.errors.password)}
+					fullWidth
+					helperText={formik.touched.password && formik.errors.password}
+					label='Your Password'
+					name='password'
+					onBlur={formik.handleBlur}
+					onChange={formik.handleChange}
+					type='password'
+					value={formik.values.password}
+					autoComplete='on'
+				/>
+				{formik.errors.submit && (
+					<Typography color='error' sx={{mt: 3}} variant='body2'>
+						{formik.errors.submit}
+					</Typography>
+				)}
+				<Button
+					size='large'
+					type='submit'
+					variant='contained'
+					style={{
+						backgroundColor: '#007efc',
+						textTransform: 'none',
+						fontSize: '1.5rem',
+					}}
+					color='primary'
+					className='font-roboto shadow-md'>
+					Sign-in
+				</Button>
+			</form>
+		</>
 	);
 }

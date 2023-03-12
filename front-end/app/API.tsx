@@ -73,9 +73,9 @@ class AxiosInstance {
 			window.localStorage.setItem('access', request.data.access);
 			window.localStorage.setItem('refresh', request.data.refresh);
 
-			const role = 0; // TODO role here
-			window.localStorage.setItem('role', String(role));
-			window.localStorage.setItem('role_name', hierarchy[role]);
+			const role: any = request.data.role_code || 0;
+			window.localStorage.setItem('role_code', String(role));
+			window.localStorage.setItem('role_name', request.data.role_name);
 
 			return request;
 		}
@@ -142,16 +142,19 @@ class AxiosInstance {
 }
 
 function parseJwt(token: string) {
+	if (token === null || token.trim() === '') {
+		return null;
+	}
 	let base64Url = token.split('.')[1];
 	let base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
 	let jsonPayload = decodeURIComponent(
 		window
 			.atob(base64)
 			.split('')
-			.map(function (c) {
+			.map(function(c) {
 				return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
 			})
-			.join('')
+			.join(''),
 	);
 	return JSON.parse(jsonPayload);
 }
@@ -163,10 +166,27 @@ function get_url(key: string, params?: Array<string>) {
 	return url[key]();
 }
 
+const is_logged_in = () => {
+	if (typeof window === 'undefined') {
+		return false;
+	}
+	const access = API.jwt(window.localStorage.getItem('access') || '');
+	if (access === null) {
+		return false;
+	}
+	const refresh = API.jwt(window.localStorage.getItem('refresh') || '');
+	if (refresh === null) {
+		return false;
+	}
+	return parseInt(refresh.exp) >= parseInt(String(new Date().getTime() / 1000));
+
+};
+
 const API: {[key: string]: any} = {
 	Axios: AxiosInstance,
 	jwt: parseJwt,
 	get_url: get_url,
+	is_logged_in: is_logged_in,
 };
 
 const url: {[key: string]: Function} = {
