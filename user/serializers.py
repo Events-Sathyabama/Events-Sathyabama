@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
-
+from .models import Branch
 
 User = get_user_model()
 choice_dict = dict(User.ROLE_CHOICE)
@@ -14,3 +14,8 @@ class UserProfile(serializers.ModelSerializer):
         model = User
         fields = ['college_id', 'role', 'full_name', 'branch']
 
+
+class BranchSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = Branch
+        fields = ['name']

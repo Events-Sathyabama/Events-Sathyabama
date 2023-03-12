@@ -10,4 +10,6 @@ urlpatterns = [
     path('ongoing/list/', views.OngoingEventList.as_view()),
     path('upcoming/list/', views.UpcomingEventList.as_view()),
     path('detail/<int:pk>', views.EventDetail.as_view()),
-    ]
+    path('create/', views.EventCreate.as_view()),
+    path('club/branch/', views.club_branch),
+]

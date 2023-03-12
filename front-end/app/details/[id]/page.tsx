@@ -5,7 +5,6 @@ import Tabs from '../tabs';
 import {useEffect, useState} from 'react';
 import API from '../../API';
 import Popup from '../../popup';
-import Login from '@/app/login';
 import EventTime from '../venue';
 
 const axios = new API.Axios();
@@ -38,36 +37,34 @@ export default function details(props: {params: {id: number}}) {
 	useEffect(() => {
 		(async () => {
 			const request = await axios.get(
-				API.get_url('event:detail', [props.params.id]),
+				API.get_url('event:detail', [props.params.id])
 			);
 			if (request.status == 200) {
-				console.log(request.data);
 				setData(request.data);
 			}
 		})();
 	}, []);
 	return (
-		<div className='flex flex-col w-full h-auto items-center justify-center'>
-			<Login />
-			<div className='flex flex-col w-full items-end'>
+		<div className="flex flex-col w-full h-auto items-center justify-center">
+			<div className="flex flex-col w-full items-end">
 				{Spopup ? (
 					<Popup.Success
 						showpopup={setSpopup}
-						message='Applications successfully updated!'></Popup.Success>
+						message="Applications successfully updated!"></Popup.Success>
 				) : null}
 				{Fpopup ? (
 					<Popup.Error
 						showpopup={setFpopup}
-						message='Applications not updated!'></Popup.Error>
+						message="Applications not updated!"></Popup.Error>
 				) : null}
 			</div>
-			<div className='flex flex-col w-11/12 h-auto'>
+			<div className="flex flex-col w-11/12 h-auto">
 				<Header
 					club={data.club}
 					short_desc={data.short_description}
 					title={data.title}
 				/>
-				<div className='flex flex-col sm:flex-row w-full h-auto mt-2 items-center gap-3 sm:items-start justify-center'>
+				<div className="flex flex-col sm:flex-row w-full h-auto mt-2 items-center gap-3 sm:items-start justify-center">
 					<Poster image={data.image} />
 					<div className="flex flex-col w-full justify-center items-center mt-2">
 						<EventTime

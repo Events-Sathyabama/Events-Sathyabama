@@ -14,6 +14,9 @@ export default function ProfilePage(): JSX.Element {
 	const [fullName, setFullName] = useState('-');
 	useEffect(() => {
 		setRole(localStorage.getItem('role_name') || '-');
+		setFullName(localStorage.getItem('name') || '-');
+		setId(localStorage.getItem('id') || '-');
+
 		(async () => {
 			const id = API.jwt(window.localStorage.getItem('access')).user_id;
 			const request = await axios.get(API.get_url('profile_detail', [id]));
@@ -21,7 +24,6 @@ export default function ProfilePage(): JSX.Element {
 			setId(request.data.college_id);
 			setBranch(request.data.branch);
 			setFullName(request.data.full_name);
-			console.log(request.data);
 		})();
 	}, []);
 	return (

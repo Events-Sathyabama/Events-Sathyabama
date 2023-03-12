@@ -24,7 +24,7 @@ export default function Upcoming() {
 
 	useEffect(() => {
 		(async () => {
-			const request = await axios.get(API.get_url('event:completed_list'));
+			const request = await axios.get(API.get_url('event:upcoming_list'));
 			if (request.status === 200) {
 				setData(request.data);
 				setIsLoading(false);
@@ -35,6 +35,7 @@ export default function Upcoming() {
 	return (
 		<div className="flex flex-col w-full h-full">
 			<h1 className="text-2xl text-center underline mt-3">Upcoming Events</h1>
+
 			{isLoading ? (
 				<div className="flex flex-col justify-center items-center w-full min-h-[79vh]">
 					<CircularProgress />

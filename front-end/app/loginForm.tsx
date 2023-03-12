@@ -31,14 +31,12 @@ export default function LoginForm(props: {showPopUp: Function}): JSX.Element {
 					router.push('/home/upcoming');
 				}
 			} catch (err: any) {
-				console.log(err);
 				props.showPopUp(true, err.response.data.detail);
 				helpers.setStatus({success: false});
 				helpers.setSubmitting(false);
 			}
 		},
 	});
-
 
 	return (
 		<>
@@ -48,47 +46,47 @@ export default function LoginForm(props: {showPopUp: Function}): JSX.Element {
 					formik.handleSubmit(e);
 					props.showPopUp(false);
 				}}
-				className='flex flex-col gap-4 mt-3'
-				autoComplete='off'>
+				className="flex flex-col gap-4 mt-3"
+				autoComplete="off">
 				<TextField
 					error={!!(formik.touched.id && formik.errors.id)}
 					fullWidth
 					helperText={formik.touched.id && formik.errors.id}
-					label='Registration Number/ Employee ID'
-					name='id'
+					label="Registration Number/ Employee ID"
+					name="id"
 					onBlur={formik.handleBlur}
 					onChange={formik.handleChange}
-					type='text'
+					type="text"
 					value={formik.values.id}
 				/>
 				<TextField
 					error={!!(formik.touched.password && formik.errors.password)}
 					fullWidth
 					helperText={formik.touched.password && formik.errors.password}
-					label='Your Password'
-					name='password'
+					label="Your Password"
+					name="password"
 					onBlur={formik.handleBlur}
 					onChange={formik.handleChange}
-					type='password'
+					type="password"
 					value={formik.values.password}
-					autoComplete='on'
+					autoComplete="on"
 				/>
 				{formik.errors.submit && (
-					<Typography color='error' sx={{mt: 3}} variant='body2'>
+					<Typography color="error" sx={{mt: 3}} variant="body2">
 						{formik.errors.submit}
 					</Typography>
 				)}
 				<Button
-					size='large'
-					type='submit'
-					variant='contained'
+					size="large"
+					type="submit"
+					variant="contained"
 					style={{
 						backgroundColor: '#007efc',
 						textTransform: 'none',
 						fontSize: '1.5rem',
 					}}
-					color='primary'
-					className='font-roboto shadow-md'>
+					color="primary"
+					className="font-roboto shadow-md">
 					Sign-in
 				</Button>
 			</form>

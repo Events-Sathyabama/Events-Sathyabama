@@ -23,7 +23,7 @@ export default function Ongoing() {
 
 	useEffect(() => {
 		(async () => {
-			const request = await axios.get(API.get_url('event:completed_list'));
+			const request = await axios.get(API.get_url('event:ongoing_list'));
 			if (request.status === 200) {
 				setData(request.data);
 				setIsLoading(false);
@@ -34,6 +34,7 @@ export default function Ongoing() {
 	return (
 		<div className="flex flex-col w-full h-full">
 			<h1 className="text-2xl text-center underline mt-3">Ongoing Events</h1>
+
 			{isLoading ? (
 				<div className="flex flex-col justify-center items-center w-full min-h-[79vh]">
 					<CircularProgress />

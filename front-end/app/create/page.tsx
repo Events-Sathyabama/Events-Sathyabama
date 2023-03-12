@@ -12,28 +12,34 @@ import {LocalizationProvider} from '@mui/x-date-pickers/LocalizationProvider';
 import {AdapterDayjs} from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
 import Chip from '@mui/material/Chip';
+import API from '../API';
 
-// TODO Fetch Clubs in this way
-const clubs = [
-	{name: 'Music Club'},
-	{name: 'Dance Club'},
-	{name: 'ACM'},
-	{name: 'Google Developers Student Club'},
-	{name: 'Community Development Club'},
-];
-
-// TODO Fetch Branches in this way
-const matchedList = [
-	{name: 'CSE 2020-2024'},
-	{name: 'CSE 2021-2025'},
-	{name: 'CSE 2022-2026'},
-];
+const axios = new API.Axios();
 
 interface ClubsType {
 	name: string;
 }
 
 export default function Create() {
+	// API calls starts
+	let [clubs, setClubs] = useState([{name: 'Loading...'}]);
+	let [matchedList, setMatchedList] = useState([
+		{name: 'Loading...', abbreviation: 'Loading...'},
+	]);
+	React.useEffect(() => {
+		(async () => {
+			const request = await axios.get(API.get_url('event:club_branch'));
+			if (request.status === 200) {
+				setClubs(request.data.club);
+				setMatchedList(request.data.branch);
+			}
+		})();
+	}, []);
+
+	// TODO Fetch Clubs in this way
+
+	// API Calls ends
+
 	const [eventName, setEventName] = useState('');
 	const handleEventNameChange = (event: any) => {
 		setEventName(event.target.value);

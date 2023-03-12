@@ -16,4 +16,6 @@ class TokenObtain(TokenObtainPairSerializer):
         data = super().validate(attrs)
         data['role_name'] = self.user.get_role_display()
         data['role_code'] = self.user.role
+        data['name'] = self.user.full_name
+        data['id'] = self.user.college_id
         return data
