@@ -1,3 +1,5 @@
+import Head from 'next/head';
+
 export const metadata = {
 	title: 'Events@Sathyabama',
 	description:
@@ -8,9 +10,9 @@ import './globals.css';
 export default function RootLayout({children}: {children: React.ReactNode}) {
 	return (
 		<html lang="en">
-			<head>
+			<Head>
 				<script src="/login.js"></script>
-			</head>
+			</Head>
 			<body>
 				<div className="flex flex-col">{children}</div>
 			</body>

@@ -68,10 +68,10 @@ class AxiosInstance {
 		if (typeof window === 'undefined') {
 			return false;
 		}
-		const request = await this.post(get_url('login'), {
-			college_id: username,
-			password: password,
-		});
+		const form = new FormData();
+		form.append('college_id', username);
+		form.append('password', password);
+		const request = await instance.get(get_url('login'));
 		for (let key in request.data) {
 			window.localStorage.setItem(key, request.data[key]);
 		}
@@ -96,7 +96,7 @@ class AxiosInstance {
 		if (!this.__check_expiry()) {
 			status = await this.__refresh_token();
 			if (!status) {
-				// window.location.replace('/')
+				window.location.href = '/';
 			}
 		}
 		return status;

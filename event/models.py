@@ -25,7 +25,7 @@ class Event(models.Model):
         (6, 'Certified'),
         (7, 'Ongoing'),
     )
-    organizer = models.ManyToManyField(User, limit_choices_to={'role__in': [0, 1, 2]}, null=True, blank=True)
+    organizer = models.ManyToManyField(User, limit_choices_to={'role__in': [0, 1, 2]}, blank=True)
     status = models.PositiveIntegerField(choices=STATUS_CHOICES, default=1)
 
     participant = models.JSONField(blank=True, null=True)

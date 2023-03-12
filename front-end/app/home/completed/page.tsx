@@ -1,15 +1,11 @@
 'use client';
 import HomeCard from '../card';
-import {useEffect, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import API from '../../API';
 import CircularProgress from '@mui/material/CircularProgress';
-
+import Page from '../pagination';
+import api_calls from '../api_calls';
 const axios = new API.Axios();
-// TODO Card Data Render Format Here
-// TODO Fetch and Update Dummy Data to Real Data Here
-const dummyData = [
-	// ...dummy data
-];
 
 export default function Completed() {
 	let abc: {
@@ -22,16 +18,22 @@ export default function Completed() {
 	}[] = [];
 	const [data, setData] = useState(abc);
 	const [isLoading, setIsLoading] = useState(true);
-
+	const [pageNo, setPageNo] = useState(1);
+	const [totalPage, setTotalPage] = useState(1);
 	useEffect(() => {
 		(async () => {
-			const request = await axios.get(API.get_url('event:completed_list'));
-			if (request.status === 200) {
-				setData(request.data);
-				setIsLoading(false);
-			}
+			setIsLoading(true); //FIXME why the loading screen not comming when next page is clicked?
+			await api_calls(
+				pageNo,
+				setPageNo,
+				totalPage,
+				setTotalPage,
+				setData,
+				'event:completed_list'
+			);
+			setIsLoading(false);
 		})();
-	}, []);
+	}, [pageNo]);
 	return (
 		<div className="flex flex-col w-full h-full">
 			<h1 className="text-2xl text-center underline mt-3">Completed Events</h1>
@@ -41,18 +43,21 @@ export default function Completed() {
 					<CircularProgress />
 				</div>
 			) : (
-				<div className="flex flex-row flex-wrap m-3 justify-center gap-3">
-					{data.map((card) => (
-						<HomeCard
-							key={card.pk}
-							title={card.title}
-							subheader={card.club}
-							imageUrl={card.image}
-							description={card.short_description}
-							date={card.date}
-							learnMoreLink={'/details/' + card.pk}
-						/>
-					))}
+				<div className="flex justify-center flex-col items-center gap-4">
+					<div className="flex flex-row flex-wrap m-3 justify-center gap-3">
+						{data.map((card) => (
+							<HomeCard
+								key={card.pk}
+								title={card.title}
+								subheader={card.club}
+								imageUrl={card.image}
+								description={card.short_description}
+								date={card.date}
+								learnMoreLink={'/details/' + card.pk}
+							/>
+						))}
+					</div>
+					<Page totalPage={totalPage} pageNo={pageNo} setPageNo={setPageNo} />
 				</div>
 			)}
 		</div>

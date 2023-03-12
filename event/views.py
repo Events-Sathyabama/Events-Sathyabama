@@ -8,7 +8,6 @@ from django.utils import timezone
 from user.serializers import BranchSerializers
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-# Create your views here.
 
 
 def create_event_base_query():
@@ -21,7 +20,6 @@ def create_event_base_query():
 class CompletedEventList(generics.ListAPIView):
     queryset = create_event_base_query().filter(end_date__lt=timezone.now())
     serializer_class = serializers.EventCardSerializers
-
 
 class OngoingEventList(generics.ListAPIView):
     queryset = create_event_base_query().filter(start_date__gte=timezone.now(), end_date__lte=timezone.now())
