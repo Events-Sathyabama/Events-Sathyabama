@@ -2,10 +2,10 @@
 import Header from '../header';
 import Poster from '../poster';
 import Tabs from '../tabs';
-import Venues from '../venue';
 import {useEffect, useState} from 'react';
 import API from '../../API';
 import Popup from '../../popup';
+import EventTime from '../venue';
 
 const axios = new API.Axios();
 
@@ -66,8 +66,11 @@ export default function details(props: {params: {id: number}}) {
 				/>
 				<div className="flex flex-col sm:flex-row w-full h-auto mt-2 items-center gap-3 sm:items-start justify-center">
 					<Poster image={data.image} />
-					<div className="flex flex-col w-full justify-center items-center">
-						<Venues venue={data.venue} dates={data.date} time={data.time} />
+					<div className="flex flex-col w-full justify-center items-center mt-2">
+						<EventTime
+							dates={data.date}
+							venue={data.venue}
+							time={data.time}></EventTime>
 						<Tabs
 							long_desc={data.long_description}
 							coordinator={data.organizer}
