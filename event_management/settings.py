@@ -156,7 +156,7 @@ REST_FRAMEWORK = {
 
     ),
     "DEFAULT_PAGINATION_CLASS": "event_management.pagination.CustomPagination",
-    "PAGE_SIZE": 12,
+    "PAGE_SIZE": 2,
 }
 
 

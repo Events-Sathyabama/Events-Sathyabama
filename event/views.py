@@ -3,39 +3,41 @@ from rest_framework import generics
 from . import serializers
 from .models import Event, Club
 from user.models import Branch
-from django.db.models import Q
 from django.utils import timezone
 from user.serializers import BranchSerializers
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
+from .mixins import SearchQuery
 
 
-def create_event_base_query():
-    query = Event.objects.all()
-    q = Q(start_date__isnull=False)
-    q = q | Q(end_date__isnull=False)
-    q = q & Q(status=2, hod_verified=1, dean_verified=1, vc_verified=1)
-    return query.filter(q)
+class CompletedEventList(SearchQuery, generics.ListAPIView):
+    serializer_class = serializers.EventCardSerializers
+    
+    def get_queryset(self):
+        query = super().get_queryset()
+        return query.filter(end_date__lt=timezone.now())
 
-class CompletedEventList(generics.ListAPIView):
-    queryset = create_event_base_query().filter(end_date__lt=timezone.now())
+class OngoingEventList(SearchQuery, generics.ListAPIView):
     serializer_class = serializers.EventCardSerializers
 
-class OngoingEventList(generics.ListAPIView):
-    queryset = create_event_base_query().filter(start_date__gte=timezone.now(), end_date__lte=timezone.now())
+    def get_queryset(self):
+        query = super().get_queryset()
+        return query.filter(start_date__gte=timezone.now(), end_date__lte=timezone.now())
+    
+class UpcomingEventList(SearchQuery, generics.ListAPIView):
     serializer_class = serializers.EventCardSerializers
-
-
-class UpcomingEventList(generics.ListAPIView):
-    queryset = create_event_base_query().filter(start_date__gt=timezone.now())
-    serializer_class = serializers.EventCardSerializers
-
+    
+    def get_queryset(self):
+        query = super().get_queryset()
+        return query.filter(start_date__gt=timezone.now())
+   
 
 class EventDetail(generics.RetrieveAPIView):
     # 2 SQL queries
     queryset = Event.objects.prefetch_related('organizer')
     serializer_class = serializers.EventDetailSerializers
 
+    
 
 class EventCreate(generics.CreateAPIView):
     queryset = Event.objects.all()

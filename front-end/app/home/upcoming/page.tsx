@@ -3,7 +3,7 @@ import HomeCard from '../card';
 import {useEffect, useState} from 'react';
 import API from '../../API';
 import CircularProgress from '@mui/material/CircularProgress';
-import api_calls from '../api_calls';
+import card_call from '../api_calls';
 import Page from '../pagination';
 
 const axios = new API.Axios();
@@ -25,12 +25,16 @@ export default function Upcoming() {
 	const [isLoading, setIsLoading] = useState(true);
 	const [pageNo, setPageNo] = useState(1);
 	const [totalPage, setTotalPage] = useState(1);
+	const [search, setSearch] = useState('');
 
+	// BUG Optimize the use effect
 	useEffect(() => {
 		(async () => {
-			setIsLoading(true);
-			await api_calls(
+			console.log('searching for = ', search, ', page no = ', pageNo);
+			setIsLoading(true); //FIXME why the loading screen not comming when next page is clicked?
+			await card_call(
 				pageNo,
+				search,
 				setPageNo,
 				totalPage,
 				setTotalPage,
@@ -39,12 +43,16 @@ export default function Upcoming() {
 			);
 			setIsLoading(false);
 		})();
-	}, []);
-
+	}, [pageNo, search]);
 	return (
 		<div className="flex flex-col w-full h-full">
 			<h1 className="text-2xl text-center underline mt-3">Upcoming Events</h1>
-
+			<input
+				placeholder="Search"
+				value={search}
+				onChange={(e) => setSearch(e.target.value)}
+				className="border-2 p-2"
+			/>
 			{isLoading ? (
 				<div className="flex flex-col justify-center items-center w-full min-h-[79vh]">
 					<CircularProgress />

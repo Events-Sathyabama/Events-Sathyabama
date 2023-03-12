@@ -2,8 +2,9 @@ import API from '../API';
 
 const axios = new API.Axios();
 
-export default async function api_calls(
+export default async function card_call(
 	pageNo: number,
+	query: string,
 	setPageNo: Function,
 	totalPage: number,
 	setTotalPage: Function,
@@ -17,6 +18,7 @@ export default async function api_calls(
 		try {
 			const request = await axios.get(API.get_url(url_name), {
 				page: pageNo,
+				q: query,
 			});
 			if (request.status === 200) {
 				if (!request.data.hasOwnProperty('results')) {
