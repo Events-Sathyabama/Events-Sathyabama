@@ -71,7 +71,7 @@ class AxiosInstance {
 		const form = new FormData();
 		form.append('college_id', username);
 		form.append('password', password);
-		const request = await instance.get(get_url('login'));
+		const request = await instance.post(get_url('login'), form);
 		for (let key in request.data) {
 			window.localStorage.setItem(key, request.data[key]);
 		}
