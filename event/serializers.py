@@ -46,8 +46,11 @@ class EventDetailSerializers(serializers.ModelSerializer):
     def get_organizer(self, obj):
         organize = []
         for i in obj.organizer.all():
+            role = i.get_role_display()
+            if role == 'Teacher':
+                role = 'Faculty'
             organize.append({
-                'role': i.get_role_display(),
+                'role': role,
                 'name': i.full_name,
             })
         print(obj.organizer)
