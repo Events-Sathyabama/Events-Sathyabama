@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <title>Document</title>
+    <script>
+        const instance = axios.create({
+            baseURL: 'http://localhost:8000/api/',
+            // withCredentials: true,
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                'Authorization':
+                    'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjgxNjcxMDY4LCJpYXQiOjE2Nzg2NDcwNjgsImp0aSI6IjQwM2MxNWI3ZmMwZDRjNDk4NzVkNGMyODFkODU4ZmExIiwidXNlcl9pZCI6MX0.bnSNXMt_lHwBTam5ijnRs6BvfFxoz-n7-Q4EkUc-mzQ',
+            },
+        });
+
+        function test() {
+            data = { image: document.getElementById('imagefield').files[0] }
+            console.log(data);
+            instance.post('event/create/', data).then(e => {
+                console.log(e.response.data);
+            }).catch(err => {
+                console.log(err.response.data);
+            })
+        }
+    </script>
+</head>
+
+<body>
+    <input accept="image/*" multiple type="file" required id="imagefield" />
+    <button onclick="test()">Submit</button>
+</body>
+
+</html>

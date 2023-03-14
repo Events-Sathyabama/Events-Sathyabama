@@ -20,7 +20,7 @@ class EventCardSerializers(serializers.ModelSerializer):
         format = "%d %b '%y"
         if obj.start_date is None or obj.end_date is None:
             return ''
-        return f"{obj.start_date.strftime(format)} - {obj.start_date.strftime(format)}"
+        return f"{obj.start_date.strftime(format)} - {obj.end_date.strftime(format)}"
 
 
 class EventDetailSerializers(serializers.ModelSerializer):
@@ -69,9 +69,12 @@ class EventDetailSerializers(serializers.ModelSerializer):
 
 
 class EventCreateSerializers(serializers.ModelSerializer):
+    id = serializers.ReadOnlyField(source='pk')
+
     class Meta:
         model = Event
         fields = [
+            'id',
             'organizer',
             'participant',
             'image',
@@ -87,6 +90,9 @@ class EventCreateSerializers(serializers.ModelSerializer):
             'branch',
         ]
     
+    def validate_organizer(self, value):
+        print(value)
+
     def validate_title(self, value):
         value = value.strip()
         value = value.title()
@@ -94,6 +100,9 @@ class EventCreateSerializers(serializers.ModelSerializer):
             raise serializers.ValidationError('Title Cannot be Blank')
         return value
     
+# class EventUpdateSerializer(EventCreateSerializer):
+#     owner = serializers.
+
 
 class ClubSerializer(serializers.ModelSerializer):
     class Meta:
