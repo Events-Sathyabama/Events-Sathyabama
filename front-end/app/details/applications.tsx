@@ -58,8 +58,8 @@ export default function Applications(props: ApplicationProps) {
 					{applicant.status === 0 && (
 						<div className="flex flex-row gap-2">
 							<Button
-								variant="contained"
-								className="bg-green-600 hover:bg-green-800"
+								variant="outlined"
+								color='success'
 								onClick={() => handleAccept(index)}>
 								Accept
 							</Button>

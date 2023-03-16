@@ -19,7 +19,7 @@ function Success(props: {message: string; showpopup: Function}) {
 				</svg>
 				<span className='sr-only'>Check icon</span>
 			</div>
-			<div className='ml-3 text-sm font-normal'>{props.message}</div>
+			<div className='ml-3 text-sm font-normal truncate w-48'>{props.message}</div>
 			<button
 				type='button'
 				className='ml-auto -mx-1.5 -my-1.5 bg-white text-gray-400 rounded-lg focus:ring-2 p-1.5 inline-flex h-8 w-8'
@@ -63,7 +63,7 @@ function Error(props: {message: string; showpopup: Function}) {
 				</svg>
 				<span className='sr-only'>Error icon</span>
 			</div>
-			<div className='ml-3 text-sm font-normal'>{props.message}</div>
+			<div className='ml-3 text-sm font-normal truncate w-48'>{props.message}</div>
 			<button
 				type='button'
 				className='ml-auto -mx-1.5 -my-1.5 bg-white text-gray-400 rounded-lg focus:ring-2 p-1.5 inline-flex h-8 w-8'

@@ -1,10 +1,12 @@
 'use client';
 import HomeCard from './card';
-import {useEffect, useRef, useState} from 'react';
+import {useEffect, useState} from 'react';
 import API from '../API';
 import CircularProgress from '@mui/material/CircularProgress';
 import Page from './pagination';
+import TextField from '@mui/material/TextField';
 const axios = new API.Axios();
+import InputAdornment from '@mui/material/InputAdornment';
 
 export default function Main(props: {url: string; heading: string}) {
 	let abc: {
@@ -24,7 +26,6 @@ export default function Main(props: {url: string; heading: string}) {
 	// BUG Optimize the use effect
 	useEffect(() => {
 		(async () => {
-			console.log('searching for = ', search, ', page no = ', pageNo);
 			setIsLoading(true); //FIXME why the loading screen not comming when next page is clicked?
 			if (pageNo > totalPage) {
 				return;
@@ -54,14 +55,39 @@ export default function Main(props: {url: string; heading: string}) {
 	}, [pageNo, search]);
 
 	return (
-		<div className="flex flex-col w-full h-full">
+		<div className="flex flex-col w-full h-full items-center gap-3">
 			<h1 className="text-2xl text-center underline mt-3">{props.heading}</h1>
-			<input
-				placeholder="Search"
-				value={search}
-				onChange={(e) => setSearch(e.target.value)}
-				className="border-2 p-2"
-			/>
+			<div className="p-3 w-11/12 md:w-1/2 rounded-xl">
+				<TextField
+					autoComplete="off"
+					onChange={(e) => setSearch(e.target.value)}
+					label="Search for events by name, club, branch, or description."
+					value={search}
+					placeholder="Start typing..."
+					size="medium"
+					className="w-full"
+					InputProps={{
+						startAdornment: (
+							<InputAdornment position="start">
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									fill="none"
+									viewBox="0 0 24 24"
+									strokeWidth={1.5}
+									stroke="currentColor"
+									className="w-6 h-6">
+									<path
+										strokeLinecap="round"
+										strokeLinejoin="round"
+										d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
+									/>
+								</svg>
+							</InputAdornment>
+						),
+					}}
+					variant="standard"
+				/>
+			</div>
 			{isLoading ? (
 				<div className="flex flex-col justify-center items-center w-full min-h-[79vh]">
 					<CircularProgress />
@@ -69,17 +95,24 @@ export default function Main(props: {url: string; heading: string}) {
 			) : (
 				<div className="flex justify-center flex-col items-center gap-4">
 					<div className="flex flex-row flex-wrap m-3 justify-center gap-3">
-						{data.map((card) => (
-							<HomeCard
-								key={card.pk}
-								title={card.title}
-								subheader={card.club}
-								imageUrl={card.image}
-								description={card.short_description}
-								date={card.date}
-								learnMoreLink={'/details/' + card.pk}
-							/>
-						))}
+						{data.length !== 0 ? (
+							data.map((card) => (
+								<HomeCard
+									key={card.pk}
+									title={card.title}
+									subheader={card.club}
+									imageUrl={card.image}
+									description={card.short_description}
+									date={card.date}
+									learnMoreLink={'/details/' + card.pk}
+								/>
+							))
+						) : (
+							<div className="flex flex-col justify-center items-center w-96 h-[58vh]">
+								<img src="/eventsNotFound.svg"></img>
+								<p className='text-3xl text-blue-500 font-semibold -mt-14'>No Events Found!!</p>
+							</div>
+						)}
 					</div>
 					<Page totalPage={totalPage} pageNo={pageNo} setPageNo={setPageNo} />
 				</div>

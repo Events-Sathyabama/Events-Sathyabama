@@ -22,7 +22,7 @@ class OngoingEventList(SearchQuery, generics.ListAPIView):
 
     def get_queryset(self):
         query = super().get_queryset()
-        return query.filter(start_date__gte=timezone.now(), end_date__lte=timezone.now())
+        return query.filter(start_date__lte=timezone.now(), end_date__gte=timezone.now())
     
 class UpcomingEventList(SearchQuery, generics.ListAPIView):
     serializer_class = serializers.EventCardSerializers
