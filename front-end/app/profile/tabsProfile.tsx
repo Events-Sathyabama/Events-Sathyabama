@@ -5,6 +5,7 @@ import Tab from '@mui/material/Tab';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
+import TableEvents from './table';
 
 function Student() {
 	const [value, setValue] = React.useState('1');
@@ -91,6 +92,7 @@ function Student() {
 				<TabPanel value="1">
 					Events which the student has opted-in to participate. (Will contain pending
 					for approval, accepted)
+					<TableEvents></TableEvents>
 				</TabPanel>
 				<TabPanel value="2">
 					Events which the student has opted-in and has completed.
