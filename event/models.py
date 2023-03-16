@@ -20,11 +20,12 @@ class Event(models.Model):
         (1, 'Pending'),
         (2, 'Approved'),
         (3, 'Rejected'),
-        (4, 'Complete'),
+        (4, 'Completed'),
         (5, 'Cancel'),
         (6, 'Certified'),
         (7, 'Ongoing'),
     )
+    owner = models.PositiveIntegerField(null=False, blank=False)
     organizer = models.ManyToManyField(User, limit_choices_to={'role__in': [0, 1, 2]}, blank=True)
     status = models.PositiveIntegerField(choices=STATUS_CHOICES, default=1)
 

@@ -38,8 +38,7 @@ const hierarchy = {
 class AxiosInstance {
 	get_config(headers?: any) {
 		return {
-			'Content-Type': 'application/json',
-			'headers': {
+			headers: {
 				...headers,
 				Authorization: (() => {
 					if (
@@ -54,14 +53,12 @@ class AxiosInstance {
 		};
 	}
 
-	async post(pathname: string, data: {[key: string]: string}, headers?: any) {
+	async post(pathname: string, data: {[key: string]: string}, headers: {}) {
 		await this.update_token();
 		const config = this.get_config(headers);
-		const form_data = new FormData();
-		for (let key in data) {
-			form_data.append(String(key), String(data[key]));
-		}
-		return await instance.post(pathname, form_data, config);
+		console.log(config);
+		console.log(data);
+		return await instance.post(pathname, data, config);
 	}
 
 	async login(username: string, password: string) {
@@ -206,10 +203,16 @@ const url: {[key: string]: Function} = {
 		return 'event/upcoming/list/';
 	},
 	'event:detail': (id: Number) => {
-		return `event/detail/${id}`;
+		return `event/detail/${id}/`;
 	},
 	'event:club_branch': () => {
-		return 'event/club/branch';
+		return 'event/club/branch/';
+	},
+	'event:create': () => {
+		return 'event/create/';
+	},
+	'event:update': (id: Number) => {
+		return `event/update/${id}/`;
 	},
 };
 

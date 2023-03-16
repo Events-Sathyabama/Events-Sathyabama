@@ -2,10 +2,10 @@ from .models import Event
 from django.db.models import Q
 
 
-class SearchQuery:
+class SearchQueryMixins:
     def get_queryset(self, *args, **kwargs):
         search = self.request.GET.get('q')
-        search = search.strip() 
+        search = search.strip() if search is not None else search
         query = Event.objects.all()
         q = Q(start_date__isnull=False)
         q = q | Q(end_date__isnull=False)

@@ -40,7 +40,10 @@ class EventDetailSerializers(serializers.ModelSerializer):
             'long_description',
             'date',
             'time',
-            'venue'
+            'venue',
+            'branch',
+            'start_date',
+            'end_date',
         ]
 
     def get_organizer(self, obj):
@@ -69,9 +72,12 @@ class EventDetailSerializers(serializers.ModelSerializer):
 
 
 class EventCreateSerializers(serializers.ModelSerializer):
+    pk = serializers.ReadOnlyField()
+
     class Meta:
         model = Event
         fields = [
+            'pk',
             'organizer',
             'participant',
             'image',
@@ -87,6 +93,9 @@ class EventCreateSerializers(serializers.ModelSerializer):
             'branch',
         ]
     
+    def validate_organizer(self, value):
+        print(value)
+
     def validate_title(self, value):
         value = value.strip()
         value = value.title()
@@ -94,6 +103,9 @@ class EventCreateSerializers(serializers.ModelSerializer):
             raise serializers.ValidationError('Title Cannot be Blank')
         return value
     
+# class EventUpdateSerializer(EventCreateSerializer):
+#     owner = serializers.
+
 
 class ClubSerializer(serializers.ModelSerializer):
     class Meta:
