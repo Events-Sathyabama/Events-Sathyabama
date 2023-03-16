@@ -40,7 +40,10 @@ class EventDetailSerializers(serializers.ModelSerializer):
             'long_description',
             'date',
             'time',
-            'venue'
+            'venue',
+            'branch',
+            'start_date',
+            'end_date',
         ]
 
     def get_organizer(self, obj):
@@ -69,12 +72,12 @@ class EventDetailSerializers(serializers.ModelSerializer):
 
 
 class EventCreateSerializers(serializers.ModelSerializer):
-    id = serializers.ReadOnlyField(source='pk')
+    pk = serializers.ReadOnlyField()
 
     class Meta:
         model = Event
         fields = [
-            'id',
+            'pk',
             'organizer',
             'participant',
             'image',

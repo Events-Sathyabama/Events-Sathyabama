@@ -211,6 +211,9 @@ const url: {[key: string]: Function} = {
 	'event:create': () => {
 		return 'event/create/';
 	},
+	'event:update': (id: Number) => {
+		return `event/update/${id}/`;
+	},
 };
 
 export default API;

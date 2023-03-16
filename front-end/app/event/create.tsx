@@ -10,15 +10,51 @@ import Button from '@mui/material/Button';
 import {MobileDatePicker} from '@mui/x-date-pickers/MobileDatePicker';
 import {LocalizationProvider} from '@mui/x-date-pickers/LocalizationProvider';
 import {AdapterDayjs} from '@mui/x-date-pickers/AdapterDayjs';
-import dayjs from 'dayjs';
 import Chip from '@mui/material/Chip';
 import API from '../API';
-import {useRouter} from 'next/navigation';
+import dayjs, {Dayjs} from 'dayjs';
 const axios = new API.Axios();
 
 // TODO Fetch Coordinators in this way
 
-export default function Create() {
+interface GetData {
+	title: string;
+	club: {name: string; id: string} | null | undefined;
+	image: File | string | null;
+	start_date: Dayjs | null;
+	end_date: Dayjs | null;
+	short_description: string;
+	long_description: string;
+	branch: string;
+	date: string;
+	time: string;
+	venue: string;
+	organizer: string;
+}
+
+interface GetError {
+	title: string | null;
+	club: string | null;
+	image: string | null;
+	start_date: string | null;
+	end_date: string | null;
+	short_description: string | null;
+	long_description: string | null;
+	branch: string | null;
+	date: string | null;
+	time: string | null;
+	venue: string | null;
+	organizer: string | null;
+}
+
+export default function Create(props: {
+	setData: {[x: string]: Function};
+	getData: GetData;
+	getError: GetError;
+	setError: {[x: string]: Function};
+	submitForm: Function;
+	buttonText: string;
+}) {
 	// Data that has to be Fetched from server
 	const [clubList, setClubList] = useState([{name: 'Loading...'}]);
 	const [BranchList, setBranchList] = useState([
@@ -55,123 +91,16 @@ export default function Create() {
 		})();
 	}, []);
 	// API Calls ends
-	const [imageBlob, setImageBlob] = useState<string>();
-	const [setData, getData, getError, setError, sendData] = (() => {
-		const [title, setTitle] = useState('');
-		const [clubName, setClubName] = useState<any | null>(null);
-		const [image, setImage] = useState<File | undefined>(undefined);
-		const [startDate, setStartDate] = useState('');
-		const [endDate, setEndDate] = useState('');
-		const [shortDesc, setShortDesc] = useState('');
-		const [longDesc, setLongDesc] = useState('');
-		const [branchName, setBranchName] = useState('');
-		const [date, setDate] = useState('');
-		const [duration, setDuration] = useState('');
-		const [venue, setVenue] = useState('');
-		const [coordinator, setCoordinator] = useState<
-			{name: string; id: string}[] | any
-		>([...fixedOptions]);
-		const getData = {
-			title: title,
-			club: clubName,
-			image: image,
-			start_date: startDate,
-			end_date: endDate,
-			short_description: shortDesc,
-			long_description: longDesc,
-			branch: branchName,
-			date: date,
-			duration: duration,
-			venue: venue,
-			organizer: coordinator,
-		};
-
-		const sendData = () => {
-			console.log(image);
-			return {
-				organizer: (() => {
-					const rv = [];
-					for (let i = 0; i < coordinator.length; i++) {
-						rv.push(coordinator[i].id);
-					}
-					return rv;
-				})(),
-				image: image,
-				title: title,
-				short_description: shortDesc,
-				long_description: longDesc,
-				club: clubName.name,
-				venue: venue,
-				start_date: new Date(startDate).toISOString().slice(0, 10),
-				end_date: new Date(startDate).toISOString().slice(0, 10),
-				date: date,
-				time: duration,
-				branch: branchName,
-			};
-		};
-		const setData = {
-			title: setTitle,
-			club: setClubName,
-			image: setImage,
-			start_date: setStartDate,
-			end_date: setEndDate,
-			short_description: setShortDesc,
-			long_description: setLongDesc,
-			branch: setBranchName,
-			date: setDate,
-			duration: setDuration,
-			venue: setVenue,
-			organizer: setCoordinator,
-		};
-
-		const [titleError, setTitleError] = useState<null | string>(null);
-		const [clubNameError, setClubNameError] = useState<null | string>(null);
-		const [imageError, setImageError] = useState<null | string>(null);
-		const [startDateError, setStartDateError] = useState<null | string>(null);
-		const [endDateError, setEndDateError] = useState<null | string>(null);
-		const [shortDescError, setShortDescError] = useState<null | string>(null);
-		const [longDescError, setLongDescError] = useState<null | string>(null);
-		const [branchNameError, setBranchNameError] = useState<null | string>(null);
-		const [dateError, setDateError] = useState<null | string>(null);
-		const [durationError, setDurationError] = useState<null | string>(null);
-		const [venueError, setVenueError] = useState<null | string>(null);
-		const [coordinatorError, setCoordinatorError] = useState<null | string>(null);
-
-		const getError = {
-			title: titleError,
-			club: clubNameError,
-			image: imageError,
-			start_date: startDateError,
-			end_date: endDateError,
-			short_description: shortDescError,
-			long_description: longDescError,
-			branch: branchNameError,
-			date: dateError,
-			duration: durationError,
-			venue: venueError,
-			organizer: coordinatorError,
-		};
-		const setError: {[x: string]: Function} = {
-			title: setTitleError,
-			club: setClubNameError,
-			image: setImageError,
-			start_date: setStartDateError,
-			end_date: setEndDateError,
-			short_description: setShortDescError,
-			long_description: setLongDescError,
-			branch: setBranchNameError,
-			date: setDateError,
-			duration: setDurationError,
-			venue: setVenueError,
-			organizer: setCoordinatorError,
-		};
-		return [setData, getData, getError, setError, sendData];
-	})();
-
+	const setData = props.setData;
+	const getData = props.getData;
+	const getError = props.getError;
+	const setError = props.setError;
 	// checkbox state to enable Custom Club Name element
 	const [checked, setChecked] = React.useState(false);
+	const [imageBlob, setImageBlob] = useState<string>('');
 	const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
 		const file = e.target.files?.[0];
+		console.log(file);
 		setData.image(file);
 		if (!file) {
 			return;
@@ -183,43 +112,17 @@ export default function Create() {
 		reader.readAsDataURL(file);
 	};
 
-	// Restrict date picker to not select previous dates
-	const minSelectableDate = dayjs().startOf('day');
-
 	// converts date to 21 Mar '23 format
-	const convertDate = (date: Date | null | string) => {
-		if (date === null || date === '') {
+	const convertDate = (date: Dayjs | null) => {
+		if (date === null) {
 			return date;
 		}
-		const selectedDate = new Date(date);
-		const day = selectedDate.getDate();
-		const month = selectedDate.toLocaleDateString('default', {month: 'short'}); // January is 0
-		const year = selectedDate.getFullYear().toString().slice(-2);
-		return day + ' ' + month.substring(0, 3) + " '" + year;
+		return date.format("DD MMM 'YY");
 	};
-	const router = useRouter();
 
 	const handleSubmit = async (event: any) => {
 		event.preventDefault();
-		try {
-			const request = await axios.post(API.get_url('event:create'), sendData(), {
-				'Content-Type': 'multipart/form-data',
-			});
-			router.push(`details/${request.data.id}`);
-		} catch (error: any) {
-			for (let field in setError) {
-				setError[field](null);
-			}
-			for (let field in error.response.data) {
-				setError[field](error.response.data[field]);
-			}
-			window.scroll({
-				top: 0,
-				left: 0,
-				behavior: 'smooth',
-			});
-			console.error(error.response.data);
-		}
+		await props.submitForm();
 	};
 
 	return (
@@ -228,11 +131,6 @@ export default function Create() {
 				<h1 className="text-2xl text-center underline mt-3">
 					Create/Edit your Event
 				</h1>
-				<div
-					className="bg-green-700 cursor-pointer p-1 rounded-md"
-					onClick={(e) => console.log(typeof getData.start_date, getData)}>
-					DEBUG
-				</div>
 				<div className="flex flex-col md:flex-row w-full sm:px-4 gap-4 md:gap-0 items-center md:items-start">
 					<form
 						onSubmit={handleSubmit}
@@ -261,7 +159,6 @@ export default function Create() {
 							}}
 							disabled={checked === true}
 							id="disable-clearable"
-							value={getData.club}
 							onChange={(event, newValue) => {
 								setData.club(newValue);
 								setError.club(null);
@@ -269,6 +166,7 @@ export default function Create() {
 							renderInput={(params) => (
 								<TextField
 									{...params}
+									value={getData.club}
 									error={getError.club !== null && !checked}
 									required
 									label="Organiser/Club Name Here"
@@ -344,20 +242,28 @@ export default function Create() {
 									<p className="ml-1">Your Event's Start Date*</p>
 									<MobileDatePicker
 										className="w-fit"
-										onChange={(date: any) => setData.start_date(date)}
-										minDate={minSelectableDate}
+										value={getData.start_date}
+										onChange={(date: any) => {
+											setData.start_date(date);
+
+											console.log(getData.end_date);
+											if (getData.end_date === null) {
+												setData.end_date(date);
+											}
+										}}
 										disablePast
 										format="DD/MM/YY"
 									/>
 								</div>
 								<div className="flex flex-col gap-1">
-									<p className={getData.start_date !== '' ? '' : 'text-gray-300'}>
+									<p className={getData.start_date !== null ? '' : 'text-gray-300'}>
 										Your Event's End Date*
 									</p>
 									<MobileDatePicker
-										disabled={getData.start_date === ''}
+										disabled={getData.start_date === null}
 										className="w-fit"
 										disablePast
+										value={getData.start_date}
 										minDate={getData.start_date}
 										onChange={(date: any) => setData.end_date(date)}
 										format="DD/MM/YY"
@@ -428,7 +334,6 @@ export default function Create() {
 						<Autocomplete
 							multiple
 							id="fixed-tags-demo"
-							value={getData.organizer}
 							onChange={(event, newValue) => {
 								setData.organizer([
 									...fixedOptions,
@@ -481,14 +386,14 @@ export default function Create() {
 							name="duration"
 							multiline
 							minRows={2}
-							value={getData.duration}
-							error={getError.duration !== null}
+							value={getData.time}
+							error={getError.time !== null}
 							onChange={(event) => {
-								setData.duration(event.target.value);
-								setError.duration(null);
+								setData.time(event.target.value);
+								setError.time(null);
 							}}
 							helperText={
-								getError.duration ||
+								getError.time ||
 								'Please provide specific instructions regarding the timing of the event, including the duration and the time at which students are required to report to the venue.'
 							}
 						/>
@@ -512,7 +417,7 @@ export default function Create() {
 							submit.
 						</p>
 						<Button type="submit" variant="contained" className="bg-blue-500">
-							Submit Event For Review
+							{props.buttonText || 'Submit'}
 						</Button>
 					</form>
 					<div className="block max-w-sm md:max-w-fit">
@@ -521,7 +426,15 @@ export default function Create() {
 							<Card
 								title={getData.title || "Event's Name Here"}
 								subheader={getData.club?.name || "Organiser/Club's Name Here"}
-								imageUrl={imageBlob || 'pulseLoading'} // pulseLoading shows the pulse loader
+								imageUrl={(() => {
+									if (imageBlob) {
+										return imageBlob;
+									}
+									if (typeof getData.image === 'string') {
+										return getData.image;
+									}
+									return 'pulseLoading';
+								})()} // pulseLoading shows the pulse loader
 								description={getData.short_description || 'Short Description Here'}
 								date={
 									(convertDate(getData.start_date) ===
