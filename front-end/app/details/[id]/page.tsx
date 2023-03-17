@@ -82,7 +82,13 @@ export default function details(props: {params: {id: number}}) {
 					<Fab
 						color="primary"
 						aria-label="edit"
-						className="fixed right-6 bottom-6 lg:right-8 lg:bottom-8 bg-blue-500 h-16 w-16">
+						sx={{
+							position: 'fixed',
+							right: '1.5rem',
+							bottom: '1.5rem',
+							height: '4rem',
+							width: '4rem',
+						}}>
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							fill="none"

@@ -90,8 +90,8 @@ function Student() {
 					</TabList>
 				</Box>
 				<TabPanel value="1">
-					Events which the student has opted-in to participate. (Will contain pending
-					for approval, accepted)
+					{/* Events which the student has opted-in to participate. (Will contain pending
+					for approval, accepted) */}
 					<TableEvents></TableEvents>
 				</TabPanel>
 				<TabPanel value="2">
