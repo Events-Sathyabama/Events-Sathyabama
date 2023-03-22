@@ -25,11 +25,11 @@ interface GetData {
 	end_date: Dayjs | null;
 	short_description: string;
 	long_description: string;
-	branch: string;
+	branch: number[] | undefined;
 	date: string;
 	time: string;
 	venue: string;
-	organizer: string;
+	organizer: {name: string; college_id: string}[] | any;
 }
 
 interface GetError {
@@ -61,12 +61,14 @@ export default function Create(props: {
 		{name: 'Loading...', abbreviation: 'Loading...'},
 	]);
 	const [coordinatorList, setCoordinatorList] = useState([
-		{name: 'Bandepalli Surya', id: '40110156'},
-		{name: 'Aryan Amish', id: '4011022'},
-		{name: 'Dr. Revathy', id: '11'},
-		{name: 'John King', id: '41101022'},
+		{name: 'Bandepalli Surya', college_id: '40110156'},
+		{name: 'Aryan Amish', college_id: '4011022'},
+		{name: 'Dr. Revathy', college_id: '11'},
+		{name: 'John King', college_id: '41101022'},
 	]);
-	const [fixedOptions, setFixedOptions] = useState<any>([{name: '-', id: '-'}]);
+	const [fixedOptions, setFixedOptions] = useState<any>([
+		{name: '-', college_id: '-'},
+	]);
 	// API calls starts
 
 	React.useEffect(() => {
@@ -77,12 +79,11 @@ export default function Create(props: {
 				setBranchList(request.data.branch);
 			}
 		})();
-		setFixedOptions([
-			{
-				name: localStorage.getItem('name') || '',
-				id: API.jwt(localStorage.getItem('access')).user_id || '',
-			},
-		]);
+		const obj = {
+			name: localStorage.getItem('name') || '',
+			college_id: API.jwt(localStorage.getItem('access')).user_id || '',
+		};
+		setFixedOptions([obj]);
 	}, []);
 
 	React.useEffect(() => {
@@ -100,7 +101,6 @@ export default function Create(props: {
 	const [imageBlob, setImageBlob] = useState<string>('');
 	const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
 		const file = e.target.files?.[0];
-		console.log(file);
 		setData.image(file);
 		if (!file) {
 			return;
@@ -245,8 +245,7 @@ export default function Create(props: {
 										value={getData.start_date}
 										onChange={(date: any) => {
 											setData.start_date(date);
-
-											console.log(getData.end_date);
+											setError.start_date(null);
 											if (getData.end_date === null) {
 												setData.end_date(date);
 											}
@@ -254,20 +253,20 @@ export default function Create(props: {
 										disablePast
 										format="DD/MM/YY"
 									/>
+									<p className="text-red-600">{getError.start_date}</p>
 								</div>
 								<div className="flex flex-col gap-1">
-									<p className={getData.start_date !== null ? '' : 'text-gray-300'}>
-										Your Event's End Date*
-									</p>
+									<p className="ml-1">Your Event's End Date*</p>
 									<MobileDatePicker
 										disabled={getData.start_date === null}
 										className="w-fit"
 										disablePast
-										value={getData.start_date}
+										value={getData.end_date}
 										minDate={getData.start_date}
 										onChange={(date: any) => setData.end_date(date)}
 										format="DD/MM/YY"
 									/>
+									<p className="text-red-600">{getError.end_date}</p>
 								</div>
 							</div>
 							<p className="-mt-3 text-xs text-gray-500 ml-3">
@@ -314,7 +313,24 @@ export default function Create(props: {
 							multiple
 							id="tags-outlined"
 							options={BranchList}
-							getOptionLabel={(option) => option.name}
+							getOptionLabel={(option) => {
+								return option.name;
+							}}
+							onChange={(event: any) => {
+								setData.branch((prev: any) => {
+									console.log(prev);
+									if (event.target.value === undefined) {
+										return prev;
+									}
+									if (prev === undefined) {
+										return [event.target.value];
+									} else {
+										prev.push(event.target.value);
+									}
+									return prev;
+								});
+								setError.branch(null);
+							}}
 							filterSelectedOptions
 							renderInput={(params) => (
 								<TextField
@@ -323,10 +339,6 @@ export default function Create(props: {
 									label={getError.branch || "Event's Branch and Batch Selection"}
 									placeholder="Start typing here.."
 									value={getData.branch}
-									onChange={(event: any) => {
-										setData.branch(event.target.value);
-										setError.branch(null);
-									}}
 								/>
 							)}
 						/>
@@ -337,18 +349,20 @@ export default function Create(props: {
 							onChange={(event, newValue) => {
 								setData.organizer([
 									...fixedOptions,
-									...newValue.filter((option) => fixedOptions[0].id !== option.id),
+									...newValue.filter(
+										(option) => fixedOptions[0].college_id !== option.college_id
+									),
 								]);
 								setError.organizer(null);
 							}}
 							options={coordinatorList}
-							getOptionLabel={(option) => `${option.name} - ${option.id}`}
+							getOptionLabel={(option) => `${option.name} - ${option.college_id}`}
 							renderTags={(tagValue, getTagProps) =>
 								tagValue.map((option, index) => (
 									<Chip
-										label={option.name + ' - ' + option.id}
+										label={option.name + ' - ' + option.college_id}
 										{...getTagProps({index})}
-										disabled={fixedOptions[0].id === option.id}
+										disabled={fixedOptions[0].college_id === option.college_id}
 									/>
 								))
 							}

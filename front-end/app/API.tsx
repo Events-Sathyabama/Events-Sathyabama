@@ -56,9 +56,17 @@ class AxiosInstance {
 	async post(pathname: string, data: {[key: string]: string}, headers: {}) {
 		await this.update_token();
 		const config = this.get_config(headers);
-		console.log(config);
-		console.log(data);
 		return await instance.post(pathname, data, config);
+	}
+	async put(pathname: string, data: {[key: string]: string}, headers: {}) {
+		await this.update_token();
+		const config = this.get_config(headers);
+		return await instance.put(pathname, data, config);
+	}
+	async patch(pathname: string, data: {[key: string]: string}, headers: {}) {
+		await this.update_token();
+		const config = this.get_config(headers);
+		return await instance.patch(pathname, data, config);
 	}
 
 	async login(username: string, password: string) {

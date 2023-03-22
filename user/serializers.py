@@ -16,6 +16,10 @@ class UserProfile(serializers.ModelSerializer):
 
 
 class BranchSerializers(serializers.ModelSerializer):
+    name = serializers.SerializerMethodField()
     class Meta:
         model = Branch
         fields = ['name']
+
+    def get_name(self, obj):
+        return f"{obj.name} ({obj.batch})"
