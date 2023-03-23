@@ -34,8 +34,8 @@ export default function HomeCard(props: HomeCardProps) {
 				'border border-gray-300 rounded-md bg-white transition-all duration-300 w-80'
 			}>
 			<CardHeader
-				title={<div className="w-80 truncate">{title}</div>}
-				subheader={<div className="w-80 truncate">{subheader}</div>}
+				title={<div className="w-72 truncate">{title}</div>}
+				subheader={<div className="w-72 truncate">{subheader}</div>}
 			/>
 			<div className="flex w-full justify-center items-center">
 				{imageUrl === 'pulseLoading' ? (

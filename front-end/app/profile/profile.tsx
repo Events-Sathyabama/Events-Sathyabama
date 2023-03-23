@@ -62,11 +62,7 @@ function Teacher(props: profile_props) {
 					<li className="flex items-center py-3">
 						<span className="text-lg">Employee ID</span>
 						<span className="text-lg font-semibold ml-auto">{props.id}</span>
-					</li>
-					<li className="flex items-center py-3">
-						<span className="text-lg">Branch</span>
-						<span className="text-lg font-semibold ml-auto">{props.branch}</span>
-					</li>
+					</li>	
 				</ul>
 			</div>
 		</div>
@@ -90,10 +86,6 @@ function HOD(props: profile_props) {
 					<li className="flex items-center py-3">
 						<span className="text-lg">Employee ID</span>
 						<span className="text-lg font-semibold ml-auto">{props.id}</span>
-					</li>
-					<li className="flex items-center py-3">
-						<span className="text-lg">Employee ID</span>
-						<span className="text-lg font-semibold ml-auto">{props.branch}</span>
 					</li>
 				</ul>
 			</div>
