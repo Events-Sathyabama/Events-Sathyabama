@@ -7,6 +7,7 @@ import API from '../../API';
 import Popup from '../../popup';
 import EventTime from '../venue';
 import Fab from '@mui/material/Fab';
+import Link from 'next/link';
 
 const axios = new API.Axios();
 
@@ -79,6 +80,7 @@ export default function details(props: {params: {id: number}}) {
 							showFailurePopup={showFailurePopup}
 						/>
 					</div>
+          <Link href={`/event/update/${props.params.id}`}>
 					<Fab
 						color="primary"
 						aria-label="edit"
@@ -104,6 +106,7 @@ export default function details(props: {params: {id: number}}) {
 							/>
 						</svg>
 					</Fab>
+          </Link>
 				</div>
 			</div>
 		</div>

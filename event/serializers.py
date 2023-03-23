@@ -1,6 +1,20 @@
 from rest_framework import serializers
 from .models import Event, Club
+from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 
+
+User = get_user_model()
+
+class OrganizerSerializer(serializers.Serializer):
+    name = serializers.CharField(source='full_name')
+    role = serializers.CharField(source='get_role_display')
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        if data['role'] != 'Student':
+            data['role'] = 'Faculty'
+        return data
 
 class EventCardSerializers(serializers.ModelSerializer):
     date = serializers.SerializerMethodField()
@@ -23,16 +37,23 @@ class EventCardSerializers(serializers.ModelSerializer):
         return f"{obj.start_date.strftime(format)} - {obj.end_date.strftime(format)}"
 
 
+class BranchSerializer(serializers.Serializer):
+    name = serializers.CharField()
+    batch = serializers.CharField()
+
+
 class EventDetailSerializers(serializers.ModelSerializer):
     date = serializers.SerializerMethodField()
-    long_description = serializers.SerializerMethodField(source='long_description')
-    organizer = serializers.SerializerMethodField()
+    long_description = serializers.SerializerMethodField()
+    organizer = OrganizerSerializer(many=True)
+    branch = BranchSerializer(many=True)
 
     class Meta:
         model = Event
         fields = [
             'pk',
             'title',
+            'owner',
             'club',
             'image',
             'organizer',
@@ -44,21 +65,9 @@ class EventDetailSerializers(serializers.ModelSerializer):
             'branch',
             'start_date',
             'end_date',
+            'participant',
         ]
-
-    def get_organizer(self, obj):
-        organize = []
-        for i in obj.organizer.all():
-            role = i.get_role_display()
-            if role == 'Teacher':
-                role = 'Faculty'
-            organize.append({
-                'role': role,
-                'name': i.full_name,
-            })
-        print(obj.organizer)
-        return organize
-
+    
     def get_long_description(self, obj):
         if obj.long_description == '':
             return obj.short_description
@@ -73,13 +82,11 @@ class EventDetailSerializers(serializers.ModelSerializer):
 
 class EventCreateSerializers(serializers.ModelSerializer):
     pk = serializers.ReadOnlyField()
-
     class Meta:
         model = Event
         fields = [
             'pk',
             'organizer',
-            'participant',
             'image',
             'title',
             'short_description',
@@ -92,9 +99,6 @@ class EventCreateSerializers(serializers.ModelSerializer):
             'time',
             'branch',
         ]
-    
-    def validate_organizer(self, value):
-        print(value)
 
     def validate_title(self, value):
         value = value.strip()
@@ -103,8 +107,29 @@ class EventCreateSerializers(serializers.ModelSerializer):
             raise serializers.ValidationError('Title Cannot be Blank')
         return value
     
-# class EventUpdateSerializer(EventCreateSerializer):
-#     owner = serializers.
+
+class EventUpdateSerializer(serializers.ModelSerializer):
+    pk = serializers.ReadOnlyField()
+
+    class Meta:
+        model = Event
+        fields = [
+            'pk',
+            'organizer',
+            'image',
+            'title',
+            'short_description',
+            'long_description',
+            'club',
+            'venue',
+            'start_date',
+            'end_date',
+            'date',
+            'time',
+            'branch',
+        ]
+        
+
 
 
 class ClubSerializer(serializers.ModelSerializer):

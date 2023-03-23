@@ -10,6 +10,7 @@ from rest_framework.decorators import api_view
 from .mixins import SearchQueryMixins
 from django.db.models import Q
 
+
 class CompletedEventList(SearchQueryMixins, generics.ListAPIView):
     serializer_class = serializers.EventCardSerializers
     
@@ -33,8 +34,12 @@ class UpcomingEventList(SearchQueryMixins, generics.ListAPIView):
    
 
 class EventDetail(generics.RetrieveAPIView):
-    # 2 SQL queries
-    queryset = Event.objects.prefetch_related('organizer')
+    # 3 SQL queries
+    def get_object(self):
+        event_id = self.kwargs.get('pk')
+        event_obj = Event.objects.select_related('owner').prefetch_related('organizer', 'participant').get(id=event_id)
+        return event_obj
+
     serializer_class = serializers.EventDetailSerializers
 
     
@@ -48,20 +53,23 @@ class EventCreate(generics.CreateAPIView):
         print(request.data)
         return super().post(request, *args, **kwargs)
 
-    def perform_create(self, obj):
-        organizer = obj.validated_data.get('organizer')
-        
-        if organizer is None:
-            organizer = [self.request.user.pk]
+    def perform_create(self, serializer):
+        event = serializer.save(owner=self.request.user)
 
-        if self.request.user.pk not in organizer:
-            organizer.append(self.request.user)
-        obj.save(organizer=organizer, owner=self.request.user.pk)
 
 
 class EventUpdate(generics.UpdateAPIView):
-    queryset = Event.objects.filter(~Q(status=4))
-    serializer_class = serializers.EventCreateSerializers
+    queryset = Event.objects.all()
+    serializer_class = serializers.EventUpdateSerializer
+
+
+    # def get_object(self, *args, **kwargs):
+    #     obj = super(EventUpdate, self).get_object(*args, **kwargs)
+    #     # Set serializer initial data to default values from the retrieved object
+    #     serializer = self.get_serializer(instance=obj, data={}, partial=True)
+    #     serializer.is_valid()
+    #     self.initial = serializer.validated_data
+    #     return obj
 
 @api_view(['GET'])
 def club_branch(request):

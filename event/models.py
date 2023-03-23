@@ -15,6 +15,7 @@ def confirm_organizer(value):
 
 CLUB_LENGTH = 70
 
+
 class Event(models.Model):
     STATUS_CHOICES = (
         (1, 'Pending'),
@@ -25,18 +26,11 @@ class Event(models.Model):
         (6, 'Certified'),
         (7, 'Ongoing'),
     )
-    owner = models.PositiveIntegerField(null=False, blank=False)
-    organizer = models.ManyToManyField(User, limit_choices_to={'role__in': [0, 1, 2]}, blank=True)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
     status = models.PositiveIntegerField(choices=STATUS_CHOICES, default=1)
+    organizer = models.ManyToManyField(User, related_name='event_organizer', blank=True)
+    participant = models.ManyToManyField(User, related_name='event_participant', blank=True)
 
-    participant = models.JSONField(blank=True, null=True)
-    # [
-    #   {
-    #       'reg_no': 40110122,
-    #       'name': 'Aryan Amish',
-    #       'dept': 'CSE',
-    #   }
-    # ]
     image = models.ImageField(upload_to='poster/')
     title = models.CharField(max_length=250)
     short_description = models.CharField(max_length=100)
@@ -50,7 +44,7 @@ class Event(models.Model):
     date = models.TextField(blank=True, null=True)
     time = models.TextField(blank=True, null=True)
 
-    branch = models.ForeignKey(Branch, on_delete=models.DO_NOTHING, blank=True, null=True)
+    branch = models.ManyToManyField(Branch, blank=True, null=True)
 
     messages = models.JSONField(blank=True, null=True)  # [{'message':'', from:'', datetime:'', status:'Rejected}]
     hod_verified = models.BooleanField(default=False)

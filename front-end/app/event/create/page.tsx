@@ -18,12 +18,12 @@ export default function Page() {
 		const [endDate, setEndDate] = useState<Dayjs | null>(null);
 		const [shortDesc, setShortDesc] = useState<string>('');
 		const [longDesc, setLongDesc] = useState<string>('');
-		const [branchName, setBranchName] = useState<string>('');
+		const [branchName, setBranchName] = useState<number[] | undefined>();
 		const [date, setDate] = useState<string>('');
 		const [duration, setDuration] = useState<string>('');
 		const [venue, setVenue] = useState<string>('');
 		const [coordinator, setCoordinator] = useState<
-			{name: string; id: string}[] | any
+			{name: string; college_id: string}[] | any
 		>([]);
 		const getData = {
 			title: title,
@@ -41,7 +41,8 @@ export default function Page() {
 		};
 
 		const sendData = () => {
-			console.log(image);
+			console.log(startDate);
+			console.log(endDate);
 			return {
 				organizer: (() => {
 					const rv = [];
@@ -56,8 +57,8 @@ export default function Page() {
 				long_description: longDesc,
 				club: clubName?.name,
 				venue: venue,
-				start_date: startDate,
-				end_date: startDate,
+				start_date: startDate?.format('YYYY-MM-DD'),
+				end_date: endDate?.format('YYYY-MM-DD'),
 				date: date,
 				time: duration,
 				branch: branchName,
@@ -124,15 +125,18 @@ export default function Page() {
 
 	const submitForm = async () => {
 		try {
+			// console.log(sendData());
 			const request = await axios.post(API.get_url('event:create'), sendData(), {
 				'Content-Type': 'multipart/form-data',
 			});
 			router.push(`details/${request.data.pk}`);
 		} catch (error: any) {
+			console.log(error);
 			for (let field in setError) {
 				setError[field](null);
 			}
 			for (let field in error.response.data) {
+				console.log(setError[field]);
 				setError[field](error.response.data[field]);
 			}
 			window.scroll({

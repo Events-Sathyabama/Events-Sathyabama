@@ -3,7 +3,7 @@ import Create from '../../create';
 import {useEffect, useState} from 'react';
 import {useRouter} from 'next/navigation';
 import API from '../../../API';
-import {Dayjs} from 'dayjs';
+import dayjs, {Dayjs} from 'dayjs';
 
 const axios = new API.Axios();
 
@@ -18,7 +18,7 @@ export default function Page(props: {params: {id: number}}) {
 		const [endDate, setEndDate] = useState<Dayjs | null>(null);
 		const [shortDesc, setShortDesc] = useState<string>('');
 		const [longDesc, setLongDesc] = useState<string>('');
-		const [branchName, setBranchName] = useState<string>('');
+		const [branchName, setBranchName] = useState<number[] | undefined>();
 		const [date, setDate] = useState<string>('');
 		const [duration, setDuration] = useState<string>('');
 		const [venue, setVenue] = useState<string>('');
@@ -42,7 +42,7 @@ export default function Page(props: {params: {id: number}}) {
 
 		const sendData = () => {
 			console.log(image);
-			return {
+			const data = {
 				organizer: (() => {
 					const rv = [];
 					for (let i = 0; i < coordinator.length; i++) {
@@ -56,12 +56,24 @@ export default function Page(props: {params: {id: number}}) {
 				long_description: longDesc,
 				club: clubName.name,
 				venue: venue,
-				start_date: startDate,
-				end_date: startDate,
+				start_date: startDate?.isValid() ? startDate?.format('YYYY-MM-DD') : null,
+				end_date: endDate?.isValid() ? endDate?.format('YYYY-MM-DD') : null,
 				date: date,
 				time: duration,
 				branch: branchName,
 			};
+			if (typeof data.image === 'string') {
+				// @ts-expect-error
+				delete data.image;
+			}
+			for (let field in data) {
+				// @ts-expect-error
+				if (data[field] === null || data[field] === '') {
+					//@ts-expect-error
+					delete data[field];
+				}
+			}
+			return data;
 		};
 		const setData: {[x: string]: Function} = {
 			title: setTitle,
@@ -121,46 +133,51 @@ export default function Page(props: {params: {id: number}}) {
 		};
 		return [setData, getData, getError, setError, sendData];
 	})();
-
+	let initial_value: any = {};
 	useEffect(() => {
 		(async () => {
 			const request = await axios.get(
 				API.get_url('event:detail', [props.params.id])
 			);
 			const data = request.data;
-			console.log(data);
-
-			setData.title = data.title;
-			setData.club = data.club;
-			setData.image = data.image;
-			setData.start_date = data.start_date;
-			setData.end_date = data.end_date;
-			setData.short_description = data.short_description;
-			setData.long_description = data.long_description;
-			setData.branch = data.branch;
-			setData.date = data.date;
-			setData.time = data.time;
-			setData.venue = data.venue;
-			setData.organizer = data.organizer;
+			// console.log(data);
+			initial_value = data;
+			console.log('initial_value: ', initial_value);
+			setData.title(data.title);
+			setData.club(data.club);
+			setData.image(data.image);
+			setData.start_date(dayjs(data.start_date));
+			setData.end_date(dayjs(data.end_date));
+			setData.short_description(data.short_description);
+			setData.long_description(data.long_description);
+			setData.branch(data.branch);
+			setData.date(data.date);
+			setData.time(data.time);
+			setData.venue(data.venue);
+			setData.organizer(data.organizer);
+			console.log(getData);
 		})();
 	}, []);
 
 	const submitForm = async () => {
 		try {
-			const request = await axios.post(
+			console.log('sending data: ', sendData());
+			const request = await axios.patch(
 				API.get_url('event:update', [props.params.id]),
 				sendData(),
 				{
 					'Content-Type': 'multipart/form-data',
 				}
 			);
+			console.log(request);
 			router.push(`details/${request.data.pk}`);
 		} catch (error: any) {
 			for (let field in setError) {
-				console.log(field);
 				setError[field](null);
 			}
+			console.log(error);
 			for (let field in error.response.data) {
+				console.log(field);
 				setError[field](error.response.data[field]);
 			}
 			window.scroll({
