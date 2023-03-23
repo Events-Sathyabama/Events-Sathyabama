@@ -263,7 +263,7 @@ export default function Create(props: {
 										disabled={getData.start_date === null}
 										className="w-fit"
 										disablePast
-										value={getData.start_date}
+										value={getData.end_date}
 										minDate={getData.start_date}
 										onChange={(date: any) => setData.end_date(date)}
 										format="DD/MM/YY"
