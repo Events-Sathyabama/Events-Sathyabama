@@ -88,7 +88,8 @@ export default function details(props: {params: {id: number}}) {
 							bottom: '1.5rem',
 							height: '4rem',
 							width: '4rem',
-						}}>
+						}}
+						style={{backgroundColor: '#1565c0'}}>
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							fill="none"

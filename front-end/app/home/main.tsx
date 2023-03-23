@@ -17,7 +17,16 @@ export default function Main(props: {url: string; heading: string}) {
 		short_description: string;
 		date: string;
 	}[] = [];
-	const [data, setData] = useState(abc);
+	const [data, setData] = useState([
+		{
+			pk: '',
+			title: '',
+			club: '',
+			image: '',
+			short_description: '',
+			date: '',
+		},
+	]);
 	const [isLoading, setIsLoading] = useState(true);
 	const [pageNo, setPageNo] = useState(1);
 	const [totalPage, setTotalPage] = useState(1);
@@ -25,8 +34,8 @@ export default function Main(props: {url: string; heading: string}) {
 
 	// BUG Optimize the use effect
 	useEffect(() => {
+		setIsLoading(true); //FIXME why the loading screen not comming when next page is clicked?
 		(async () => {
-			setIsLoading(true); //FIXME why the loading screen not comming when next page is clicked?
 			if (pageNo > totalPage) {
 				return;
 			}
@@ -88,14 +97,14 @@ export default function Main(props: {url: string; heading: string}) {
 					variant="standard"
 				/>
 			</div>
-			{isLoading ? (
-				<div className="flex flex-col justify-center items-center w-full min-h-[79vh]">
+			{data.length != 0 && (isLoading || data[0].pk === '') ? (
+				<div className="flex flex-col justify-center items-center w-full min-h-[65vh]">
 					<CircularProgress />
 				</div>
 			) : (
 				<div className="flex justify-center flex-col items-center gap-4">
 					<div className="flex flex-row flex-wrap m-3 justify-center gap-3">
-						{data.length !== 0 ? (
+						{data.length !== 0 && data[0].pk != ''  ? (
 							data.map((card) => (
 								<HomeCard
 									key={card.pk}
@@ -108,9 +117,11 @@ export default function Main(props: {url: string; heading: string}) {
 								/>
 							))
 						) : (
-							<div className="flex flex-col justify-center items-center w-96 h-[58vh]">
-								<img src="/eventsNotFound.svg"></img>
-								<p className='text-3xl text-blue-500 font-semibold -mt-14'>No Events Found!!</p>
+							<div className="flex flex-col justify-center items-center w-96 -mt-14 mb-14 h-[58vh]">
+								<img src="/eventsNotFound.svg" className="opacity-80"></img>
+								<p className="text-2xl font-extralight text-blue-500 opacity-80 -mt-16">
+									No events found!!
+								</p>
 							</div>
 						)}
 					</div>

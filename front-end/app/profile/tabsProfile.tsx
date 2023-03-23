@@ -6,6 +6,7 @@ import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
 import TableEvents from './table';
+import OrganiserCards from './profileCards';
 
 function Student() {
 	const [value, setValue] = React.useState('1');
@@ -92,13 +93,15 @@ function Student() {
 				<TabPanel value="1">
 					{/* Events which the student has opted-in to participate. (Will contain pending
 					for approval, accepted) */}
-					<TableEvents></TableEvents>
+					<TableEvents passer="1"></TableEvents>
 				</TabPanel>
 				<TabPanel value="2">
-					Events which the student has opted-in and has completed.
+					{/* Events which the student has opted-in and has completed. */}
+					<TableEvents passer="2"></TableEvents>
 				</TabPanel>
 				<TabPanel value="3">
-					Events which the student is organising i.e. Student Coordinator
+					{/* Events which the student is organising i.e. Student Coordinator */}
+					<OrganiserCards></OrganiserCards>
 				</TabPanel>
 			</TabContext>
 		</Box>
@@ -188,12 +191,17 @@ function HODVC() {
 					</TabList>
 				</Box>
 				<TabPanel value="1">
-					Events which are posted by the teacher and pending for approval here
+					{/* Events which are posted by the teacher and pending for approval here */}
+					<OrganiserCards></OrganiserCards>
 				</TabPanel>
 				<TabPanel value="2">
-					Events which have been shown to the students and are being organised.
+					{/* Events which have been shown to the students and are being organised. */}
+					<OrganiserCards></OrganiserCards>
 				</TabPanel>
-				<TabPanel value="3">Events which have been successfully organised.</TabPanel>
+				<TabPanel value="3">
+					{/* Events which have been successfully organised. */}
+					<OrganiserCards></OrganiserCards>
+				</TabPanel>
 			</TabContext>
 		</Box>
 	);
@@ -282,13 +290,16 @@ function Teacher() {
 					</TabList>
 				</Box>
 				<TabPanel value="1">
-					Events which are organised by the teacher and pending for approval.
+					{/* Events which are organised by the teacher and pending for approval. */}
+					<OrganiserCards></OrganiserCards>
 				</TabPanel>
 				<TabPanel value="2">
-					Events which are organised by the teacher and shown to the students.
+					{/* Events which are organised by the teacher and shown to the students. */}
+					<OrganiserCards></OrganiserCards>
 				</TabPanel>
 				<TabPanel value="3">
-					Events which are organised by the teacher and are completed.
+					{/* Events which are organised by the teacher and are completed. */}
+					<OrganiserCards></OrganiserCards>
 				</TabPanel>
 			</TabContext>
 		</Box>
