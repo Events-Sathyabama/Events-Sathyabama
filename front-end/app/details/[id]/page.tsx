@@ -68,7 +68,7 @@ export default function details(props: {params: {id: number}}) {
 				/>
 				<div className="flex flex-col sm:flex-row w-full h-auto mt-2 items-center gap-3 sm:items-start justify-center">
 					<Poster image={data.image} />
-					<div className="flex flex-col w-full justify-center items-center mt-2">
+					<div className="flex flex-col w-full justify-center items-center mt-2 gap-3">
 						<EventTime
 							dates={data.date}
 							venue={data.venue}

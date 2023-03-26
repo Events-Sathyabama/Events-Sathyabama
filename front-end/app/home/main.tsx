@@ -104,7 +104,7 @@ export default function Main(props: {url: string; heading: string}) {
 			) : (
 				<div className="flex justify-center flex-col items-center gap-4">
 					<div className="flex flex-row flex-wrap m-3 justify-center gap-3">
-						{data.length !== 0 && data[0].pk != ''  ? (
+						{data.length !== 0 && data[0].pk != '' ? (
 							data.map((card) => (
 								<HomeCard
 									key={card.pk}
