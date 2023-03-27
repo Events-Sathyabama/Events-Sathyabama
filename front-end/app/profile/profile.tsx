@@ -17,7 +17,7 @@ export default function Profile(props: ProfileProps): JSX.Element {
 						src="/Profile.png"
 						alt=""
 					/>
-					<p className="text-gray-900 text-center truncate w-72 font-bold text-2xl my-2">
+					<p className="text-gray-900 text-center truncate w-64 font-bold text-2xl my-2">
 						{name}
 					</p>
 				</div>
