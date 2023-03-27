@@ -13,10 +13,11 @@ from django.db.models import Q
 
 class CompletedEventList(SearchQueryMixins, generics.ListAPIView):
     serializer_class = serializers.EventCardSerializers
-    
+
     def get_queryset(self):
         query = super().get_queryset()
         return query.filter(end_date__lt=timezone.now()).order_by('-end_date')
+
 
 class OngoingEventList(SearchQueryMixins, generics.ListAPIView):
     serializer_class = serializers.EventCardSerializers
@@ -24,25 +25,26 @@ class OngoingEventList(SearchQueryMixins, generics.ListAPIView):
     def get_queryset(self):
         query = super().get_queryset()
         return query.filter(start_date__lte=timezone.now(), end_date__gte=timezone.now())
-    
+
+
 class UpcomingEventList(SearchQueryMixins, generics.ListAPIView):
     serializer_class = serializers.EventCardSerializers
-    
+
     def get_queryset(self):
         query = super().get_queryset()
         return query.filter(start_date__gt=timezone.now()).order_by('start_date')
-   
+
 
 class EventDetail(generics.RetrieveAPIView):
     # 3 SQL queries
     def get_object(self):
         event_id = self.kwargs.get('pk')
-        event_obj = Event.objects.select_related('owner').prefetch_related('organizer', 'participant').get(id=event_id)
+        event_obj = Event.objects.select_related('owner').prefetch_related(
+            'organizer', 'participant').get(id=event_id)
         return event_obj
 
     serializer_class = serializers.EventDetailSerializers
 
-    
 
 class EventCreate(generics.CreateAPIView):
     queryset = Event.objects.all()
@@ -57,11 +59,9 @@ class EventCreate(generics.CreateAPIView):
         event = serializer.save(owner=self.request.user)
 
 
-
 class EventUpdate(generics.UpdateAPIView):
     queryset = Event.objects.all()
     serializer_class = serializers.EventUpdateSerializer
-
 
     # def get_object(self, *args, **kwargs):
     #     obj = super(EventUpdate, self).get_object(*args, **kwargs)
@@ -71,8 +71,9 @@ class EventUpdate(generics.UpdateAPIView):
     #     self.initial = serializer.validated_data
     #     return obj
 
+
 @api_view(['GET'])
 def club_branch(request):
     club = serializers.ClubSerializer(Club.objects.all(), many=True)
     branch = BranchSerializers(Branch.objects.all(), many=True)
-    return Response({'club': club.data, 'branch':branch.data})
+    return Response({'club': club.data, 'branch': branch.data})

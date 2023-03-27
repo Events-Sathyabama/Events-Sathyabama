@@ -1,9 +1,11 @@
 from django.contrib import admin
 from django.urls import path
 from . import views
+import time
 
 
 app_name = 'event'
+
 
 urlpatterns = [
     path('completed/list/', views.CompletedEventList.as_view()),
