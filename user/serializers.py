@@ -15,11 +15,24 @@ class UserProfile(serializers.ModelSerializer):
         fields = ['college_id', 'role', 'full_name', 'branch']
 
 
-class BranchSerializers(serializers.ModelSerializer):
-    name = serializers.SerializerMethodField()
+class BranchSerializer(serializers.ModelSerializer):
     class Meta:
         model = Branch
-        fields = ['name']
+        fields = ['name', 'batch', 'pk']
 
-    def get_name(self, obj):
-        return f"{obj.name} ({obj.batch})"
+    
+    
+class OrganizerSerializer(serializers.Serializer):
+    name = serializers.CharField(source='full_name')
+    role = serializers.CharField(source='get_role_display')
+    college_id = serializers.CharField()
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        if data['role'] != 'Student':
+            data['role'] = 'Faculty'
+        return data
+
+class OwnerSerializer(serializers.Serializer):
+    name = serializers.CharField(source='full_name')
+    college_id = serializers.CharField()

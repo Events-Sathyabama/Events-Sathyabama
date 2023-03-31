@@ -222,6 +222,9 @@ const url: {[key: string]: Function} = {
 	'event:update': (id: Number) => {
 		return `event/update/${id}/`;
 	},
+	'user:organizer': () => {
+		return 'user/organizer/';
+	},
 };
 
 export default API;
