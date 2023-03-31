@@ -55,16 +55,16 @@ export default function details(props: {params: {id: number}}) {
 		setLoading(true);
 		setCalledByApply(true);
 		//if success
-		// setTimeout(() => {
-		// 	setApplied(true);
-		// 	setSpopup(true);
-		// }, 4000);
+		setTimeout(() => {
+			setApplied(true);
+			setSpopup(true);
+		}, 4000);
 
 		//if failure
-		setTimeout(() => {
-			setFpopup(true);
-			setLoading(false);
-		}, 4000);
+		// setTimeout(() => {
+		// 	setFpopup(true);
+		// 	setLoading(false);
+		// }, 4000);
 	}
 	const [calledByApply, setCalledByApply] = useState(false);
 	const [applied, setApplied] = useState(false);
