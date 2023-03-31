@@ -20,7 +20,6 @@ export default function ProfilePage(): JSX.Element {
 		(async () => {
 			const id = API.jwt(window.localStorage.getItem('access')).user_id;
 			const request = await axios.get(API.get_url('profile_detail', [id]));
-			console.log(request.data);
 			setRole(request.data.role);
 			setId(request.data.college_id);
 			setBranch(request.data.branch);

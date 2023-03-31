@@ -1,7 +1,7 @@
 export default function EventTime(props: {
-	dates: string | null;
-	time: string | null;
-	venue: string | null;
+	dates: string | undefined;
+	time: string | undefined;
+	venue: string | undefined;
 }) {
 	return (
 		<div className="relative w-full">

@@ -10,10 +10,8 @@ import './globals.css';
 export default function RootLayout({children}: {children: React.ReactNode}) {
 	return (
 		<html lang="en">
-			<Head>
-				<script src="/login.js"></script>
-			</Head>
 			<body>
+				<script src="/login.js"></script>
 				<div className="flex flex-col">{children}</div>
 			</body>
 		</html>

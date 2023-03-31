@@ -1,4 +1,4 @@
-export default function Poster(props: {image: string | null}) {
+export default function Poster(props: {image: string | undefined}) {
 	return (
 		<img
 			className="max-h-[60vh] w-full sm:max-w-xs object-fill rounded-md shadow-md"

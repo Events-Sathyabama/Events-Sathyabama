@@ -44,7 +44,7 @@ class Event(models.Model):
     date = models.TextField(blank=True, null=True)
     time = models.TextField(blank=True, null=True)
 
-    branch = models.ManyToManyField(Branch, blank=True, null=True)
+    branch = models.ManyToManyField(Branch, blank=True)
 
     messages = models.JSONField(blank=True, null=True)  # [{'message':'', from:'', datetime:'', status:'Rejected}]
     hod_verified = models.BooleanField(default=False)

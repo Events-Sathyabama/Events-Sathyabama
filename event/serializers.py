@@ -2,21 +2,13 @@ from rest_framework import serializers
 from .models import Event, Club
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
-
+import user.serializers as user_serializer
 
 User = get_user_model()
 
-class OrganizerSerializer(serializers.Serializer):
-    name = serializers.CharField(source='full_name')
-    role = serializers.CharField(source='get_role_display')
 
-    def to_representation(self, instance):
-        data = super().to_representation(instance)
-        if data['role'] != 'Student':
-            data['role'] = 'Faculty'
-        return data
 
-class EventCardSerializers(serializers.ModelSerializer):
+class EventCardSerializer(serializers.ModelSerializer):
     date = serializers.SerializerMethodField()
 
     class Meta:
@@ -37,17 +29,14 @@ class EventCardSerializers(serializers.ModelSerializer):
         return f"{obj.start_date.strftime(format)} - {obj.end_date.strftime(format)}"
 
 
-class BranchSerializer(serializers.Serializer):
-    name = serializers.CharField()
-    batch = serializers.CharField()
 
 
-class EventDetailSerializers(serializers.ModelSerializer):
+class EventDetailSerializer(serializers.ModelSerializer):
     date = serializers.SerializerMethodField()
     long_description = serializers.SerializerMethodField()
-    organizer = OrganizerSerializer(many=True)
-    branch = BranchSerializer(many=True)
-
+    organizer = user_serializer.OrganizerSerializer(many=True)
+    branch = user_serializer.BranchSerializer(many=True)
+    owner = user_serializer.OrganizerSerializer()
     class Meta:
         model = Event
         fields = [
@@ -79,8 +68,7 @@ class EventDetailSerializers(serializers.ModelSerializer):
             return ''
         return f"{obj.start_date.strftime(format)} - {obj.start_date.strftime(format)}"
 
-
-class EventCreateSerializers(serializers.ModelSerializer):
+class EventCreateSerializer(serializers.ModelSerializer):
     pk = serializers.ReadOnlyField()
     class Meta:
         model = Event
@@ -100,6 +88,8 @@ class EventCreateSerializers(serializers.ModelSerializer):
             'branch',
         ]
 
+    
+
     def validate_title(self, value):
         value = value.strip()
         value = value.title()
@@ -110,7 +100,8 @@ class EventCreateSerializers(serializers.ModelSerializer):
 
 class EventUpdateSerializer(serializers.ModelSerializer):
     pk = serializers.ReadOnlyField()
-
+    organizer = serializers.ListField(child=serializers.IntegerField())
+    branch = serializers.ListField(child=serializers.IntegerField())
     class Meta:
         model = Event
         fields = [

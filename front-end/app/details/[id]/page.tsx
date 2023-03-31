@@ -11,6 +11,25 @@ import Link from 'next/link';
 
 const axios = new API.Axios();
 
+interface OrganizerInterface {
+	name: string;
+	college_id: string;
+	role: string;
+}
+interface DetailInterface {
+	title: string;
+	pk: string;
+	club: string;
+	date: string;
+	time: string;
+	venue: string;
+	long_description: string;
+	short_description: string;
+	organizer: OrganizerInterface[];
+	image: string;
+	owner: OrganizerInterface;
+}
+
 export default function details(props: {params: {id: number}}) {
 	const [Spopup, setSpopup] = useState(false);
 	const [Fpopup, setFpopup] = useState(false);
@@ -23,18 +42,7 @@ export default function details(props: {params: {id: number}}) {
 		setFpopup(true);
 	}
 
-	const [data, setData] = useState({
-		title: null,
-		pk: null,
-		club: null,
-		date: null,
-		time: null,
-		venue: null,
-		long_description: null,
-		short_description: null,
-		organizer: [],
-		image: null,
-	});
+	const [data, setData] = useState<DetailInterface>();
 
 	useEffect(() => {
 		(async () => {
@@ -62,20 +70,27 @@ export default function details(props: {params: {id: number}}) {
 			</div>
 			<div className="flex flex-col w-11/12 h-auto">
 				<Header
-					club={data.club}
-					short_desc={data.short_description}
-					title={data.title}
+					club={data?.club}
+					short_desc={data?.short_description}
+					title={data?.title}
 				/>
 				<div className="flex flex-col sm:flex-row w-full h-auto mt-2 items-center gap-3 sm:items-start justify-center">
-					<Poster image={data.image} />
+					<Poster image={data?.image} />
 					<div className="flex flex-col w-full justify-center items-center mt-2">
 						<EventTime
-							dates={data.date}
-							venue={data.venue}
-							time={data.time}></EventTime>
+							dates={data?.date}
+							venue={data?.venue}
+							time={data?.time}></EventTime>
 						<Tabs
-							long_desc={data.long_description}
-							coordinator={data.organizer}
+							long_desc={data?.long_description}
+							coordinator={(() => {
+								const rv = [];
+								if (data !== undefined) {
+									rv.push(...data.organizer);
+									rv.push(data.owner);
+								}
+								return rv;
+							})()}
 							showSuccessPopup={showSuccessPopup}
 							showFailurePopup={showFailurePopup}
 						/>

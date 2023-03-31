@@ -1,7 +1,7 @@
 export default function Header(props: {
-	title: string | null;
-	club: string | null;
-	short_desc: string | null;
+	title: string | undefined;
+	club: string | undefined;
+	short_desc: string | undefined;
 }) {
 	return (
 		<div className="flex flex-col bg-[#f3f6f9] p-3 rounded-lg mt-4">
