@@ -56,12 +56,11 @@ export default function Create(props: {
 				setBranchList(request.data.branch);
 			}
 		})();
-		searchOrganizer();
 	}, []);
 
 	// API Calls ends
 
-	async function searchOrganizer(event?: React.ChangeEvent<HTMLInputElement>) {
+	async function searchOrganizer(event: React.ChangeEvent<HTMLInputElement>) {
 		const request = await axios.get(API.get_url('user:organizer'), {
 			q: event?.target?.value,
 		});
@@ -437,16 +436,30 @@ export default function Create(props: {
 								})()} // pulseLoading shows the pulse loader
 								description={getData.short_description || 'Short Description Here'}
 								date={(() => {
-									const start_date = convertDate(getData.start_date);
-									const end_date = convertDate(getData.end_date);
-									let rv = "Event's Date Here";
-									if (start_date) {
-										rv = start_date;
-										if (end_date) {
-											rv += ` - ${end_date}`;
-										}
+									let eventDate: string | undefined = '';
+
+									if (
+										convertDate(getData.start_date) ===
+											convertDate(getData.end_date) &&
+										convertDate(getData.start_date) !== ''
+									) {
+										eventDate = convertDate(getData.start_date);
+									} else if (
+										convertDate(getData.start_date) &&
+										convertDate(getData.end_date)
+									) {
+										eventDate =
+											convertDate(getData.start_date) +
+											' - ' +
+											convertDate(getData.end_date);
+									} else if (convertDate(getData.start_date)) {
+										eventDate = convertDate(getData.start_date);
+									} else {
+										eventDate = "Event's Date Here";
 									}
-									return rv;
+
+									eventDate = eventDate || "Event's Date Here";
+									return eventDate;
 								})()}
 								hover={false}></Card>
 						</div>

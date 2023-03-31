@@ -106,7 +106,7 @@ export default function details(props: {params: {id: number}}) {
 					title={data?.title}
 				/>
 				<div className="flex flex-col md:flex-row w-full h-auto mt-2 items-center gap-3 md:items-start justify-center">
-					<Poster image={data.image} />
+					<Poster image={data?.image} />
 					<div className="flex flex-col w-full justify-center items-center mt-2 gap-3">
 						<div className="flex flex-col items-start bg-blue-50 w-full p-4 rounded-lg gap-3">
 							<div className="flex flex-row items-center gap-3">
@@ -132,7 +132,9 @@ export default function details(props: {params: {id: number}}) {
 									<p className="text-2xl text-black font-light">100/190</p>
 								</div>
 							</div>
-							<ProgressBar registeredStudents={100} totalCapacity={190}></ProgressBar>
+							<ProgressBar
+								registeredStudents={100}
+								totalCapacity={190}></ProgressBar>
 							{applied ? (
 								<p className="w-full border border-green-500 p-2 rounded-md text-center shadow-lg text-white bg-green-600 transition-all duration-1000">
 									APPLIED

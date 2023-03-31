@@ -47,3 +47,5 @@ export interface InterfaceError {
 	venue: string | null;
 	organizer: string | null;
 }
+
+export default {};
