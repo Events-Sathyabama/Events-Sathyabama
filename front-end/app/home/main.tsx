@@ -7,6 +7,7 @@ import Page from './pagination';
 import TextField from '@mui/material/TextField';
 const axios = new API.Axios();
 import InputAdornment from '@mui/material/InputAdornment';
+import Image from 'next/image';
 
 export default function Main(props: {url: string; heading: string}) {
 	let abc: {
@@ -104,7 +105,7 @@ export default function Main(props: {url: string; heading: string}) {
 			) : (
 				<div className="flex justify-center flex-col items-center gap-4">
 					<div className="flex flex-row flex-wrap m-3 justify-center gap-3">
-						{data.length !== 0 && data[0].pk != ''  ? (
+						{data.length !== 0 && data[0].pk != '' ? (
 							data.map((card) => (
 								<HomeCard
 									key={card.pk}
@@ -117,9 +118,9 @@ export default function Main(props: {url: string; heading: string}) {
 								/>
 							))
 						) : (
-							<div className="flex flex-col justify-center items-center w-96 -mt-14 mb-14 h-[58vh]">
-								<img src="/eventsNotFound.svg" className="opacity-80"></img>
-								<p className="text-2xl font-extralight text-blue-500 opacity-80 -mt-16">
+							<div className="flex flex-col justify-center items-center w-96 h-[58vh]">
+								<Image src="/eventsNotFound.svg" width={500} height={500} alt=""></Image>
+								<p className="text-2xl font-light text-blue-400 mt-4">
 									No events found!!
 								</p>
 							</div>

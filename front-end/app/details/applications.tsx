@@ -71,7 +71,7 @@ export default function Applications(props: ApplicationProps) {
 							</Button>
 						</div>
 					)}
-					{applicant.status === 1 && <p className="text-green-500">Accepted</p>}
+					{applicant.status === 1 && <p className="text-green-700">Accepted</p>}
 					{applicant.status === -1 && <p className="text-red-500">Denied</p>}
 				</div>
 			))}

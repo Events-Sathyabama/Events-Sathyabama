@@ -7,12 +7,13 @@ import Footer from './footer';
 import PopUp from './popup';
 import API from './API';
 import {useRouter} from 'next/navigation';
-import LoginBackdrop from './backdrop';
+import WebBackdrop from './backdrop';
 
 export default function LoginPage(): JSX.Element {
 	const [loading, setLoading] = useState(true);
 	const [fPopUp, setFPopUp] = useState(false);
 	const [popUpMessage, setPopUpMessage] = useState('');
+	const [validBackdrop, setValidBackdrop] = useState(false);
 	const router = useRouter();
 	useEffect(() => {
 		if (API.is_logged_in()) {
@@ -72,9 +73,14 @@ export default function LoginPage(): JSX.Element {
 					) : (
 						<>
 							{/* TODO Login Backdrop Work Here */}
-							{/* <LoginBackdrop></LoginBackdrop> */}
+							{/* <WebBackdrop message="Verifying login status..."></WebBackdrop> */}
+							{validBackdrop ? (
+								<WebBackdrop message="Verifying Credentials..."></WebBackdrop>
+							) : null}
 							<h1 className="font-roboto text-4xl font-semibold">Sign-in</h1>
-							<LoginForm showPopUp={handleChange}></LoginForm>
+							<LoginForm
+								setBackdrop={(state: boolean) => setValidBackdrop(state)}
+								showPopUp={handleChange}></LoginForm>
 							<Link href="/forgot" className="mt-2">
 								<span className="text-blue-600 font-roboto text-sm hover:underline">
 									Forgot Password?

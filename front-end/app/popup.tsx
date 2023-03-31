@@ -1,97 +1,93 @@
-function Success(props: {message: string; showpopup: Function}) {
-	return (
-		<div
-			id="toast-success"
-			className="flex fixed items-center w-full max-w-xs p-4 m-3 text-black border border-blue-500 bg-white rounded-lg shadow-md"
-			role="alert">
-			<div className="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 text-green-500 bg-green-100 rounded-lg">
-				<svg
-					aria-hidden="true"
-					className="w-5 h-5"
-					fill="currentColor"
-					viewBox="0 0 20 20"
-					xmlns="http://www.w3.org/2000/svg">
-					<path
-						fillRule="evenodd"
-						d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-						clipRule="evenodd"></path>
-				</svg>
-				<span className="sr-only">Check icon</span>
-			</div>
-			<div className='ml-3 text-sm font-normal truncate w-48'>{props.message}</div>
-			<button
-				type="button"
-				className="ml-auto -mx-1.5 -my-1.5 bg-white text-gray-400 rounded-lg focus:ring-2 p-1.5 inline-flex h-8 w-8"
-				data-dismiss-target="#toast-success"
-				onClick={() => props.showpopup(false)}
-				aria-label="Close">
-				<span className="sr-only">Close</span>
-				<svg
-					aria-hidden="true"
-					className="w-5 h-5"
-					fill="currentColor"
-					viewBox="0 0 20 20"
-					xmlns="http://www.w3.org/2000/svg">
-					<path
-						fillRule="evenodd"
-						d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-						clipRule="evenodd"></path>
-				</svg>
-			</button>
-		</div>
-	);
+import * as React from 'react';
+import MuiAlert, { AlertProps } from '@mui/material/Alert';
+import Snackbar, { SnackbarOrigin } from '@mui/material/Snackbar';
+
+const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
+  props,
+  ref
+) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
+
+interface SuccessProps {
+  message: string;
+  showpopup: (open: boolean) => void;
+  anchorOrigin?: SnackbarOrigin;
 }
 
-function Error(props: {message: string; showpopup: Function; className?: string}) {
-	return (
-		<div
-			id="toast-danger"
-			className={
-				props.className +
-				' flex absolute items-center w-full max-w-xs p-4 m-3 text-black border border-blue-500 bg-white rounded-lg shadow-md'
-			}
-			role="alert">
-			<div className="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 text-red-500 bg-red-100 rounded-lg">
-				<svg
-					aria-hidden="true"
-					className="w-5 h-5"
-					fill="currentColor"
-					viewBox="0 0 20 20"
-					xmlns="http://www.w3.org/2000/svg">
-					<path
-						fillRule="evenodd"
-						d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-						clipRule="evenodd"></path>
-				</svg>
-				<span className="sr-only">Error icon</span>
-			</div>
-			<div className='ml-3 text-sm font-normal truncate w-48'>{props.message}</div>
-			<button
-				type="button"
-				className="ml-auto -mx-1.5 -my-1.5 bg-white text-gray-400 rounded-lg focus:ring-2 p-1.5 inline-flex h-8 w-8"
-				data-dismiss-target="#toast-success"
-				onClick={() => props.showpopup(false)}
-				aria-label="Close">
-				<span className="sr-only">Close</span>
-				<svg
-					aria-hidden="true"
-					className="w-5 h-5"
-					fill="currentColor"
-					viewBox="0 0 20 20"
-					xmlns="http://www.w3.org/2000/svg">
-					<path
-						fillRule="evenodd"
-						d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-						clipRule="evenodd"></path>
-				</svg>
-			</button>
-		</div>
-	);
+function Success(props: SuccessProps) {
+  const { message, showpopup, anchorOrigin } = props;
+  const [open, setOpen] = React.useState(true);
+
+  const handleClose = (event?: React.SyntheticEvent, reason?: string) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setOpen(false);
+    showpopup(false);
+  };
+
+  return (
+    <>
+      {open && (
+        <Snackbar
+          open={open}
+          autoHideDuration={6000}
+		  //@ts-expect-error
+          onClose={handleClose}
+          anchorOrigin={anchorOrigin || { vertical: 'top', horizontal: 'right' }}
+        >
+          <Alert className="mt-20 sm:mt-16" onClose={handleClose} severity="success">
+            {message}
+          </Alert>
+        </Snackbar>
+      )}
+    </>
+  );
+}
+
+interface ErrorProps {
+  message: string;
+  showpopup: (open: boolean) => void;
+  className?: string;
+  anchorOrigin?: SnackbarOrigin;
+}
+
+function Error(props: ErrorProps) {
+  const { message, showpopup, anchorOrigin } = props;
+  const [open, setOpen] = React.useState(true);
+
+  const handleClose = (event?: React.SyntheticEvent, reason?: string) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpen(false);
+    showpopup(false);
+  };
+
+  return (
+    <>
+      {open && (
+        <Snackbar
+          open={open}
+          autoHideDuration={6000}
+		  //@ts-expect-error
+          onClose={handleClose}
+          anchorOrigin={anchorOrigin || { vertical: 'top', horizontal: 'right' }}
+        >
+          <Alert className="mt-20 sm:mt-16" onClose={handleClose} severity="error">
+            {message}
+          </Alert>
+        </Snackbar>
+      )}
+    </>
+  );
 }
 
 const Popup = {
-	Success: Success,
-	Error: Error,
+  Success,
+  Error,
 };
 
 export default Popup;

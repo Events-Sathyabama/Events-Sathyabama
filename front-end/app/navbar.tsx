@@ -157,6 +157,7 @@ export default function Navbar() {
 											<Menu.Item>
 												{({active}) => (
 													<button
+														id="Sign-Out"
 														onClick={() => signOut()}
 														className={classNames(
 															active ? 'bg-gray-100' : '',

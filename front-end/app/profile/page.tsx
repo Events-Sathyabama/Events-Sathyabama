@@ -32,31 +32,36 @@ export default function ProfilePage(): JSX.Element {
 			<div className="container mx-auto my-5 p-5">
 				<div className="md:flex no-wrap md:-mx-2 ">
 					{role === 'Student' && (
-						<>
-							<Profile.Student id={id} branch={branch} name={fullName} />
+						<div className='flex w-full flex-col md:flex-row gap-3 justify-center items-center md:items-start'>
+							<Profile id={id} branch={branch} name={fullName} role="Student" />
 							<TabsProfile.Student></TabsProfile.Student>
-						</>
+						</div>
 					)}
 					{role === 'Teacher' && (
-						<>
-							<Profile.Teacher
+						<div className='flex w-full flex-col md:flex-row gap-3 justify-center items-center md:items-start'>
+							<Profile
 								id={id}
 								branch={branch}
-								name={fullName}></Profile.Teacher>
+								name={fullName}
+								role="Teacher"></Profile>
 							<TabsProfile.Teacher></TabsProfile.Teacher>
-						</>
+						</div>
 					)}
 					{role === 'HOD' && (
-						<>
-							<Profile.HOD id={id} branch={branch} name={fullName}></Profile.HOD>
+						<div className='flex w-full flex-col md:flex-row gap-3 justify-center items-center md:items-start'>
+							<Profile id={id} branch={branch} name={fullName} role="HOD"></Profile>
 							<TabsProfile.HOD></TabsProfile.HOD>
-						</>
+						</div>
 					)}
 					{role === 'Vice-Chancellor' && (
-						<>
-							<Profile.VC id={id} branch={branch} name={fullName}></Profile.VC>
+						<div className='flex w-full flex-col md:flex-row gap-3 justify-center items-center md:items-start'>
+							<Profile
+								id={id}
+								branch={branch}
+								name={fullName}
+								role="Vice-Chancellor"></Profile>
 							<TabsProfile.VC></TabsProfile.VC>
-						</>
+						</div>
 					)}
 				</div>
 			</div>

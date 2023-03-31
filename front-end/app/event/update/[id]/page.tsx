@@ -219,7 +219,7 @@ export default function Page(props: {params: {id: number}}) {
 				getError={getError}
 				setError={setError}
 				submitForm={submitForm}
-				buttonText={'Update The Event'}
+				buttonText={'Update Event'}
 			/>
 		</>
 	);
