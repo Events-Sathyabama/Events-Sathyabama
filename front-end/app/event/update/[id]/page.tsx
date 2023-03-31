@@ -4,28 +4,35 @@ import {useEffect, useState} from 'react';
 import {useRouter} from 'next/navigation';
 import API from '../../../API';
 import dayjs, {Dayjs} from 'dayjs';
+import {
+	InterfaceBranch,
+	InterfaceClub,
+	InterfaceOrganizer,
+	InterfaceData,
+} from '../../datainterface';
 
 const axios = new API.Axios();
 
 export default function Page(props: {params: {id: number}}) {
 	const router = useRouter();
-
+	const [owner, setOwner] = useState<InterfaceOrganizer[]>([]);
 	const [setData, getData, getError, setError, sendData] = (() => {
 		const [title, setTitle] = useState<string>('');
-		const [clubName, setClubName] = useState<any | null>(null);
-		const [image, setImage] = useState<File | null>(null);
-		const [startDate, setStartDate] = useState<Dayjs | null>(null);
-		const [endDate, setEndDate] = useState<Dayjs | null>(null);
+		const [clubName, setClubName] = useState<{name: string; inputValue?: string}>({
+			name: '',
+		});
+		const [image, setImage] = useState<File>();
+		const [startDate, setStartDate] = useState<Dayjs>();
+		const [endDate, setEndDate] = useState<Dayjs>();
 		const [shortDesc, setShortDesc] = useState<string>('');
 		const [longDesc, setLongDesc] = useState<string>('');
-		const [branchName, setBranchName] = useState<number[] | undefined>();
+		const [branchName, setBranchName] = useState<InterfaceBranch[]>([]);
 		const [date, setDate] = useState<string>('');
 		const [duration, setDuration] = useState<string>('');
 		const [venue, setVenue] = useState<string>('');
-		const [coordinator, setCoordinator] = useState<
-			{name: string; id: string}[] | any
-		>([]);
-		const getData = {
+		const [coordinator, setCoordinator] = useState<InterfaceOrganizer[]>([]);
+
+		const getData: InterfaceData = {
 			title: title,
 			club: clubName,
 			image: image,
@@ -38,41 +45,61 @@ export default function Page(props: {params: {id: number}}) {
 			time: duration,
 			venue: venue,
 			organizer: coordinator,
+			owner: owner,
 		};
 
 		const sendData = () => {
-			console.log(image);
+			const organizer = () => {
+				const rv: string[] = [];
+				for (let i = 0; i < coordinator.length; i++) {
+					rv.push(String(coordinator[i].college_id));
+				}
+				return rv;
+			};
+			const branch = () => {
+				const rv: string[] = [];
+				for (let i = 0; i < branchName.length; i++) {
+					rv.push(String(branchName[i].pk));
+				}
+				return rv;
+			};
 			const data = {
-				organizer: (() => {
-					const rv = [];
-					for (let i = 0; i < coordinator.length; i++) {
-						rv.push(coordinator[i].id);
-					}
-					return rv;
-				})(),
+				organizer: organizer(),
 				image: image,
 				title: title,
 				short_description: shortDesc,
 				long_description: longDesc,
-				club: clubName.name,
+				club: clubName?.name,
 				venue: venue,
-				start_date: startDate?.isValid() ? startDate?.format('YYYY-MM-DD') : null,
-				end_date: endDate?.isValid() ? endDate?.format('YYYY-MM-DD') : null,
+				start_date: startDate?.format('YYYY-MM-DD'),
+				end_date: endDate?.format('YYYY-MM-DD'),
 				date: date,
 				time: duration,
-				branch: branchName,
+				branch: branch(),
 			};
-			if (typeof data.image === 'string') {
+			const formData = new FormData();
+			// @ts-expect-error
+			if (coordinator.length > 1) formData.append('organizer', organizer());
+			// @ts-expect-error
+			if (typeof image !== 'string') formData.append('image', image);
+			if (title !== null || title !== '') formData.append('title', title);
+			if (shortDesc !== null || shortDesc !== '')
+				formData.append('short_description', shortDesc);
+			if (longDesc !== null || longDesc !== '')
+				formData.append('long_description', longDesc);
+			if (clubName !== null || clubName !== '')
+				formData.append('club', JSON.stringify(clubName));
+			if (venue !== null || venue !== '') formData.append('venue', venue);
+			if (startDate !== null || startDate !== '')
 				// @ts-expect-error
-				delete data.image;
-			}
-			for (let field in data) {
+				formData.append('start_date', startDate?.format('YYYY-MM-DD'));
+			if (endDate !== null || endDate !== '')
 				// @ts-expect-error
-				if (data[field] === null || data[field] === '') {
-					//@ts-expect-error
-					delete data[field];
-				}
-			}
+				formData.append('end_date', endDate?.format('YYYY-MM-DD'));
+			if (date !== null || date !== '') formData.append('date', date);
+			if (duration !== null || duration !== '') formData.append('time', duration);
+			// @ts-expect-error
+			if (branchName.length > 0) formData.append('branch', branch());
 			return data;
 		};
 		const setData: {[x: string]: Function} = {
@@ -140,11 +167,10 @@ export default function Page(props: {params: {id: number}}) {
 				API.get_url('event:detail', [props.params.id])
 			);
 			const data = request.data;
-			// console.log(data);
 			initial_value = data;
-			console.log('initial_value: ', initial_value);
 			setData.title(data.title);
-			setData.club(data.club);
+			// debugger;
+			setData.club({name: data.club});
 			setData.image(data.image);
 			setData.start_date(dayjs(data.start_date));
 			setData.end_date(dayjs(data.end_date));
@@ -154,14 +180,13 @@ export default function Page(props: {params: {id: number}}) {
 			setData.date(data.date);
 			setData.time(data.time);
 			setData.venue(data.venue);
-			setData.organizer(data.organizer);
-			console.log(getData);
+			setData.organizer([...data.organizer, data.owner]);
+			setOwner([data.owner]);
 		})();
 	}, []);
 
 	const submitForm = async () => {
 		try {
-			console.log('sending data: ', sendData());
 			const request = await axios.patch(
 				API.get_url('event:update', [props.params.id]),
 				sendData(),
@@ -169,15 +194,13 @@ export default function Page(props: {params: {id: number}}) {
 					'Content-Type': 'multipart/form-data',
 				}
 			);
-			console.log(request);
 			router.push(`details/${request.data.pk}`);
 		} catch (error: any) {
+			console.error(error.response);
 			for (let field in setError) {
 				setError[field](null);
 			}
-			console.log(error);
 			for (let field in error.response.data) {
-				console.log(field);
 				setError[field](error.response.data[field]);
 			}
 			window.scroll({
@@ -185,7 +208,6 @@ export default function Page(props: {params: {id: number}}) {
 				left: 0,
 				behavior: 'smooth',
 			});
-			console.error(error.response.data);
 		}
 	};
 

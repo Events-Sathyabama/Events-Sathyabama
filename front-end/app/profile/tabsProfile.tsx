@@ -5,8 +5,25 @@ import Tab from '@mui/material/Tab';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
-import TableEvents from './table';
-import OrganiserCards from './profileCards';
+import ProfileCards from './profileCards';
+
+// TODO fetch the application status of students in this way
+const rows = [
+	{
+		eventName: 'Madhugai - The Strength',
+		applicationStatus: 'Pending',
+		link: '/details/5',
+	},
+	{eventName: 'Testing Event 5', applicationStatus: 'Rejected', link: '/details/5'},
+	{eventName: 'Event 3', applicationStatus: 'Accepted', link: '/details/5'},
+	{eventName: 'Event 4', applicationStatus: 'Pending', link: '/details/5'},
+	{eventName: 'Event 5', applicationStatus: 'Completed', link: '/details/5'},
+	{
+		eventName: 'Event 5',
+		applicationStatus: 'Certified',
+		link: '/details/5',
+	},
+];
 
 function Student() {
 	const [value, setValue] = React.useState('1');
@@ -21,10 +38,7 @@ function Student() {
 				<Box
 					sx={{borderBottom: 1, borderColor: 'divider'}}
 					className="flex flex-row w-full justify-center">
-					<TabList
-						onChange={handleChange}
-						aria-label="lab API tabs example"
-						>
+					<TabList onChange={handleChange} aria-label="lab API tabs example">
 						<Tab
 							label={
 								<div className="flex flex-col justify-center items-center">
@@ -93,18 +107,20 @@ function Student() {
 						/>
 					</TabList>
 				</Box>
-				<TabPanel value="1">
+				<TabPanel value="1" className='flex flex-col gap-3 w-full items-center'>
 					{/* Events which the student has opted-in to participate. (Will contain pending
 					for approval, accepted) */}
-					<TableEvents passer="1"></TableEvents>
+					{/* {rows.map((row: {eventName: string; applicationStatus: string}) => {
+						return (
+							<ProfileCards name={row.eventName} status={row.applicationStatus} />
+						);
+					})} */}
 				</TabPanel>
 				<TabPanel value="2">
 					{/* Events which the student has opted-in and has completed. */}
-					<TableEvents passer="2"></TableEvents>
 				</TabPanel>
 				<TabPanel value="3">
 					{/* Events which the student is organising i.e. Student Coordinator */}
-					<OrganiserCards></OrganiserCards>
 				</TabPanel>
 			</TabContext>
 		</Box>
@@ -195,15 +211,12 @@ function HODVC() {
 				</Box>
 				<TabPanel value="1">
 					{/* Events which are posted by the teacher and pending for approval here */}
-					<OrganiserCards></OrganiserCards>
 				</TabPanel>
 				<TabPanel value="2">
 					{/* Events which have been shown to the students and are being organised. */}
-					<OrganiserCards></OrganiserCards>
 				</TabPanel>
 				<TabPanel value="3">
 					{/* Events which have been successfully organised. */}
-					<OrganiserCards></OrganiserCards>
 				</TabPanel>
 			</TabContext>
 		</Box>
@@ -294,15 +307,12 @@ function Teacher() {
 				</Box>
 				<TabPanel value="1">
 					{/* Events which are organised by the teacher and pending for approval. */}
-					<OrganiserCards></OrganiserCards>
 				</TabPanel>
 				<TabPanel value="2">
 					{/* Events which are organised by the teacher and shown to the students. */}
-					<OrganiserCards></OrganiserCards>
 				</TabPanel>
 				<TabPanel value="3">
 					{/* Events which are organised by the teacher and are completed. */}
-					<OrganiserCards></OrganiserCards>
 				</TabPanel>
 			</TabContext>
 		</Box>

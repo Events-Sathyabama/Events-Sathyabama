@@ -1,6 +1,7 @@
 interface Coordinator {
 	name: string;
 	role: string;
+	college_id: string;
 }
 
 interface CoordinatorProps {

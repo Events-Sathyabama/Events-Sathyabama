@@ -5,7 +5,11 @@ from django.db import models
 from django.utils import timezone
 from .Branch import Branch
 from django.utils.translation import gettext_lazy as _
+from django.core.validators import MaxValueValidator, MinValueValidator
+from django.core.exceptions import ValidationError
 
+def current_year():
+    return timezone.now().year
 
 class UserManager(BaseUserManager):
     def create_user(self, college_id, email=None, password=None, role=0):
@@ -85,15 +89,15 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     branch = models.ForeignKey(Branch, on_delete=models.CASCADE, blank=True, null=True)
 
-    joining_year = models.CharField(max_length=4, blank=True, null=True)
-    leaving_year = models.CharField(max_length=4, blank=True, null=True)
+    joining_year = models.PositiveIntegerField(
+        default=current_year(), validators=[MinValueValidator(1950), MaxValueValidator(current_year())])
+    leaving_year = models.PositiveIntegerField(blank=True, null=True, validators=[MinValueValidator(1950)])
 
     objects = UserManager()
 
     EMAIL_FIELD = "email"
     USERNAME_FIELD = 'college_id'
     REQUIRED_FIELDS = ['email', 'role'] # Email & Password are required by default.
-
 
     class Meta(AbstractUser.Meta):
         swappable = "AUTH_USER_MODEL"
@@ -104,3 +108,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     @property
     def full_name(self):
         return f"{self.first_name} {self.last_name}".strip()
+
+    def clean(self, *args, **kwargs):
+        if self.leaving_year is not None and self.leaving_year < self.joining_year:
+            raise ValidationError('Leaving Year cannot be before joining year')
+        

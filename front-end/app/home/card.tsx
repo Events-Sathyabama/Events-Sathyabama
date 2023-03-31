@@ -31,7 +31,7 @@ export default function HomeCard(props: HomeCardProps) {
 				(hover === true
 					? 'hover:scale-105 hover:shadow-lg hover:border-blue-500 hover:my-2 hover:mx-1 '
 					: '') +
-				'border border-gray-300 rounded-md bg-white transition-all duration-300 w-80'
+				'border border-gray-400 rounded-md bg-white transition-all duration-300 w-80'
 			}>
 			<CardHeader
 				title={<div className="w-72 truncate">{title}</div>}

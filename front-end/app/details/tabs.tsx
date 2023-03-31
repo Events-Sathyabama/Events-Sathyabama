@@ -32,8 +32,8 @@ const dummyApplications = [
 ];
 
 export default function Tabs(props: {
-	long_desc: string | null;
-	coordinator: {name: string; role: string}[];
+	long_desc: string | undefined;
+	coordinator: {name: string; role: string; college_id: string}[];
 	showSuccessPopup: Function;
 	showFailurePopup: Function;
 }) {

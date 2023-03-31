@@ -3,7 +3,7 @@ import Card from '../home/card';
 import * as React from 'react';
 import TextField from '@mui/material/TextField';
 import {useState} from 'react';
-import Autocomplete from '@mui/material/Autocomplete';
+import Autocomplete, {createFilterOptions} from '@mui/material/Autocomplete';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Button from '@mui/material/Button';
@@ -12,92 +12,64 @@ import {LocalizationProvider} from '@mui/x-date-pickers/LocalizationProvider';
 import {AdapterDayjs} from '@mui/x-date-pickers/AdapterDayjs';
 import Chip from '@mui/material/Chip';
 import API from '../API';
+import {
+	InterfaceClub,
+	InterfaceBranch,
+	InterfaceOrganizer,
+	InterfaceData,
+	InterfaceError,
+} from './datainterface';
+
 import dayjs, {Dayjs} from 'dayjs';
 const axios = new API.Axios();
+const filter = createFilterOptions<InterfaceClub>();
 
-// TODO Fetch Coordinators in this way
-
-interface GetData {
-	title: string;
-	club: {name: string; id: string} | null | undefined;
-	image: File | string | null;
-	start_date: Dayjs | null;
-	end_date: Dayjs | null;
-	short_description: string;
-	long_description: string;
-	branch: number[] | undefined;
-	date: string;
-	time: string;
-	venue: string;
-	organizer: {name: string; college_id: string}[] | any;
-}
-
-interface GetError {
-	title: string | null;
-	club: string | null;
-	image: string | null;
-	start_date: string | null;
-	end_date: string | null;
-	short_description: string | null;
-	long_description: string | null;
-	branch: string | null;
-	date: string | null;
-	time: string | null;
-	venue: string | null;
-	organizer: string | null;
-}
-
+const organizerSelected = new Set<string>([]);
 export default function Create(props: {
 	setData: {[x: string]: Function};
-	getData: GetData;
-	getError: GetError;
+	getData: InterfaceData;
+	getError: InterfaceError;
 	setError: {[x: string]: Function};
 	submitForm: Function;
 	buttonText: string;
 }) {
 	// Data that has to be Fetched from server
-	const [clubList, setClubList] = useState([{name: 'Loading...'}]);
-	const [BranchList, setBranchList] = useState([
-		{name: 'Loading...', abbreviation: 'Loading...'},
+	const setData = props.setData;
+	const getData = props.getData;
+	const getError = props.getError;
+	const setError = props.setError;
+	const [clubList, setClubList] = useState<InterfaceClub[]>([
+		{name: 'Loading...', abbreviation: ''},
 	]);
-	const [coordinatorList, setCoordinatorList] = useState([
-		{name: 'Bandepalli Surya', college_id: '40110156'},
-		{name: 'Aryan Amish', college_id: '4011022'},
-		{name: 'Dr. Revathy', college_id: '11'},
-		{name: 'John King', college_id: '41101022'},
+	const [BranchList, setBranchList] = useState<InterfaceBranch[]>([
+		{name: 'Loading...', batch: '', pk: -1},
 	]);
-	const [fixedOptions, setFixedOptions] = useState<any>([
-		{name: '-', college_id: '-'},
-	]);
-	// API calls starts
+	const [coordinatorList, setCoordinatorList] = useState([]);
 
+	// API calls starts
 	React.useEffect(() => {
 		(async () => {
 			const request = await axios.get(API.get_url('event:club_branch'));
+			console.log(request.data);
 			if (request.status === 200) {
 				setClubList(request.data.club);
 				setBranchList(request.data.branch);
 			}
 		})();
-		const obj = {
-			name: localStorage.getItem('name') || '',
-			college_id: API.jwt(localStorage.getItem('access')).user_id || '',
-		};
-		setFixedOptions([obj]);
+		searchOrganizer();
 	}, []);
 
-	React.useEffect(() => {
-		(async () => {
-			// const request = await axios.get(API.get_url('event:organizer'));
-		})();
-	}, []);
 	// API Calls ends
-	const setData = props.setData;
-	const getData = props.getData;
-	const getError = props.getError;
-	const setError = props.setError;
+
+	async function searchOrganizer(event?: React.ChangeEvent<HTMLInputElement>) {
+		const request = await axios.get(API.get_url('user:organizer'), {
+			q: event?.target?.value,
+		});
+
+		setCoordinatorList(request.data.results);
+	}
+
 	// checkbox state to enable Custom Club Name element
-	const [checked, setChecked] = React.useState(false);
 	const [imageBlob, setImageBlob] = useState<string>('');
 	const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
 		const file = e.target.files?.[0];
@@ -113,15 +85,15 @@ export default function Create(props: {
 	};
 
 	// converts date to 21 Mar '23 format
-	const convertDate = (date: Dayjs | null) => {
-		if (date === null) {
-			return date;
+	const convertDate = (date: Dayjs | undefined) => {
+		if (date) {
+			return date.format("DD MMM 'YY");
 		}
-		return date.format("DD MMM 'YY");
+		return date;
 	};
-
 	const handleSubmit = async (event: any) => {
 		event.preventDefault();
+		console.log('hi');
 		await props.submitForm();
 	};
 
@@ -153,24 +125,66 @@ export default function Create(props: {
 							}
 						/>
 						<Autocomplete
-							options={clubList}
-							getOptionLabel={(option: {name: string}) => {
-								return option.name;
-							}}
-							disabled={checked === true}
-							id="disable-clearable"
+							value={getData.club}
 							onChange={(event, newValue) => {
-								setData.club(newValue);
+								if (typeof newValue === 'string') {
+									setData.club({
+										name: newValue,
+									});
+								} else if (newValue && newValue.inputValue) {
+									setData.club({
+										name: newValue.inputValue,
+									});
+								} else {
+									setData.club(newValue);
+								}
 								setError.club(null);
 							}}
+							filterOptions={(options, params) => {
+								const filtered = filter(options, params);
+
+								const {inputValue} = params;
+								// Suggest the creation of a new value
+								const isExisting = options.some(
+									(option) => inputValue === option.name
+								);
+								if (inputValue !== '' && !isExisting) {
+									filtered.push({
+										inputValue,
+										name: `Club Name was not Found in the list Add "${inputValue}"`,
+									});
+								}
+
+								return filtered;
+							}}
+							selectOnFocus
+							clearOnBlur
+							handleHomeEndKeys
+							id="disable-clearable"
+							options={clubList}
+							getOptionLabel={(option) => {
+								// Value selected with enter, right from the input
+								if (typeof option === 'string') {
+									return option;
+								}
+								// Add "xxx" option created dynamically
+								if (option.inputValue) {
+									// setData.club({name: option.inputValue});
+									return option.inputValue;
+								}
+								// Regular option
+								return option.name;
+							}}
+							renderOption={(props, option) => <li {...props}>{option.name}</li>}
+							freeSolo
 							renderInput={(params) => (
 								<TextField
 									{...params}
-									value={getData.club}
-									error={getError.club !== null && !checked}
+									error={getError.club !== null}
 									required
 									label="Organiser/Club Name Here"
 									variant="outlined"
+									value={getData.club?.name}
 									helperText={
 										getError.club ||
 										"Check our list first. If your club or organiser's name is not included, check the box below to manually enter it."
@@ -178,41 +192,7 @@ export default function Create(props: {
 								/>
 							)}
 						/>
-						<FormControlLabel
-							className="ml-3"
-							disabled={getData.club !== null}
-							control={
-								<Checkbox
-									checked={checked}
-									onChange={() => {
-										setChecked(!checked);
-									}}
-									className="w-max"
-									inputProps={{'aria-label': 'controlled'}}
-								/>
-							}
-							label="I assure you that my club or organiser name was not found in the above list."
-						/>
-						{checked ? (
-							<TextField
-								required
-								autoComplete="off"
-								disabled={!checked}
-								id="outlined-required"
-								label="New Organiser/Club Name Here"
-								defaultValue=""
-								error={getError.club !== null}
-								onChange={(event) => {
-									setData.club(event.target.value);
-									setError.club(null);
-								}}
-								value={getData.club}
-								helperText={
-									getError.club ||
-									"Double check for typos while entering your club/organiser name in the list above. If you still can't find it, proceed by manually entering your club/organiser name here."
-								}
-							/>
-						) : null}
+
 						<Button
 							variant="outlined"
 							component="label"
@@ -246,7 +226,7 @@ export default function Create(props: {
 										onChange={(date: any) => {
 											setData.start_date(date);
 											setError.start_date(null);
-											if (getData.end_date === null) {
+											if (getData.end_date) {
 												setData.end_date(date);
 											}
 										}}
@@ -258,7 +238,7 @@ export default function Create(props: {
 								<div className="flex flex-col gap-1">
 									<p className="ml-1">Your Event's End Date*</p>
 									<MobileDatePicker
-										disabled={getData.start_date === null}
+										disabled={getData.start_date === undefined}
 										className="w-fit"
 										disablePast
 										value={getData.end_date}
@@ -311,64 +291,70 @@ export default function Create(props: {
 						{/* Branch */}
 						<Autocomplete
 							multiple
-							id="tags-outlined"
 							options={BranchList}
-							getOptionLabel={(option) => {
-								return option.name;
-							}}
-							onChange={(event: any) => {
-								setData.branch((prev: any) => {
-									console.log(prev);
-									if (event.target.value === undefined) {
-										return prev;
-									}
-									if (prev === undefined) {
-										return [event.target.value];
-									} else {
-										prev.push(event.target.value);
-									}
-									return prev;
-								});
-								setError.branch(null);
-							}}
+							value={getData.branch}
+							groupBy={(option) => option.name}
+							getOptionLabel={(option) =>
+								`${option.name}` + option.batch !== '' ? ` ${option.batch}` : ''
+							}
 							filterSelectedOptions
-							renderInput={(params) => (
-								<TextField
-									{...params}
-									error={getError.branch !== null}
-									label={getError.branch || "Event's Branch and Batch Selection"}
-									placeholder="Start typing here.."
-									value={getData.branch}
-								/>
-							)}
-						/>
-						{/* Co-ordinators */}
-						<Autocomplete
-							multiple
-							id="fixed-tags-demo"
 							onChange={(event, newValue) => {
-								setData.organizer([
-									...fixedOptions,
-									...newValue.filter(
-										(option) => fixedOptions[0].college_id !== option.college_id
-									),
-								]);
-								setError.organizer(null);
+								setData.branch(newValue);
 							}}
-							options={coordinatorList}
-							getOptionLabel={(option) => `${option.name} - ${option.college_id}`}
 							renderTags={(tagValue, getTagProps) =>
 								tagValue.map((option, index) => (
 									<Chip
-										label={option.name + ' - ' + option.college_id}
+										label={`${option.name} (${option.batch})`}
 										{...getTagProps({index})}
-										disabled={fixedOptions[0].college_id === option.college_id}
 									/>
 								))
 							}
 							renderInput={(params) => (
 								<TextField
 									{...params}
+									error={getError.branch !== null}
+									label={getError.branch || "Event's Branch and Batch Selection"}
+									placeholder="Start typing here.."
+								/>
+							)}
+						/>
+
+						{/* Co-ordinators */}
+						<Autocomplete
+							multiple
+							value={getData.organizer}
+							filterSelectedOptions
+							onChange={(event, newValue) => {
+								organizerSelected.clear();
+								setData.organizer([
+									...getData.owner,
+									...newValue.filter((option) => {
+										organizerSelected.add(option.college_id);
+										return getData.owner.indexOf(option) === -1;
+									}),
+								]);
+								console.log(organizerSelected);
+							}}
+							options={(() => {
+								return coordinatorList.filter((options) => {
+									// @ts-expect-error
+									return !organizerSelected.has(options.college_id);
+								});
+							})()}
+							getOptionLabel={(option) => `${option.name} - ${option.college_id}`}
+							renderTags={(tagValue, getTagProps) =>
+								tagValue.map((option, index) => (
+									<Chip
+										label={option.name + ' - ' + option.college_id}
+										{...getTagProps({index})}
+										disabled={getData.owner.indexOf(option) !== -1}
+									/>
+								))
+							}
+							renderInput={(params) => (
+								<TextField
+									{...params}
+									onChange={searchOrganizer}
 									error={getError.organizer !== null}
 									label={
 										getError.organizer || 'Faculty and Student Coordinators Here'
@@ -377,6 +363,7 @@ export default function Create(props: {
 								/>
 							)}
 						/>
+
 						<TextField
 							id="outlined-multiline-flexible"
 							label="Date - Detailed Here"
@@ -415,7 +402,6 @@ export default function Create(props: {
 							autoComplete="off"
 							id="outlined-required"
 							label="Venue Here"
-							defaultValue=""
 							fullWidth
 							name="venue"
 							error={getError.venue !== null}
@@ -450,20 +436,18 @@ export default function Create(props: {
 									return 'pulseLoading';
 								})()} // pulseLoading shows the pulse loader
 								description={getData.short_description || 'Short Description Here'}
-								date={
-									(convertDate(getData.start_date) ===
-										convertDate(getData.end_date) &&
-									convertDate(getData.start_date) !== ''
-										? convertDate(getData.start_date)
-										: convertDate(getData.start_date) &&
-										  convertDate(getData.end_date)
-										? convertDate(getData.start_date) +
-										  ' - ' +
-										  convertDate(getData.end_date)
-										: convertDate(getData.start_date)
-										? convertDate(getData.start_date)
-										: "Event's Date Here") || "Event's Date Here"
-								}
+								date={(() => {
+									const start_date = convertDate(getData.start_date);
+									const end_date = convertDate(getData.end_date);
+									let rv = "Event's Date Here";
+									if (start_date) {
+										rv = start_date;
+										if (end_date) {
+											rv += ` - ${end_date}`;
+										}
+									}
+									return rv;
+								})()}
 								hover={false}></Card>
 						</div>
 					</div>
