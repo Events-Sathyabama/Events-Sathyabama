@@ -9,6 +9,7 @@ export interface InterfaceOrganizer{
     name: string;
 	college_id: string;
 	role: string;
+	pk: number;
 }
 
 export interface InterfaceClub {
@@ -30,7 +31,7 @@ export interface InterfaceData {
 	time: string | undefined;
 	venue: string | undefined;
 	organizer: InterfaceOrganizer[];
-	owner: InterfaceOrganizer[];
+	owner: InterfaceOrganizer;
 }
 
 export interface InterfaceError {

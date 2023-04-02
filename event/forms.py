@@ -6,7 +6,6 @@ class EventCreationForm(forms.ModelForm):
         model = Event
         fields = [
             'organizer',
-            'participant',
             'image',
             'title',
             'short_description',

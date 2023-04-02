@@ -2,7 +2,7 @@ from django.db import models
 # Create your models here.
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
-
+from django.db.models import Q
 from user.models import Branch
 
 User = get_user_model()
@@ -26,10 +26,18 @@ class Event(models.Model):
         (6, 'Certified'),
         (7, 'Ongoing'),
     )
+
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
     status = models.PositiveIntegerField(choices=STATUS_CHOICES, default=1)
     organizer = models.ManyToManyField(User, related_name='event_organizer', blank=True)
-    participant = models.ManyToManyField(User, related_name='event_participant', blank=True)
+    
+
+    # this will only contain accepted participant
+    accepted_participant = models.ManyToManyField(User, related_name='accepted_participant', blank=True)
+    
+    total_strength = models.PositiveIntegerField(null=True, blank=True)
+    applied_participant = models.ManyToManyField(User, related_name='applied_participant', blank=True)
+    fcfs = models.BooleanField(default=True)
 
     image = models.ImageField(upload_to='poster/')
     title = models.CharField(max_length=250)
@@ -51,10 +59,16 @@ class Event(models.Model):
     dean_verified = models.BooleanField(default=False)
     vc_verified = models.BooleanField(default=False)
 
+    def clean(self, *args, **kwargs):
+        cleanData = super().save(*args, **kwargs)
+        for participant in self.participant.all():
+            if not self.applied_participant.filter(pk=participant.pk).exists():
+                raise ValidationError(f"{participant.full_name} ({participant.college_id}) is not in the applied participant List")
+        
+        
+
     def __str__(self):
-        return self.title
-
-
+        return f"{self.title} ({self.owner.full_name})"
 
 class Club(models.Model):
     abbreviation = models.CharField(max_length=10, null=True, blank=True)

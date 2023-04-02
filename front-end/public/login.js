@@ -1,4 +1,5 @@
 ((undefined) => {
+	const backDrop = document.getElementById('global-backdrop');
 	function parseJwt(token) {
 		if (token === null || token.trim() === '') {
 			return null;
@@ -34,10 +35,14 @@
 	if (is_logged_in()) {
 		if (window.location.pathname === '/') {
 			window.location.href = '/home/upcoming';
+		} else {
+			backDrop.style.display = 'none';
 		}
 	} else {
 		if (window.location.pathname !== '/') {
 			window.location.href = '/';
+		} else {
+			backDrop.style.display = 'none';
 		}
 	}
 })();

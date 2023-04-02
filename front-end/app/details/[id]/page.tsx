@@ -10,27 +10,9 @@ import Fab from '@mui/material/Fab';
 import Link from 'next/link';
 import LoadingButton from '@mui/lab/LoadingButton';
 import ProgressBar from '../progressBar';
+import {InterfaceData} from '@/app/event/datainterface';
 
 const axios = new API.Axios();
-
-interface OrganizerInterface {
-	name: string;
-	college_id: string;
-	role: string;
-}
-interface DetailInterface {
-	title: string;
-	pk: string;
-	club: string;
-	date: string;
-	time: string;
-	venue: string;
-	long_description: string;
-	short_description: string;
-	organizer: OrganizerInterface[];
-	image: string;
-	owner: OrganizerInterface;
-}
 
 export default function details(props: {params: {id: number}}) {
 	const [Spopup, setSpopup] = useState(false);
@@ -44,7 +26,7 @@ export default function details(props: {params: {id: number}}) {
 		setFpopup(true);
 	}
 
-	const [data, setData] = useState<DetailInterface>();
+	const [data, setData] = useState<InterfaceData>();
 
 	useEffect(() => {
 		(async () => {
@@ -101,7 +83,7 @@ export default function details(props: {params: {id: number}}) {
 			</div>
 			<div className="flex flex-col w-11/12 h-auto">
 				<Header
-					club={data?.club}
+					club={data?.club?.name}
 					short_desc={data?.short_description}
 					title={data?.title}
 				/>

@@ -41,7 +41,7 @@ class EventDetail(generics.RetrieveAPIView):
     def get_object(self):
         event_id = self.kwargs.get('pk')
         event_obj = Event.objects.select_related('owner').prefetch_related(
-            'organizer', 'participant').get(id=event_id)
+            'organizer', 'accepted_participant').get(id=event_id)
         return event_obj
 
     serializer_class = serializers.EventDetailSerializer
@@ -61,7 +61,8 @@ class EventCreate(generics.CreateAPIView):
                 data[i[:-2]] = self.request.data.getlist(i)
             else:
                 data[i] = self.request.data.get(i)
-        return super().get_serializer(data=data, *args)
+        kwargs['data'] = data
+        return super().get_serializer(*args, **kwargs)
 
     def perform_create(self, serializer):
         event = serializer.save(owner=self.request.user)
@@ -71,13 +72,19 @@ class EventUpdate(generics.UpdateAPIView):
     queryset = Event.objects.all()
     serializer_class = serializers.EventUpdateSerializer
 
-    # def get_object(self, *args, **kwargs):
-    #     obj = super(EventUpdate, self).get_object(*args, **kwargs)
-    #     # Set serializer initial data to default values from the retrieved object
-    #     serializer = self.get_serializer(instance=obj, data={}, partial=True)
-    #     serializer.is_valid()
-    #     self.initial = serializer.validated_data
-    #     return obj
+    def get_serializer(self, *args, **kwargs):
+        data = {}
+        data['branch'] = []
+        data['organizer'] = []
+        for i in self.request.data:
+            if i.endswith('[]'):
+                data[i[:-2]] = self.request.data.getlist(i)
+            else:
+                data[i] = self.request.data.get(i)
+        kwargs['data'] = data
+        return super().get_serializer(*args, **kwargs)
+
+    
 
 
 @api_view(['GET'])

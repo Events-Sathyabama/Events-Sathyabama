@@ -15,7 +15,12 @@ const axios = new API.Axios();
 
 export default function Page(props: {params: {id: number}}) {
 	const router = useRouter();
-	const [owner, setOwner] = useState<InterfaceOrganizer[]>([]);
+	const [owner, setOwner] = useState<InterfaceOrganizer>({
+		name: '-',
+		college_id: '-',
+		role: '',
+		pk: -1,
+	});
 	const [setData, getData, getError, setError, sendData] = (() => {
 		const [title, setTitle] = useState<string>('');
 		const [clubName, setClubName] = useState<{name: string; inputValue?: string}>({
@@ -50,16 +55,18 @@ export default function Page(props: {params: {id: number}}) {
 
 		const sendData = () => {
 			const organizer = () => {
-				const rv: string[] = [];
+				const rv: number[] = [];
 				for (let i = 0; i < coordinator.length; i++) {
-					rv.push(String(coordinator[i].college_id));
+					if (owner.pk !== coordinator[i].pk) {
+						rv.push(coordinator[i].pk);
+					}
 				}
 				return rv;
 			};
 			const branch = () => {
-				const rv: string[] = [];
+				const rv: number[] = [];
 				for (let i = 0; i < branchName.length; i++) {
-					rv.push(String(branchName[i].pk));
+					rv.push(branchName[i].pk);
 				}
 				return rv;
 			};
@@ -77,29 +84,16 @@ export default function Page(props: {params: {id: number}}) {
 				time: duration,
 				branch: branch(),
 			};
-			const formData = new FormData();
-			// @ts-expect-error
-			if (coordinator.length > 1) formData.append('organizer', organizer());
-			// @ts-expect-error
-			if (typeof image !== 'string') formData.append('image', image);
-			if (title !== null || title !== '') formData.append('title', title);
-			if (shortDesc !== null || shortDesc !== '')
-				formData.append('short_description', shortDesc);
-			if (longDesc !== null || longDesc !== '')
-				formData.append('long_description', longDesc);
-			if (clubName !== null || clubName !== '')
-				formData.append('club', JSON.stringify(clubName));
-			if (venue !== null || venue !== '') formData.append('venue', venue);
-			if (startDate !== null || startDate !== '')
+			if (typeof image === 'string') delete data['image'];
+			for (let val in data) {
 				// @ts-expect-error
-				formData.append('start_date', startDate?.format('YYYY-MM-DD'));
-			if (endDate !== null || endDate !== '')
-				// @ts-expect-error
-				formData.append('end_date', endDate?.format('YYYY-MM-DD'));
-			if (date !== null || date !== '') formData.append('date', date);
-			if (duration !== null || duration !== '') formData.append('time', duration);
-			// @ts-expect-error
-			if (branchName.length > 0) formData.append('branch', branch());
+				const value = data[val];
+				if (value === null || value === '' || value === undefined) {
+					//@ts-expect-error
+					delete data[val];
+				}
+			}
+
 			return data;
 		};
 		const setData: {[x: string]: Function} = {
@@ -180,8 +174,9 @@ export default function Page(props: {params: {id: number}}) {
 			setData.date(data.date);
 			setData.time(data.time);
 			setData.venue(data.venue);
-			setData.organizer([...data.organizer, data.owner]);
-			setOwner([data.owner]);
+			setData.organizer([data.owner, ...data.organizer]);
+			console.log(data.owner);
+			setOwner(data.owner);
 		})();
 	}, []);
 
@@ -194,7 +189,7 @@ export default function Page(props: {params: {id: number}}) {
 					'Content-Type': 'multipart/form-data',
 				}
 			);
-			router.push(`details/${request.data.pk}`);
+			// router.push(`details/${request.data.pk}`);
 		} catch (error: any) {
 			console.error(error.response);
 			for (let field in setError) {

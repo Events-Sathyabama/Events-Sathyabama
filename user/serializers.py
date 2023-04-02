@@ -26,6 +26,7 @@ class OrganizerSerializer(serializers.Serializer):
     name = serializers.CharField(source='full_name')
     role = serializers.CharField(source='get_role_display')
     college_id = serializers.CharField()
+    pk = serializers.ReadOnlyField()
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
