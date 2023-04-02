@@ -2,7 +2,8 @@
 import Header from '../header';
 import Poster from '../poster';
 import Tabs from '../tabs';
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
+import useEffect from '../../useEffect';
 import API from '../../API';
 import Popup from '../../popup';
 import EventTime from '../venue';
@@ -10,9 +11,23 @@ import Fab from '@mui/material/Fab';
 import Link from 'next/link';
 import LoadingButton from '@mui/lab/LoadingButton';
 import ProgressBar from '../progressBar';
-import {InterfaceData} from '@/app/event/datainterface';
+import {InterfaceData, InterfaceOrganizer} from '@/app/event/datainterface';
 
 const axios = new API.Axios();
+
+const isUserFound = (
+	user: InterfaceOrganizer,
+	participant: InterfaceOrganizer[]
+) => {
+	console.log('isUserFound', user, participant);
+	for (let i = 0; i < participant.length; i++) {
+		if (participant[i].pk === user.pk) {
+			console.log('True');
+			return true;
+		}
+	}
+	return false;
+};
 
 export default function details(props: {params: {id: number}}) {
 	const [Spopup, setSpopup] = useState(false);
@@ -20,15 +35,10 @@ export default function details(props: {params: {id: number}}) {
 	const [appliedCount, setAppliedCount] = useState(0);
 	const [totalStrenth, setTotalStrenth] = useState(0);
 	const [popupMessage, setPopupMessage] = useState('');
-	function showSuccessPopup() {
-		setSpopup(true);
-	}
-
-	function showFailurePopup() {
-		setFpopup(true);
-	}
-
+	const [applied, setApplied] = useState(false);
+	const [loading, setLoading] = useState(false);
 	const [data, setData] = useState<InterfaceData>();
+	const [isOrganizer, setIsOrganizer] = useState(false);
 
 	useEffect(() => {
 		(async () => {
@@ -36,26 +46,15 @@ export default function details(props: {params: {id: number}}) {
 				API.get_url('event:detail', [props.params.id])
 			);
 			const data = request.data;
+			const user_detail = API.get_user_detail();
 			if (request.status == 200) {
 				setData(request.data);
 			}
-			const user_detail = API.get_user_detail();
-			const participant = data.applied_participant;
-			for (let i = 0; i < participant.length; i++) {
-				if (participant[0].pk === user_detail.pk) {
-					setApplied(true);
-				}
-			}
-			setAppliedCount(data.applied_participant.length);
-			setTotalStrenth(data.total_strength);
 		})();
 	}, []);
 
-	const [loading, setLoading] = useState(false);
-
-	async function handleClick() {
+	async function applyToEvent() {
 		setLoading(true);
-		setCalledByApply(true);
 		try {
 			const response = await axios.get(API.get_url('event:apply', props.params.id));
 			console.log(response);
@@ -82,9 +81,26 @@ export default function details(props: {params: {id: number}}) {
 		// setTimeout(() => {
 		// }, 4000);
 	}
-	const [calledByApply, setCalledByApply] = useState(false);
-	const [applied, setApplied] = useState(false);
-
+	const applyButton = (
+		<>
+			{applied ? (
+				<p className="w-full border border-green-500 p-2 rounded-md text-center shadow-lg text-white bg-green-600 transition-all duration-1000">
+					APPLIED
+				</p>
+			) : (
+				<LoadingButton
+					loadingIndicator="Applying…"
+					variant="contained"
+					className="w-full"
+					onClick={applyToEvent}
+					loading={loading}
+					size="large"
+					style={!loading ? {backgroundColor: '#1565c0'} : {}}>
+					<span>Apply for Event</span>
+				</LoadingButton>
+			)}
+		</>
+	);
 	return (
 		<div className="flex flex-col w-full h-auto items-center justify-center">
 			<div className="flex flex-col w-full items-end">
@@ -139,22 +155,7 @@ export default function details(props: {params: {id: number}}) {
 									<ProgressBar
 										registeredStudents={appliedCount}
 										totalCapacity={totalStrenth}></ProgressBar>
-									{applied ? (
-										<p className="w-full border border-green-500 p-2 rounded-md text-center shadow-lg text-white bg-green-600 transition-all duration-1000">
-											APPLIED
-										</p>
-									) : (
-										<LoadingButton
-											loadingIndicator="Applying…"
-											variant="contained"
-											className="w-full"
-											onClick={handleClick}
-											loading={loading}
-											size="large"
-											style={!loading ? {backgroundColor: '#1565c0'} : {}}>
-											<span>Apply for Event</span>
-										</LoadingButton>
-									)}
+									{!isOrganizer ? applyButton : <></>}
 								</>
 							) : (
 								<></>
@@ -174,37 +175,44 @@ export default function details(props: {params: {id: number}}) {
 								}
 								return rv;
 							})()}
-							showSuccessPopup={showSuccessPopup}
-							showFailurePopup={showFailurePopup}
+							showSuccessPopup={() => setSpopup(true)}
+							showFailurePopup={() => setFpopup(true)}
+							isOrganizer={isOrganizer}
+							appliedParticipant={data?.applied_participant || []}
+							acceptedParticipant={data?.accepted_participant || []}
 						/>
 					</div>
-					<Link href={`/event/update/${props.params.id}`}>
-						<Fab
-							color="primary"
-							aria-label="edit"
-							sx={{
-								position: 'fixed',
-								right: '1.5rem',
-								bottom: '1.5rem',
-								height: '4rem',
-								width: '4rem',
-							}}
-							style={{backgroundColor: '#1565c0'}}>
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								fill="none"
-								viewBox="0 0 24 24"
-								strokeWidth={1.5}
-								stroke="currentColor"
-								className="w-6 h-6">
-								<path
-									strokeLinecap="round"
-									strokeLinejoin="round"
-									d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125"
-								/>
-							</svg>
-						</Fab>
-					</Link>
+					{isOrganizer ? (
+						<Link href={`/event/update/${props.params.id}`}>
+							<Fab
+								color="primary"
+								aria-label="edit"
+								sx={{
+									position: 'fixed',
+									right: '1.5rem',
+									bottom: '1.5rem',
+									height: '4rem',
+									width: '4rem',
+								}}
+								style={{backgroundColor: '#1565c0'}}>
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									fill="none"
+									viewBox="0 0 24 24"
+									strokeWidth={1.5}
+									stroke="currentColor"
+									className="w-6 h-6">
+									<path
+										strokeLinecap="round"
+										strokeLinejoin="round"
+										d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125"
+									/>
+								</svg>
+							</Fab>
+						</Link>
+					) : (
+						<></>
+					)}
 				</div>
 			</div>
 		</div>

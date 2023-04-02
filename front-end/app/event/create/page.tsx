@@ -1,6 +1,6 @@
 'use client';
 import Create from '../create';
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 import {useRouter} from 'next/navigation';
 import API from '../../API';
 import {Dayjs} from 'dayjs';
@@ -11,6 +11,7 @@ import {
 	InterfaceError,
 	InterfaceOrganizer,
 } from '../datainterface';
+import useEffect from '@/app/useEffect';
 
 const axios = new API.Axios();
 

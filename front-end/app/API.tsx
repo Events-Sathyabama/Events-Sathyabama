@@ -189,13 +189,10 @@ const user_detail = () => {
 		const access = window.localStorage.getItem('access');
 		if (access !== null) {
 			return {
-				pk: parseJwt(access).user_id,
-				college_id: localStorage.getItem('id'),
-				role: {
-					name: localStorage.getItem('role_name'),
-					code: localStorage.getItem('role_code'),
-				},
 				name: localStorage.getItem('name'),
+				college_id: localStorage.getItem('id'),
+				role: localStorage.getItem('role_name'),
+				pk: parseJwt(access).user_id,
 			};
 		}
 		return undefined;

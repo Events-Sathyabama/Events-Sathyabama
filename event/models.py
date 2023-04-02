@@ -70,7 +70,12 @@ class Event(models.Model):
     #     for participant in self.accepted_participant.all():
     #         if not self.applied_participant.filter(pk=participant.pk).exists():
     #             raise ValidationError(f"{participant.full_name} ({participant.college_id}) is not in the applied participant List")
-        
+    
+    def is_organizer(self, user):
+        if user == self.owner or self.organizer.filter(pk=user.pk).exists():
+            return True
+        return False
+
     def is_eligible_to_apply(self, user):
         if user.role not in self.accepted_role:
             self.eligible_message = f"{user.get_role_display()} can't apply to this Event"

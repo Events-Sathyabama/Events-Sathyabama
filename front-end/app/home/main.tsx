@@ -1,6 +1,6 @@
 'use client';
 import HomeCard from './card';
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 import API from '../API';
 import CircularProgress from '@mui/material/CircularProgress';
 import Page from './pagination';
@@ -8,6 +8,7 @@ import TextField from '@mui/material/TextField';
 const axios = new API.Axios();
 import InputAdornment from '@mui/material/InputAdornment';
 import Image from 'next/image';
+import useEffect from '../useEffect';
 
 export default function Main(props: {url: string; heading: string}) {
 	let abc: {
@@ -119,7 +120,11 @@ export default function Main(props: {url: string; heading: string}) {
 							))
 						) : (
 							<div className="flex flex-col justify-center items-center w-96 h-[58vh]">
-								<Image src="/eventsNotFound.svg" width={500} height={500} alt=""></Image>
+								<Image
+									src="/eventsNotFound.svg"
+									width={500}
+									height={500}
+									alt=""></Image>
 								<p className="text-2xl font-light text-blue-400 mt-4">
 									No events found!!
 								</p>

@@ -1,6 +1,6 @@
 'use client';
 import Link from 'next/link';
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 import LoginForm from './loginForm';
 import LandingNav from './landingNav';
 import Footer from './footer';
@@ -8,6 +8,7 @@ import PopUp from './popup';
 import API from './API';
 import {useRouter} from 'next/navigation';
 import WebBackdrop from './backdrop';
+import useEffect from './useEffect';
 
 export default function LoginPage(): JSX.Element {
 	const [loading, setLoading] = useState(true);

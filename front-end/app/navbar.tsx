@@ -1,9 +1,10 @@
 'use client';
-import {Fragment, useState, useEffect} from 'react';
+import {Fragment, useState} from 'react';
 import {Disclosure, Menu, Transition} from '@headlessui/react';
 import {Bars3Icon, XMarkIcon} from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import {usePathname, useRouter} from 'next/navigation';
+import useEffect from './useEffect';
 
 function classNames(...classes: any) {
 	return classes.filter(Boolean).join(' ');

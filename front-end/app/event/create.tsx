@@ -19,6 +19,7 @@ import {
 	InterfaceData,
 	InterfaceError,
 } from './datainterface';
+import useEffect from '../useEffect';
 
 import dayjs, {Dayjs} from 'dayjs';
 const axios = new API.Axios();
@@ -47,7 +48,7 @@ export default function Create(props: {
 	const [coordinatorList, setCoordinatorList] = useState([]);
 
 	// API calls starts
-	React.useEffect(() => {
+	useEffect(() => {
 		(async () => {
 			const request = await axios.get(API.get_url('event:club_branch'));
 			console.log(request.data);

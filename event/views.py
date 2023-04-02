@@ -45,7 +45,14 @@ class EventDetail(generics.RetrieveAPIView):
             'organizer', 'accepted_participant').get(id=event_id)
         return event_obj
 
-    serializer_class = serializers.EventDetailSerializer
+    def get_serializer_class(self):
+        event = self.get_object()
+        if event.is_organizer(self.request.user):
+            return serializers.EventDetailSerializerOrganizer
+        else:
+            return serializers.EventDetailSerializerStudent
+            
+    # serializer_class = serializers.EventDetailSerializer
 
 
 class EventCreate(generics.CreateAPIView):

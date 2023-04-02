@@ -7,6 +7,7 @@ import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
 import Coordinators from './coordinators';
 import Applications from './applications';
+import {InterfaceOrganizer} from '../event/datainterface';
 
 // TODO Fetch Coordinators in this way
 const coordinators = [
@@ -36,6 +37,9 @@ export default function Tabs(props: {
 	coordinator: {name: string; role: string; college_id: string}[];
 	showSuccessPopup: Function;
 	showFailurePopup: Function;
+	isOrganizer: boolean;
+	appliedParticipant: InterfaceOrganizer[];
+	acceptedParticipant: InterfaceOrganizer[];
 }) {
 	const [value, setValue] = React.useState('1');
 
@@ -94,41 +98,49 @@ export default function Tabs(props: {
 							value="2"
 							sx={{textTransform: 'none', fontSize: '1.25rem'}}
 						/>
-						<Tab
-							label={
-								<div className="flex flex-col justify-center items-center">
-									<svg
-										xmlns="http://www.w3.org/2000/svg"
-										fill="none"
-										viewBox="0 0 24 24"
-										strokeWidth={1.5}
-										stroke="currentColor"
-										className="w-6 h-6">
-										<path
-											strokeLinecap="round"
-											strokeLinejoin="round"
-											d="M8.25 7.5V6.108c0-1.135.845-2.098 1.976-2.192.373-.03.748-.057 1.123-.08M15.75 18H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08M15.75 18.75v-1.875a3.375 3.375 0 00-3.375-3.375h-1.5a1.125 1.125 0 01-1.125-1.125v-1.5A3.375 3.375 0 006.375 7.5H5.25m11.9-3.664A2.251 2.251 0 0015 2.25h-1.5a2.251 2.251 0 00-2.15 1.586m5.8 0c.065.21.1.433.1.664v.75h-6V4.5c0-.231.035-.454.1-.664M6.75 7.5H4.875c-.621 0-1.125.504-1.125 1.125v12c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V16.5a9 9 0 00-9-9z"
-										/>
-									</svg>
-									<h1 className="text-lg">Applications</h1>
-								</div>
-							}
-							value="3"
-							sx={{textTransform: 'none', fontSize: '1.25rem'}}
-						/>
+						{props.isOrganizer ? (
+							<Tab
+								label={
+									<div className="flex flex-col justify-center items-center">
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											fill="none"
+											viewBox="0 0 24 24"
+											strokeWidth={1.5}
+											stroke="currentColor"
+											className="w-6 h-6">
+											<path
+												strokeLinecap="round"
+												strokeLinejoin="round"
+												d="M8.25 7.5V6.108c0-1.135.845-2.098 1.976-2.192.373-.03.748-.057 1.123-.08M15.75 18H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08M15.75 18.75v-1.875a3.375 3.375 0 00-3.375-3.375h-1.5a1.125 1.125 0 01-1.125-1.125v-1.5A3.375 3.375 0 006.375 7.5H5.25m11.9-3.664A2.251 2.251 0 0015 2.25h-1.5a2.251 2.251 0 00-2.15 1.586m5.8 0c.065.21.1.433.1.664v.75h-6V4.5c0-.231.035-.454.1-.664M6.75 7.5H4.875c-.621 0-1.125.504-1.125 1.125v12c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V16.5a9 9 0 00-9-9z"
+											/>
+										</svg>
+										<h1 className="text-lg">Applications</h1>
+									</div>
+								}
+								value="3"
+								sx={{textTransform: 'none', fontSize: '1.25rem'}}
+							/>
+						) : (
+							<></>
+						)}
 					</TabList>
 				</Box>
 				<TabPanel value="1">{props.long_desc}</TabPanel>
 				<TabPanel value="2">
 					<Coordinators coordinators={props.coordinator}></Coordinators>
 				</TabPanel>
-				<TabPanel value="3">
-					<Applications
-						applications={dummyApplications}
-						showSuccessPopup={props.showSuccessPopup}
-						showFailurePopup={props.showFailurePopup}
-					/>
-				</TabPanel>
+				{props.isOrganizer ? (
+					<TabPanel value="3">
+						<Applications
+							applications={dummyApplications}
+							showSuccessPopup={props.showSuccessPopup}
+							showFailurePopup={props.showFailurePopup}
+						/>
+					</TabPanel>
+				) : (
+					<></>
+				)}
 			</TabContext>
 		</Box>
 	);
