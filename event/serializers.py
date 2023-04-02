@@ -32,6 +32,9 @@ class EventCardSerializer(serializers.ModelSerializer):
 
 
 class EventDetailSerializer(serializers.ModelSerializer):
+
+    ROLE_CHOICES = dict(Event.ROLE_CHOICES)
+
     date = serializers.SerializerMethodField()
     long_description = serializers.SerializerMethodField()
     organizer = user_serializer.OrganizerSerializer(many=True)
@@ -39,6 +42,9 @@ class EventDetailSerializer(serializers.ModelSerializer):
     owner = user_serializer.OrganizerSerializer()
     approval_message = serializers.SerializerMethodField()
     status = serializers.CharField(source="get_status_display")
+    accepted_participant = user_serializer.OrganizerSerializer(many=True)
+    applied_participant = user_serializer.OrganizerSerializer(many=True)
+    accepted_role = serializers.SerializerMethodField()
     class Meta:
         model = Event
         fields = [
@@ -59,7 +65,7 @@ class EventDetailSerializer(serializers.ModelSerializer):
             'accepted_participant',
             'applied_participant',
             'fcfs',
-
+            'accepted_role',
             'status',
             'hod_verified',
             'dean_verified',
@@ -72,6 +78,12 @@ class EventDetailSerializer(serializers.ModelSerializer):
         if obj.messages is None:
             return []
         return obj.messages
+    def get_accepted_role(self, obj):
+        rv = []
+        for role in obj.accepted_role:
+            if role in self.ROLE_CHOICES:
+                rv.append(self.ROLE_CHOICES[role])
+        return rv
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)

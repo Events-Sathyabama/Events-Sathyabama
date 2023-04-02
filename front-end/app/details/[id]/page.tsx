@@ -17,7 +17,9 @@ const axios = new API.Axios();
 export default function details(props: {params: {id: number}}) {
 	const [Spopup, setSpopup] = useState(false);
 	const [Fpopup, setFpopup] = useState(false);
-
+	const [appliedCount, setAppliedCount] = useState(0);
+	const [totalStrenth, setTotalStrenth] = useState(0);
+	const [popupMessage, setPopupMessage] = useState('');
 	function showSuccessPopup() {
 		setSpopup(true);
 	}
@@ -33,27 +35,51 @@ export default function details(props: {params: {id: number}}) {
 			const request = await axios.get(
 				API.get_url('event:detail', [props.params.id])
 			);
+			const data = request.data;
 			if (request.status == 200) {
 				setData(request.data);
 			}
+			const user_detail = API.get_user_detail();
+			const participant = data.applied_participant;
+			for (let i = 0; i < participant.length; i++) {
+				if (participant[0].pk === user_detail.pk) {
+					setApplied(true);
+				}
+			}
+			setAppliedCount(data.applied_participant.length);
+			setTotalStrenth(data.total_strength);
 		})();
 	}, []);
 
 	const [loading, setLoading] = useState(false);
 
-	function handleClick() {
+	async function handleClick() {
 		setLoading(true);
 		setCalledByApply(true);
-		//if success
-		setTimeout(() => {
-			setApplied(true);
+		try {
+			const response = await axios.get(API.get_url('event:apply', props.params.id));
+			console.log(response);
+			setPopupMessage(response.data.message);
 			setSpopup(true);
-		}, 4000);
+			setAppliedCount((prev) => prev + 1);
+			setApplied(true);
+		} catch (err: any) {
+			console.log(err);
+			if (err.response) {
+				if (err.response.data.message !== undefined) {
+					setPopupMessage(err.response.data.message);
+				} else {
+					setPopupMessage('Something went Wrong!!');
+				}
+			} else {
+				setPopupMessage(err.message);
+			}
+			setFpopup(true);
+			setLoading(false);
+		}
 
 		//if failure
 		// setTimeout(() => {
-		// 	setFpopup(true);
-		// 	setLoading(false);
 		// }, 4000);
 	}
 	const [calledByApply, setCalledByApply] = useState(false);
@@ -65,20 +91,10 @@ export default function details(props: {params: {id: number}}) {
 				{Spopup ? (
 					<Popup.Success
 						showpopup={setSpopup}
-						message={
-							calledByApply
-								? 'Event Application Successful!'
-								: 'Applications updated!'
-						}></Popup.Success>
+						message={popupMessage}></Popup.Success>
 				) : null}
 				{Fpopup ? (
-					<Popup.Error
-						showpopup={setFpopup}
-						message={
-							calledByApply
-								? 'Event Application Unsuccessful, try again!'
-								: 'Applications not updated!'
-						}></Popup.Error>
+					<Popup.Error showpopup={setFpopup} message={popupMessage}></Popup.Error>
 				) : null}
 			</div>
 			<div className="flex flex-col w-11/12 h-auto">
@@ -111,27 +127,37 @@ export default function details(props: {params: {id: number}}) {
 									<p className="text-2xl text-black font-medium">
 										Application Counts:
 									</p>
-									<p className="text-2xl text-black font-light">100/190</p>
+									<p className="text-2xl text-black font-light">
+										{totalStrenth === 0
+											? 'Total Strength have not been set yet'
+											: `${appliedCount}/${totalStrenth}`}
+									</p>
 								</div>
 							</div>
-							<ProgressBar
-								registeredStudents={100}
-								totalCapacity={190}></ProgressBar>
-							{applied ? (
-								<p className="w-full border border-green-500 p-2 rounded-md text-center shadow-lg text-white bg-green-600 transition-all duration-1000">
-									APPLIED
-								</p>
+							{totalStrenth !== 0 ? (
+								<>
+									<ProgressBar
+										registeredStudents={appliedCount}
+										totalCapacity={totalStrenth}></ProgressBar>
+									{applied ? (
+										<p className="w-full border border-green-500 p-2 rounded-md text-center shadow-lg text-white bg-green-600 transition-all duration-1000">
+											APPLIED
+										</p>
+									) : (
+										<LoadingButton
+											loadingIndicator="Applying…"
+											variant="contained"
+											className="w-full"
+											onClick={handleClick}
+											loading={loading}
+											size="large"
+											style={!loading ? {backgroundColor: '#1565c0'} : {}}>
+											<span>Apply for Event</span>
+										</LoadingButton>
+									)}
+								</>
 							) : (
-								<LoadingButton
-									loadingIndicator="Applying…"
-									variant="contained"
-									className="w-full"
-									onClick={handleClick}
-									loading={loading}
-									size="large"
-									style={!loading ? {backgroundColor: '#1565c0'} : {}}>
-									<span>Apply for Event</span>
-								</LoadingButton>
+								<></>
 							)}
 						</div>
 						<EventTime

@@ -184,11 +184,30 @@ const is_logged_in = () => {
 	return parseInt(refresh.exp) >= parseInt(String(new Date().getTime() / 1000));
 };
 
+const user_detail = () => {
+	if (typeof window !== undefined) {
+		const access = window.localStorage.getItem('access');
+		if (access !== null) {
+			return {
+				pk: parseJwt(access).user_id,
+				college_id: localStorage.getItem('id'),
+				role: {
+					name: localStorage.getItem('role_name'),
+					code: localStorage.getItem('role_code'),
+				},
+				name: localStorage.getItem('name'),
+			};
+		}
+		return undefined;
+	}
+};
+
 const API: {[key: string]: any} = {
 	Axios: AxiosInstance,
 	jwt: parseJwt,
 	get_url: get_url,
 	is_logged_in: is_logged_in,
+	get_user_detail: user_detail,
 };
 
 const url: {[key: string]: Function} = {
@@ -221,6 +240,9 @@ const url: {[key: string]: Function} = {
 	},
 	'event:update': (id: Number) => {
 		return `event/update/${id}/`;
+	},
+	'event:apply': (id: Number) => {
+		return `event/apply/${id}/`;
 	},
 	'user:organizer': () => {
 		return 'user/organizer/';

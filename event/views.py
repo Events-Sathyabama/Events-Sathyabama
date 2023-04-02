@@ -10,6 +10,7 @@ from rest_framework.decorators import api_view
 from .mixins import SearchQueryMixins
 from django.db.models import Q
 from django.core.exceptions import ValidationError
+from django.shortcuts import get_object_or_404
 
 
 class CompletedEventList(SearchQueryMixins, generics.ListAPIView):
@@ -84,8 +85,22 @@ class EventUpdate(generics.UpdateAPIView):
         kwargs['data'] = data
         return super().get_serializer(*args, **kwargs)
 
-    
-
+@api_view(['GET'])    
+def apply_event(request, pk):
+    response = Response({'message': 'Event Application Successfull!!'})
+    try:
+        event = Event.objects.get(pk=pk)
+        if event.is_eligible_to_apply(user=request.user):
+            event.applied_participant.add(request.user)
+            response.status_code = 200
+        else:
+            response.status_code = 403
+            response.data['message'] = event.eligible_message
+    except:
+        response = Response()
+        response.status_code = 404
+        response.data['message'] = 'No Event Found!!'
+    return response
 
 @api_view(['GET'])
 def club_branch(request):
