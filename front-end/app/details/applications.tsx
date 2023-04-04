@@ -53,13 +53,13 @@ export default function Applications(props: ApplicationProps) {
 			{updatedApplications.map((applicant, index) => (
 				<div
 					key={index}
-					className="flex flex-row justify-between items-center mt-3 border-0 border-b pb-2">
-					<h1 className="text-xl p-2">{applicant.name}</h1>
+					className="flex flex-row w-full justify-between items-center mt-3 border-0 border-b pb-2">
+					<h1 className="text-xl p-2 w-9/12 mr-2">{applicant.name}</h1>
 					{applicant.status === 0 && (
-						<div className="flex flex-row gap-2">
+						<div className="flex flex-row gap-2 w-56 justify-end">
 							<Button
 								variant="outlined"
-								color='success'
+								color="success"
 								onClick={() => handleAccept(index)}>
 								Accept
 							</Button>
@@ -71,8 +71,17 @@ export default function Applications(props: ApplicationProps) {
 							</Button>
 						</div>
 					)}
-					{applicant.status === 1 && <p className="text-green-700">Accepted</p>}
-					{applicant.status === -1 && <p className="text-red-500">Denied</p>}
+					{applicant.status === 1 && (
+						<div className="flex flex-row gap-2 w-56 justify-end">
+							{' '}
+							<p className="text-green-700">Accepted</p>
+						</div>
+					)}
+					{applicant.status === -1 && (
+						<div className="flex flex-row gap-2 w-56 justify-end">
+							<p className="text-red-500">Denied</p>
+						</div>
+					)}
 				</div>
 			))}
 			<div className="flex flex-col w-full justify-center items-center mt-4 gap-4">

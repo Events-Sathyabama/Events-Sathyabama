@@ -33,6 +33,12 @@ export default function Main(props: {url: string; heading: string}) {
 	const [totalPage, setTotalPage] = useState(1);
 	const [search, setSearch] = useState('');
 
+	const [showSearch, setShowSearch] = useState(false);
+
+	useEffect(() => {
+		setShowSearch(true);
+	}, []);
+
 	// BUG Optimize the use effect
 	useEffect(() => {
 		setIsLoading(true); //FIXME why the loading screen not comming when next page is clicked?
@@ -66,38 +72,44 @@ export default function Main(props: {url: string; heading: string}) {
 
 	return (
 		<div className="flex flex-col w-full h-full items-center gap-3">
-			<h1 className="text-2xl text-center underline mt-3">{props.heading}</h1>
-			<div className="p-3 w-11/12 md:w-1/2 rounded-xl">
-				<TextField
-					autoComplete="off"
-					onChange={(e) => setSearch(e.target.value)}
-					label="Search for events by name, club, branch, or description."
-					value={search}
-					placeholder="Start typing..."
-					size="medium"
-					className="w-full"
-					InputProps={{
-						startAdornment: (
-							<InputAdornment position="start">
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									fill="none"
-									viewBox="0 0 24 24"
-									strokeWidth={1.5}
-									stroke="currentColor"
-									className="w-6 h-6">
-									<path
-										strokeLinecap="round"
-										strokeLinejoin="round"
-										d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
-									/>
-								</svg>
-							</InputAdornment>
-						),
-					}}
-					variant="standard"
-				/>
-			</div>
+			<h1 className="text-2xl text-center mt-3 underline animateFadeIn">{props.heading}</h1>
+			{showSearch ? (
+				<div className="p-3 w-11/12 md:w-1/2 rounded-xl animateFadeIn">
+					<TextField
+						autoComplete="off"
+						onChange={(e) => setSearch(e.target.value)}
+						label="Search for events by name, club, branch, or description."
+						value={search}
+						placeholder="Start typing..."
+						size="medium"
+						className="w-full"
+						InputProps={{
+							startAdornment: (
+								<InputAdornment position="start">
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										fill="none"
+										viewBox="0 0 24 24"
+										strokeWidth={1.5}
+										stroke="currentColor"
+										className="w-6 h-6">
+										<path
+											strokeLinecap="round"
+											strokeLinejoin="round"
+											d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
+										/>
+									</svg>
+								</InputAdornment>
+							),
+						}}
+						variant="standard"
+					/>
+				</div>
+			) : (
+				<div className="p-3 w-11/12 md:w-1/2 rounded-xl animateFadeIn">
+					<div className="h-12 animate-pulse bg-gray-100 rounded-xl w-full mb-4"></div>
+				</div>
+			)}
 			{data.length != 0 && (isLoading || data[0].pk === '') ? (
 				<div className="flex flex-col justify-center items-center w-full min-h-[65vh]">
 					<CircularProgress />
@@ -118,9 +130,13 @@ export default function Main(props: {url: string; heading: string}) {
 								/>
 							))
 						) : (
-							<div className="flex flex-col justify-center items-center w-96 h-[58vh]">
-								<Image src="/eventsNotFound.svg" width={500} height={500} alt=""></Image>
-								<p className="text-2xl font-light text-blue-400 mt-4">
+							<div className="flex flex-col justify-center items-center w-full h-[58vh] animateFadeIn">
+								<Image
+									src="/eventsNotFound.avif"
+									width={500}
+									height={500}
+									alt=""></Image>
+								<p className="text-2xl font-light text-[#60adf5] mt-4">
 									No events found!!
 								</p>
 							</div>
