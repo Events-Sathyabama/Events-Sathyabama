@@ -1,10 +1,10 @@
 import ImageLoader from '../loader';
-export default function Poster(props: {image: string | undefined}) {
+export default function Poster(props: {image: string | undefined | File}) {
 	return (
 		<ImageLoader
 			component="img"
 			className="h-[60vh] w-full sm:pt-2 sm:max-w-xs object-fill rounded-md shadow-md"
-			src={props.image || ''}
+			src={typeof props.image === 'string' ? props.image : ''}
 			alt="Event Poster">
 			<div className="flex items-center h-[60vh] w-full rounded-md shadow-md border border-gray-300 p-2 animate-pulse">
 				{' '}

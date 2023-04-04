@@ -37,6 +37,8 @@ class EventDetailSerializer(serializers.ModelSerializer):
     organizer = user_serializer.OrganizerSerializer(many=True)
     branch = user_serializer.BranchSerializer(many=True)
     owner = user_serializer.OrganizerSerializer()
+    approval_message = serializers.SerializerMethodField()
+    status = serializers.CharField(source="get_status_display")
     class Meta:
         model = Event
         fields = [
@@ -54,9 +56,30 @@ class EventDetailSerializer(serializers.ModelSerializer):
             'branch',
             'start_date',
             'end_date',
-            'participant',
+            'accepted_participant',
+            'applied_participant',
+            'fcfs',
+
+            'status',
+            'hod_verified',
+            'dean_verified',
+            'vc_verified',
+            'approval_message',
+            'total_strength',
         ]
     
+    def get_approval_message(self, obj):
+        if obj.messages is None:
+            return []
+        return obj.messages
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        owner_id = representation.get('owner').get('college_id')
+        organizers = representation.get('organizer')
+        representation['organizer'] = [i for i in organizers if i.get('college_id') != owner_id]
+        return representation
+
     def get_long_description(self, obj):
         if obj.long_description == '':
             return obj.short_description
@@ -98,28 +121,8 @@ class EventCreateSerializer(serializers.ModelSerializer):
         return value
     
 
-class EventUpdateSerializer(serializers.ModelSerializer):
-    pk = serializers.ReadOnlyField()
-    organizer = serializers.ListField(child=serializers.IntegerField())
-    branch = serializers.ListField(child=serializers.IntegerField())
-    class Meta:
-        model = Event
-        fields = [
-            'pk',
-            'organizer',
-            'image',
-            'title',
-            'short_description',
-            'long_description',
-            'club',
-            'venue',
-            'start_date',
-            'end_date',
-            'date',
-            'time',
-            'branch',
-        ]
-        
+class EventUpdateSerializer(EventCreateSerializer):
+    pass        
 
 
 

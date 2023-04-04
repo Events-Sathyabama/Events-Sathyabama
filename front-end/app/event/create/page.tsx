@@ -16,7 +16,12 @@ const axios = new API.Axios();
 
 export default function Page() {
 	const router = useRouter();
-	const [owner, setOwner] = useState<InterfaceOrganizer[]>([]);
+	const [owner, setOwner] = useState<InterfaceOrganizer>({
+		name: '-',
+		college_id: '-',
+		role: '',
+		pk: -1,
+	});
 	const [setData, getData, getError, setError, sendData] = (() => {
 		const [title, setTitle] = useState<string>();
 		const [clubName, setClubName] = useState<InterfaceClub>();
@@ -52,7 +57,7 @@ export default function Page() {
 			const organizer = () => {
 				const rv = [];
 				for (let i = 0; i < coordinator.length; i++) {
-					if (coordinator[i].college_id !== owner[0].college_id) {
+					if (coordinator[i].college_id !== owner.college_id) {
 						rv.push(String(coordinator[i].college_id));
 					}
 				}
@@ -182,8 +187,9 @@ export default function Page() {
 			name: localStorage.getItem('name') || '',
 			college_id: localStorage.getItem('id') || '',
 			role: localStorage.getItem('role_name') || '',
+			pk: API.jwt(localStorage.getItem('access')).user_id || -1,
 		};
-		setOwner([obj]);
+		setOwner(obj);
 		setData.organizer([obj]);
 	}, []);
 

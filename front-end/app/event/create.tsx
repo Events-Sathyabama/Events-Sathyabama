@@ -326,13 +326,12 @@ export default function Create(props: {
 							onChange={(event, newValue) => {
 								organizerSelected.clear();
 								setData.organizer([
-									...getData.owner,
+									getData.owner,
 									...newValue.filter((option) => {
 										organizerSelected.add(option.college_id);
-										return getData.owner.indexOf(option) === -1;
+										return getData.owner.college_id !== option.college_id;
 									}),
 								]);
-								console.log(organizerSelected);
 							}}
 							options={(() => {
 								return coordinatorList.filter((options) => {
@@ -346,7 +345,7 @@ export default function Create(props: {
 									<Chip
 										label={option.name + ' - ' + option.college_id}
 										{...getTagProps({index})}
-										disabled={getData.owner.indexOf(option) !== -1}
+										disabled={getData.owner.college_id === option.college_id}
 									/>
 								))
 							}
