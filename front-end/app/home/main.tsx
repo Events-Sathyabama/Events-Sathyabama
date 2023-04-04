@@ -9,16 +9,10 @@ const axios = new API.Axios();
 import InputAdornment from '@mui/material/InputAdornment';
 import Image from 'next/image';
 import useEffect from '../useEffect';
+import ApiLoader from '../apiLoader';
+import handleError from '../handleError';
 
 export default function Main(props: {url: string; heading: string}) {
-	let abc: {
-		pk: string;
-		title: string;
-		club: string;
-		image: string;
-		short_description: string;
-		date: string;
-	}[] = [];
 	const [data, setData] = useState([
 		{
 			pk: '',
@@ -29,54 +23,70 @@ export default function Main(props: {url: string; heading: string}) {
 			date: '',
 		},
 	]);
-	const [isLoading, setIsLoading] = useState(true);
 	const [pageNo, setPageNo] = useState(1);
 	const [totalPage, setTotalPage] = useState(1);
 	const [search, setSearch] = useState('');
+	const [Loader, setLoader] = useState(0);
 
-	// BUG Optimize the use effect
-	useEffect(() => {
-		setIsLoading(true); //FIXME why the loading screen not comming when next page is clicked?
-		(async () => {
-			if (pageNo > totalPage) {
-				return;
-			}
-			(async () => {
-				try {
-					const request = await axios.get(API.get_url(props.url), {
-						page: pageNo,
-						q: search,
-					});
-					if (request.status === 200) {
-						if (!request.data.hasOwnProperty('results')) {
-							setPageNo(1);
-							return;
+	useEffect(
+		() => {
+			let query: number;
+			const queryPromise = new Promise((resolve, reject) => {
+				query = window.setTimeout(async () => {
+					try {
+						const response = await axios.get(API.get_url(props.url), {
+							page: pageNo,
+							q: search,
+						});
+						console.log('query: ', search, response);
+						if (response.status === 200) {
+							if (!response.data.hasOwnProperty('results')) {
+								setPageNo(1);
+								return;
+							}
+							setTotalPage(response.data.total_pages);
+							setData(response.data.results);
+							if (response.data.count === 0) {
+								setLoader(404);
+							} else {
+								setLoader(200);
+							}
+						} else {
+							setLoader(response.status);
 						}
-						setTotalPage(request.data.total_pages);
-						setData(request.data.results);
-					}
-				} catch (err: any) {
-					if (err.response.status === 404) {
+						resolve(response);
+					} catch (err) {
 						setPageNo(1);
+						reject(err);
 					}
-				}
-			})();
-			setIsLoading(false);
-		})();
-	}, [pageNo, search]);
+				}, 500);
+			});
+			return [
+				queryPromise,
+				() => {
+					console.log('cleanup: ', query);
+					window.clearInterval(query);
+				},
+			];
+		},
+		[pageNo, search],
+		setLoader
+	);
 
 	return (
 		<div className="flex flex-col w-full h-full items-center gap-3">
-			<h1 className="text-2xl text-center underline mt-3">{props.heading}</h1>
+			<h1 className="text-2xl text-center underline mt-3 z-30">{props.heading}</h1>
 			<div className="p-3 w-11/12 md:w-1/2 rounded-xl">
 				<TextField
 					autoComplete="off"
-					onChange={(e) => setSearch(e.target.value)}
+					onChange={(e) => {
+						setSearch(e.target.value);
+					}}
 					label="Search for events by name, club, branch, or description."
 					value={search}
 					placeholder="Start typing..."
 					size="medium"
-					className="w-full"
+					className="w-full z-30" // made z-index greater than 20 to show above loading screen
 					InputProps={{
 						startAdornment: (
 							<InputAdornment position="start">
@@ -99,41 +109,23 @@ export default function Main(props: {url: string; heading: string}) {
 					variant="standard"
 				/>
 			</div>
-			{data.length != 0 && (isLoading || data[0].pk === '') ? (
-				<div className="flex flex-col justify-center items-center w-full min-h-[65vh]">
-					<CircularProgress />
+			{<ApiLoader state={Loader} message={'Event Not Found'} />}
+			<div className="flex justify-center flex-col items-center gap-4">
+				<div className="flex flex-row flex-wrap m-3 justify-center gap-3">
+					{data.map((card) => (
+						<HomeCard
+							key={card.pk}
+							title={card.title}
+							subheader={card.club}
+							imageUrl={card.image}
+							description={card.short_description}
+							date={card.date}
+							learnMoreLink={'/details/' + card.pk}
+						/>
+					))}
 				</div>
-			) : (
-				<div className="flex justify-center flex-col items-center gap-4">
-					<div className="flex flex-row flex-wrap m-3 justify-center gap-3">
-						{data.length !== 0 && data[0].pk != '' ? (
-							data.map((card) => (
-								<HomeCard
-									key={card.pk}
-									title={card.title}
-									subheader={card.club}
-									imageUrl={card.image}
-									description={card.short_description}
-									date={card.date}
-									learnMoreLink={'/details/' + card.pk}
-								/>
-							))
-						) : (
-							<div className="flex flex-col justify-center items-center w-96 h-[58vh]">
-								<Image
-									src="/eventsNotFound.svg"
-									width={500}
-									height={500}
-									alt=""></Image>
-								<p className="text-2xl font-light text-blue-400 mt-4">
-									No events found!!
-								</p>
-							</div>
-						)}
-					</div>
-					<Page totalPage={totalPage} pageNo={pageNo} setPageNo={setPageNo} />
-				</div>
-			)}
+				<Page totalPage={totalPage} pageNo={pageNo} setPageNo={setPageNo} />
+			</div>
 		</div>
 	);
 }

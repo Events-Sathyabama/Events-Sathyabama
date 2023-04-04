@@ -32,6 +32,8 @@ const dummyApplications = [
 	},
 ];
 
+// BUG this component has a big MUI error
+
 export default function Tabs(props: {
 	long_desc: string | undefined;
 	coordinator: {name: string; role: string; college_id: string}[];

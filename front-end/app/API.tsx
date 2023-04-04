@@ -1,5 +1,4 @@
 import axios from 'axios';
-import {Constructor} from 'type-fest';
 
 const instance = axios.create({
 	baseURL: (() => {
@@ -36,7 +35,21 @@ const hierarchy = {
 };
 
 class AxiosInstance {
-	get_config(headers?: any) {
+	async __make_call(callback: Function, config: Function, setCode?: Function) {
+		if (typeof setCode === 'function') {
+			setCode(0);
+		}
+		const status = await this.update_token();
+		if (status) {
+			return await callback(config());
+		}
+		if (typeof setCode === 'function') {
+			setCode(999);
+		}
+		throw {status: 999, message: 'Refresh Token Failed!!'};
+	}
+
+	get_config(headers?: any): any {
 		return {
 			headers: {
 				...headers,
@@ -53,22 +66,60 @@ class AxiosInstance {
 		};
 	}
 
-	async post(pathname: string, data: {[key: string]: string}, headers: {}) {
-		await this.update_token();
-		const config = this.get_config(headers);
-		return await instance.post(pathname, data, config);
+	async post(
+		pathname: string,
+		data: {[key: string]: string},
+		headers?: {},
+		setLoadingCode?: Function
+	) {
+		return await this.__make_call(
+			async (config: any) => await instance.post(pathname, data, config),
+			() => this.get_config(headers),
+			setLoadingCode
+		);
 	}
-	async put(pathname: string, data: {[key: string]: string}, headers: {}) {
-		await this.update_token();
-		const config = this.get_config(headers);
-		return await instance.put(pathname, data, config);
+	async put(
+		pathname: string,
+		data: {[key: string]: string},
+		headers: {},
+		setLoadingCode?: Function
+	) {
+		return await this.__make_call(
+			async (config: any) => await instance.put(pathname, data, config),
+			() => this.get_config(headers),
+			setLoadingCode
+		);
 	}
-	async patch(pathname: string, data: {[key: string]: string}, headers: {}) {
-		await this.update_token();
-		const config = this.get_config(headers);
-		return await instance.patch(pathname, data, config);
+	async patch(
+		pathname: string,
+		data: {[key: string]: string},
+		headers: {},
+		setLoadingCode?: Function
+	) {
+		return await this.__make_call(
+			async (config: any) => await instance.patch(pathname, data, config),
+			() => this.get_config(headers),
+			setLoadingCode
+		);
 	}
-
+	async get(
+		pathname: string,
+		data?: {[key: string]: string},
+		headers?: any,
+		setLoadingCode?: Function
+	) {
+		let data_str = '?';
+		if (data !== null) {
+			for (let key in data) {
+				data_str += `${key}=${data[key]}&`;
+			}
+		}
+		return await this.__make_call(
+			async (config: any) => await instance.get(pathname + data_str, config),
+			() => this.get_config(headers),
+			setLoadingCode
+		);
+	}
 	async login(username: string, password: string) {
 		if (typeof window === 'undefined') {
 			return false;
@@ -83,22 +134,9 @@ class AxiosInstance {
 		return request;
 	}
 
-	async get(pathname: string, data?: {[key: string]: string}, headers?: any) {
-		await this.update_token();
-		const config = this.get_config(headers);
-		let data_str = '?';
-		if (data !== null) {
-			for (let key in data) {
-				data_str += `${key}=${data[key]}&`;
-			}
-		}
-		return await instance.get(pathname + data_str, config);
-	}
-
 	async update_token() {
-		let status = false;
-		// debugger;
-		if (!this.__check_expiry()) {
+		let status = true;
+		if (this.__tokenIsExpired()) {
 			status = await this.__refresh_token();
 			if (!status) {
 				window.location.href = '/';
@@ -108,8 +146,6 @@ class AxiosInstance {
 	}
 
 	async __refresh_token() {
-		if (typeof window === 'undefined') return false;
-
 		const token = window.localStorage.getItem('refresh');
 		const expiryTime = token !== null ? parseJwt(token).exp : null;
 		let currTime = parseInt(String(new Date().getTime() / 1000));
@@ -118,29 +154,36 @@ class AxiosInstance {
 		}
 		const form_data = new FormData();
 		form_data.append('refresh', token);
-		const request = await instance.post(get_url('token_refresh'), form_data);
-		if (request.status !== 200) {
-			return false;
+
+		let request;
+		try {
+			request = await instance.post(get_url('token_refresh'), form_data);
+			if (request.status !== 200) {
+				return false;
+			}
+			const access = request.data.access;
+			if (access === null) {
+				return false;
+			}
+			window.localStorage.setItem('access', access);
+			return true;
+		} catch (err) {
+			console.error('Failde to Refresh Token!!');
+			throw err;
 		}
-		const access = request.data.access;
-		if (access === null) {
-			return false;
-		}
-		window.localStorage.setItem('access', access);
-		return true;
 	}
 
-	__check_expiry() {
+	__tokenIsExpired() {
 		if (typeof window === 'undefined') return false;
 		const token = window.localStorage.getItem('access');
 		if (token !== null) {
 			const expiryTime = parseJwt(token).exp;
-			return (
+			return !(
 				expiryTime !== null &&
 				parseInt(expiryTime) >= parseInt(String(new Date().getTime() / 1000))
 			);
 		}
-		return false;
+		return true;
 	}
 }
 

@@ -33,7 +33,6 @@ class EventCardSerializer(serializers.ModelSerializer):
 class BaseEventDetailSerializer(serializers.ModelSerializer):
     ROLE_CHOICES = dict(Event.ROLE_CHOICES)
     
-    
     date = serializers.SerializerMethodField()
     long_description = serializers.SerializerMethodField()
     organizer = user_serializer.OrganizerSerializer(many=True)
@@ -41,32 +40,58 @@ class BaseEventDetailSerializer(serializers.ModelSerializer):
     owner = user_serializer.OrganizerSerializer()
     applied_count = serializers.SerializerMethodField()
     accepted_count = serializers.SerializerMethodField()
-    class Meta:
+    total_strength = serializers.SerializerMethodField()
+    
+    def __new__(cls, *args, **kwargs):
+
+        if not hasattr(cls, 'Meta'):
+            cls.Meta = cls.BaseMeta
+        else:
+            Meta = cls.Meta
+            if hasattr(cls.BaseMeta, 'fields'):
+                if hasattr(Meta, 'fields'):
+                    cls.Meta.fields += cls.BaseMeta.fields
+                else:
+                    cls.Meta.fields = cls.BaseMeta.fields
+            
+            if hasattr(cls.BaseMeta, 'exclude'):
+                if hasattr(Meta, 'exclude'):
+                    cls.Meta.exclude += cls.BaseMeta.exclude
+                else:
+                    cls.Meta.exclude = cls.BaseMeta.exclude
+            
+            if not hasattr(Meta, 'model') and hasattr(cls.BaseMeta, 'model'):
+                cls.Meta.model = cls.BaseMeta.model
+                
+        return super().__new__(cls)
+        
+    class BaseMeta:
         model = Event
         fields = [
             'pk',
-            'title',
-            'owner',
-            'club',
-            'image',
-            'organizer',
-            'short_description',
-            'long_description',
-            'date',
-            'time',
-            'venue',
-            'branch',
-            'start_date',
-            'end_date',
-            'fcfs',
-            'hod_verified',
-            'dean_verified',
-            'vc_verified',
-            'total_strength',
-            'applied_count',
-            'accepted_count',
+            "date",
+            "long_description",
+            "organizer",
+            "branch",
+            "owner",
+            "applied_count",
+            "accepted_count",
+            "total_strength",
+            "image",
+            "title",
+            "short_description",
+            "club",
+            "venue",
+            "start_date",
+            "end_date",
+            "time",
         ]
+        additional_fields = []
+        fields += additional_fields
     
+    def get_total_strength(self, obj):
+        return obj.total_strength or 0
+
     def get_applied_count(self, obj):
         return obj.applied_participant.count()
     
@@ -92,7 +117,40 @@ class BaseEventDetailSerializer(serializers.ModelSerializer):
         return f"{obj.start_date.strftime(format)} - {obj.start_date.strftime(format)}"
 
 class EventDetailSerializerStudent(BaseEventDetailSerializer):
-    pass
+    is_applied = serializers.SerializerMethodField()
+    is_accepted = serializers.SerializerMethodField()
+    
+    applied_count = serializers.SerializerMethodField()
+    accepted_count = serializers.SerializerMethodField()
+    
+
+    def get_applied_count(self, obj):
+        return obj.applied_participant.count()
+
+    def get_accepted_count(self, obj):
+        return obj.accepted_participant.count()
+    
+    def get_is_applied(self, obj):
+        request = self.context.get('request')
+        if obj.applied_participant.filter(pk = request.user.pk).exists():
+            return True
+        return False
+    
+    def get_is_accepted(self, obj):
+        request = self.context.get('request')
+
+        if obj.accepted_participant.filter(pk = request.user.pk).exists():
+            return True
+        return False
+    
+    class Meta:
+        fields = [
+            'is_applied',
+            'is_accepted',
+            'applied_count',
+            'accepted_count',
+        ]
+    
 
 class EventDetailSerializerOrganizer(EventDetailSerializerStudent):
     approval_message = serializers.SerializerMethodField()
@@ -112,34 +170,16 @@ class EventDetailSerializerOrganizer(EventDetailSerializerStudent):
             if role in self.ROLE_CHOICES:
                 rv.append(self.ROLE_CHOICES[role])
         return rv
+
     class Meta:
-        model = Event
         fields = [
-            'pk',
-            'title',
-            'owner',
-            'club',
-            'image',
-            'organizer',
-            'short_description',
-            'long_description',
-            'date',
-            'time',
-            'venue',
-            'branch',
-            'start_date',
-            'end_date',
+            'approval_message',
+            'status',
             'accepted_participant',
             'applied_participant',
-            'fcfs',
             'accepted_role',
-            'status',
-            'hod_verified',
-            'dean_verified',
-            'vc_verified',
-            'approval_message',
-            'total_strength',
         ]
+        
 
 class EventCreateSerializer(serializers.ModelSerializer):
     pk = serializers.ReadOnlyField()

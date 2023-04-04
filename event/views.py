@@ -38,19 +38,28 @@ class UpcomingEventList(SearchQueryMixins, generics.ListAPIView):
 
 
 class EventDetail(generics.RetrieveAPIView):
+
+    serializers = {
+        'student': serializers.EventDetailSerializerStudent,
+        'organizer': serializers.EventDetailSerializerOrganizer,
+    }
+
     # 3 SQL queries
     def get_object(self):
         event_id = self.kwargs.get('pk')
-        event_obj = Event.objects.select_related('owner').prefetch_related(
-            'organizer', 'accepted_participant').get(id=event_id)
-        return event_obj
+        return get_object_or_404(Event, pk=event_id)
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['request'] = self.request
+        return context
 
     def get_serializer_class(self):
         event = self.get_object()
         if event.is_organizer(self.request.user):
-            return serializers.EventDetailSerializerOrganizer
+            return self.serializers['organizer']
         else:
-            return serializers.EventDetailSerializerStudent
+            return self.serializers['student']
             
     # serializer_class = serializers.EventDetailSerializer
 

@@ -12,6 +12,7 @@ import {
 	InterfaceOrganizer,
 } from '../datainterface';
 import useEffect from '@/app/useEffect';
+import ApiLoader from '@/app/apiLoader';
 
 const axios = new API.Axios();
 
@@ -168,7 +169,6 @@ export default function Page() {
 			});
 			router.push(`details/${request.data.pk}`);
 		} catch (error: any) {
-			console.log(error);
 			for (let field in setError) {
 				setError[field](null);
 			}
@@ -180,28 +180,37 @@ export default function Page() {
 				left: 0,
 				behavior: 'smooth',
 			});
-			console.error(error.response.data);
 		}
 	};
-	useEffect(() => {
-		const obj = {
-			name: localStorage.getItem('name') || '',
-			college_id: localStorage.getItem('id') || '',
-			role: localStorage.getItem('role_name') || '',
-			pk: API.jwt(localStorage.getItem('access')).user_id || -1,
-		};
-		setOwner(obj);
-		setData.organizer([obj]);
-	}, []);
+	const [Loader, setLoader] = useState(0);
+
+	useEffect(
+		() => {
+			const obj = {
+				name: localStorage.getItem('name') || '',
+				college_id: localStorage.getItem('id') || '',
+				role: localStorage.getItem('role_name') || '',
+				pk: API.jwt(localStorage.getItem('access')).user_id || -1,
+			};
+			setOwner(obj);
+			setData.organizer([obj]);
+		},
+		[],
+		setLoader
+	);
 
 	return (
-		<Create
-			getData={getData}
-			setData={setData}
-			getError={getError}
-			setError={setError}
-			submitForm={submitForm}
-			buttonText={'Submit Event For Review'}
-		/>
+		<>
+			{<ApiLoader state={Loader} message="Setting Things up for you..." />}
+			<Create
+				getData={getData}
+				setData={setData}
+				getError={getError}
+				setError={setError}
+				submitForm={submitForm}
+				buttonText={'Submit Event For Review'}
+				setLoader={setLoader}
+			/>
+		</>
 	);
 }

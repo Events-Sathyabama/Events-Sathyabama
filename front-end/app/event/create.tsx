@@ -33,6 +33,7 @@ export default function Create(props: {
 	setError: {[x: string]: Function};
 	submitForm: Function;
 	buttonText: string;
+	setLoader: Function;
 }) {
 	// Data that has to be Fetched from server
 	const setData = props.setData;
