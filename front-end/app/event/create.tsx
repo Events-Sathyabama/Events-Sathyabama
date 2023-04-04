@@ -186,7 +186,7 @@ export default function Create(props: {
 									value={getData.club?.name}
 									helperText={
 										getError.club ||
-										"Check our list first. If your club or organiser's name is not included, check the box below to manually enter it."
+										"Please enter your club or organiser's name in this field. This will reflect on both the homepage cards and the event's details page."
 									}
 								/>
 							)}
