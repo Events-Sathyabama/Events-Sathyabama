@@ -1,12 +1,15 @@
 'use client';
 import HomeCard from './card';
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 import API from '../API';
 import Page from './pagination';
 import TextField from '@mui/material/TextField';
 const axios = new API.Axios();
 import InputAdornment from '@mui/material/InputAdornment';
 import Image from 'next/image';
+import useEffect from '../useEffect';
+import ApiLoader from '../apiLoader';
+import handleError from '../handleError';
 
 function LoadingCard() {
 	return (
@@ -30,14 +33,6 @@ function LoadingCard() {
 }
 
 export default function Main(props: {url: string; heading: string}) {
-	let abc: {
-		pk: string;
-		title: string;
-		club: string;
-		image: string;
-		short_description: string;
-		date: string;
-	}[] = [];
 	const [data, setData] = useState([
 		{
 			pk: '',
@@ -48,12 +43,12 @@ export default function Main(props: {url: string; heading: string}) {
 			date: '',
 		},
 	]);
-	const [isLoading, setIsLoading] = useState(true);
 	const [pageNo, setPageNo] = useState(1);
 	const [totalPage, setTotalPage] = useState(1);
 	const [search, setSearch] = useState('');
+	const [Loader, setLoader] = useState(0);
 
-	const [showSearch, setShowSearch] = useState(false);
+  const [showSearch, setShowSearch] = useState(false);
 
 	useEffect(() => {
 		setShowSearch(true);
@@ -69,40 +64,49 @@ export default function Main(props: {url: string; heading: string}) {
 
 	const [numCards, setNumCards] = useState(4);
 	const cards = Array(numCards).fill(0);
+  
+  
+	useEffect(
+		() => {
+			const query = window.setTimeout(async () => {
 
-	// BUG Optimize the use effect
-	useEffect(() => {
-		setIsLoading(true); //FIXME why the loading screen not comming when next page is clicked?
-		(async () => {
-			if (pageNo > totalPage) {
-				return;
-			}
-			(async () => {
 				try {
-					const request = await axios.get(API.get_url(props.url), {
+					const response = await axios.get(API.get_url(props.url), {
 						page: pageNo,
 						q: search,
 					});
-					if (request.status === 200) {
-						if (!request.data.hasOwnProperty('results')) {
+					if (response.status === 200) {
+						if (!response.data.hasOwnProperty('results')) {
 							setPageNo(1);
 							return;
 						}
-						setTotalPage(request.data.total_pages);
-						setData(request.data.results);
+						setTotalPage(response.data.total_pages);
+						setData(response.data.results);
+						if (response.data.count === 0) {
+							setLoader(404);
+						} else {
+							setLoader(200);
+						}
+					} else {
+						setLoader(response.status);
 					}
-				} catch (err: any) {
-					if (err.response.status === 404) {
-						setPageNo(1);
-					}
+				} catch (err) {
+					handleError(err, setLoader);
+					setPageNo(1);
 				}
-			})();
-			setIsLoading(false);
-		})();
-	}, [pageNo, search]);
+			}, 500);
+
+			return () => {
+				window.clearInterval(query);
+			};
+		},
+		[pageNo, search],
+		setLoader
+	);
 
 	return (
 		<div className="flex flex-col w-full h-full items-center gap-3">
+
 			<h1 className="text-2xl text-center mt-3 underline animateFadeIn">
 				{props.heading}
 			</h1>

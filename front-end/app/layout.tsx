@@ -1,5 +1,5 @@
 import WebBackdrop from './backdrop';
-import {useState, useEffect} from 'react';
+import {useState} from 'react';
 import API from './API';
 import {useRouter} from 'next/navigation';
 import './globals.css';

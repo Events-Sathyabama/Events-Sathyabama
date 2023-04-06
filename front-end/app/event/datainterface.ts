@@ -32,6 +32,8 @@ export interface InterfaceData {
 	venue: string | undefined;
 	organizer: InterfaceOrganizer[];
 	owner: InterfaceOrganizer;
+	applied_participant?: InterfaceOrganizer[];
+	accepted_participant?: InterfaceOrganizer[];
 }
 
 export interface InterfaceError {

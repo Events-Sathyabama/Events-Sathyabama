@@ -112,4 +112,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     def clean(self, *args, **kwargs):
         if self.leaving_year is not None and self.leaving_year < self.joining_year:
             raise ValidationError('Leaving Year cannot be before joining year')
+    
+    def has_email(self):
+        return True
         
+    def has_phone(self):
+        return True

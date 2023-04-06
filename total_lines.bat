@@ -1,0 +1,1 @@
+git ls-files | grep -v -e '\.jpg' -e '\.svg' -e '\.png' -e '\.txt' -e '\.md' | xargs wc -l | tail -1

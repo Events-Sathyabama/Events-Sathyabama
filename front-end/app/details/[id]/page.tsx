@@ -2,7 +2,8 @@
 import Header from '../header';
 import Poster from '../poster';
 import Tabs from '../tabs';
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
+import useEffect from '../../useEffect';
 import API from '../../API';
 import Popup from '../../popup';
 import EventTime from '../venue';
@@ -10,68 +11,108 @@ import Fab from '@mui/material/Fab';
 import Link from 'next/link';
 import LoadingButton from '@mui/lab/LoadingButton';
 import ProgressBar from '../progressBar';
-import CircularProgress from '@mui/material/CircularProgress';
-import {InterfaceData} from '@/app/event/datainterface';
+import {InterfaceData, InterfaceOrganizer} from '@/app/event/datainterface';
+import ApiLoader from '../../apiLoader';
+import handleError from '@/app/handleError';
 
 const axios = new API.Axios();
+
+const isUserFound = (
+	user: InterfaceOrganizer,
+	participant: InterfaceOrganizer[]
+) => {
+	console.log('isUserFound', user, participant);
+	for (let i = 0; i < participant.length; i++) {
+		if (participant[i].pk === user.pk) {
+			console.log('True');
+			return true;
+		}
+	}
+	return false;
+};
 
 export default function details(props: {params: {id: number}}) {
 	const [Spopup, setSpopup] = useState(false);
 	const [Fpopup, setFpopup] = useState(false);
+	const [popupMessage, setPopupMessage] = useState('');
+	const [appliedCount, setAppliedCount] = useState(0);
+	const [totalStrenth, setTotalStrenth] = useState(0);
+	const [isApplied, setIsApplied] = useState(false);
+	const [isOrganizer, setIsOrganizer] = useState(false);
+	const [calledByApply, setCalledByApply] = useState(false);
 
-	function showSuccessPopup() {
-		setSpopup(true);
-	}
+	const [applying, setApplying] = useState(false);
 
-	function showFailurePopup() {
-		setFpopup(true);
-	}
-
-	const [data, setData] = useState<DetailInterface>();
-	const [fetchingDetails, setFetchingDetails] = useState(true);
-
-	useEffect(() => {
+	const [data, setData] = useState<InterfaceData>();
+	const [Loader, setLoader] = useState(0);
+	const runOnce = true; // makes this useEffect only run once
+	useEffect(
+		async () => {
 		window.scrollTo(0, 0);
-		(async () => {
+      
 			const request = await axios.get(
 				API.get_url('event:detail', [props.params.id])
 			);
-			if (request.status == 200) {
-				setData(request.data);
-				setFetchingDetails(false);
+			const data = request.data;
+			if (request.status !== 200) {
+				setLoader(request.status);
+				return;
 			}
-		})();
-	}, []);
+			if (!data.hasOwnProperty('is_applied')) {
+				setIsOrganizer(true);
+			} else {
+				setIsApplied(data.is_applied);
 
-	const [loading, setLoading] = useState(false);
+			}
 
-	function handleClick() {
-		setLoading(true);
-		setCalledByApply(true);
-		//if success
-		setTimeout(() => {
-			setApplied(true);
+			setAppliedCount(data.applied_count);
+			setTotalStrenth(data.total_strength);
+
+			setData(data);
+		},
+		[],
+		setLoader,
+		runOnce
+	);
+
+	async function applyToEvent() {
+		setApplying(true);
+    setCalledByApply(true);
+		try {
+			const response = await axios.get(API.get_url('event:apply', props.params.id));
+			console.log(response);
+			setPopupMessage(response.data.message);
 			setSpopup(true);
-		}, 4000);
-
-		//if failure
-		// setTimeout(() => {
-		// 	setFpopup(true);
-		// 	setLoading(false);
-		// }, 4000);
+			setAppliedCount((prev) => prev + 1);
+			setIsApplied(true);
+		} catch (err: any) {
+			console.log(err);
+			if (err.response) {
+				if (err.response.data.message !== undefined) {
+					setPopupMessage(err.response.data.message);
+				} else {
+					setPopupMessage('Something went Wrong!!');
+				}
+			} else {
+				setPopupMessage(err.message);
+			}
+			setFpopup(true);
+			handleError(err, setLoader);
+		}
+		setApplying(false);
 	}
-	const [calledByApply, setCalledByApply] = useState(false);
-	const [applied, setApplied] = useState(false);
 
 	return (
-		<div className="flex flex-col w-full h-auto items-center justify-center">
-			<div className="flex flex-col w-full items-end">
-				{Spopup ? (
+		<>
+			{<ApiLoader state={Loader} message="Fetching Data..." />}
+			<div className="flex flex-col w-full h-auto items-center justify-center">
+				<div className="flex flex-col w-full items-end">
+					{Spopup ? (
 					<Popup.Success
 						showpopup={setSpopup}
 						message={
 							calledByApply
-								? 'Event Application Successful!'
+								? popupMessage
 								: 'Applications updated!'
 						}></Popup.Success>
 				) : null}
@@ -80,19 +121,15 @@ export default function details(props: {params: {id: number}}) {
 						showpopup={setFpopup}
 						message={
 							calledByApply
-								? 'Event Application Unsuccessful, try again!'
+								? popupMessage
 								: 'Applications not updated!'
 						}></Popup.Error>
 				) : null}
-			</div>
-			{fetchingDetails ? (
-				<div className="flex flex-col justify-center items-center w-full min-h-[85vh]">
-					<CircularProgress />
 				</div>
-			) : (
 				<div className="flex flex-col w-11/12 h-auto">
 					<Header
-						club={data?.club.name}
+						club={data?.club?.name}
+
 						short_desc={data?.short_description}
 						title={data?.title}
 					/>
@@ -117,28 +154,41 @@ export default function details(props: {params: {id: number}}) {
 										</svg>
 									</div>
 									<div className="flex flex-col">
-										<p className="text-2xl text-black font-medium">Head Count:</p>
-										<p className="text-2xl text-black font-light">100/190</p>
+										<p className="text-2xl text-black font-medium">
+											Head Count:
+										</p>
+										<p className="text-2xl text-black font-light">
+											{totalStrenth === 0
+												? 'Total Strength have not been set yet'
+												: `${appliedCount}/${totalStrenth}`}
+										</p>
 									</div>
 								</div>
 								<ProgressBar
-									registeredStudents={100}
-									totalCapacity={190}></ProgressBar>
-								{applied ? (
-									<p className="w-full border border-green-500 p-2 rounded-md text-center shadow-lg text-white bg-green-600 transition-all duration-1000">
-										APPLIED
-									</p>
+									registeredStudents={appliedCount || 0}
+									totalCapacity={totalStrenth || 1}></ProgressBar>
+								{!isOrganizer ? (
+									<>
+										{isApplied ? (
+											<p className="w-full border border-green-500 p-2 rounded-md text-center shadow-lg text-white bg-green-600 transition-all duration-1000">
+												APPLIED
+											</p>
+										) : (
+											<LoadingButton
+												loadingIndicator="Applying…"
+												variant="contained"
+												className="w-full"
+												onClick={applyToEvent}
+												loading={applying}
+												size="large"
+												style={!applying ? {backgroundColor: '#1565c0'} : {}}>
+												<span>Apply for Event</span>
+											</LoadingButton>
+										)}
+									</>
 								) : (
-									<LoadingButton
-										loadingIndicator="Applying…"
-										variant="contained"
-										className="w-full"
-										onClick={handleClick}
-										loading={loading}
-										size="large"
-										style={!loading ? {backgroundColor: '#1565c0'} : {}}>
-										<span>Apply for Event</span>
-									</LoadingButton>
+									<></>
+
 								)}
 							</div>
 							<EventTime
@@ -155,40 +205,47 @@ export default function details(props: {params: {id: number}}) {
 									}
 									return rv;
 								})()}
-								showSuccessPopup={showSuccessPopup}
-								showFailurePopup={showFailurePopup}
+								showSuccessPopup={() => setSpopup(true)}
+								showFailurePopup={() => setFpopup(true)}
+								isOrganizer={isOrganizer}
+								appliedParticipant={data?.applied_participant || []}
+								acceptedParticipant={data?.accepted_participant || []}
 							/>
 						</div>
-						<Link href={`/event/update/${props.params.id}`}>
-							<Fab
-								color="primary"
-								aria-label="edit"
-								sx={{
-									position: 'fixed',
-									right: '1.5rem',
-									bottom: '1.5rem',
-									height: '4rem',
-									width: '4rem',
-								}}
-								style={{backgroundColor: '#1565c0'}}>
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									fill="none"
-									viewBox="0 0 24 24"
-									strokeWidth={1.5}
-									stroke="currentColor"
-									className="w-6 h-6">
-									<path
-										strokeLinecap="round"
-										strokeLinejoin="round"
-										d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125"
-									/>
-								</svg>
-							</Fab>
-						</Link>
+						{isOrganizer ? (
+							<Link href={`/event/update/${props.params.id}`}>
+								<Fab
+									color="primary"
+									aria-label="edit"
+									sx={{
+										position: 'fixed',
+										right: '1.5rem',
+										bottom: '1.5rem',
+										height: '4rem',
+										width: '4rem',
+									}}
+									style={{backgroundColor: '#1565c0', zIndex: 10}}>
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										fill="none"
+										viewBox="0 0 24 24"
+										strokeWidth={1.5}
+										stroke="currentColor"
+										className="w-6 h-6">
+										<path
+											strokeLinecap="round"
+											strokeLinejoin="round"
+											d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125"
+										/>
+									</svg>
+								</Fab>
+							</Link>
+						) : (
+							<></>
+						)}
 					</div>
 				</div>
-			)}
-		</div>
+			</div>
+		</>
 	);
 }

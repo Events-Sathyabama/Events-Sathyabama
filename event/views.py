@@ -10,6 +10,7 @@ from rest_framework.decorators import api_view
 from .mixins import SearchQueryMixins
 from django.db.models import Q
 from django.core.exceptions import ValidationError
+from django.shortcuts import get_object_or_404
 
 
 class CompletedEventList(SearchQueryMixins, generics.ListAPIView):
@@ -37,14 +38,30 @@ class UpcomingEventList(SearchQueryMixins, generics.ListAPIView):
 
 
 class EventDetail(generics.RetrieveAPIView):
+
+    serializers = {
+        'student': serializers.EventDetailSerializerStudent,
+        'organizer': serializers.EventDetailSerializerOrganizer,
+    }
+
     # 3 SQL queries
     def get_object(self):
         event_id = self.kwargs.get('pk')
-        event_obj = Event.objects.select_related('owner').prefetch_related(
-            'organizer', 'accepted_participant').get(id=event_id)
-        return event_obj
+        return get_object_or_404(Event, pk=event_id)
 
-    serializer_class = serializers.EventDetailSerializer
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['request'] = self.request
+        return context
+
+    def get_serializer_class(self):
+        event = self.get_object()
+        if event.is_organizer(self.request.user):
+            return self.serializers['organizer']
+        else:
+            return self.serializers['student']
+            
+    # serializer_class = serializers.EventDetailSerializer
 
 
 class EventCreate(generics.CreateAPIView):
@@ -84,8 +101,22 @@ class EventUpdate(generics.UpdateAPIView):
         kwargs['data'] = data
         return super().get_serializer(*args, **kwargs)
 
-    
-
+@api_view(['GET'])    
+def apply_event(request, pk):
+    response = Response({'message': 'Event Application Successfull!!'})
+    try:
+        event = Event.objects.get(pk=pk)
+        if event.is_eligible_to_apply(user=request.user):
+            event.applied_participant.add(request.user)
+            response.status_code = 200
+        else:
+            response.status_code = 403
+            response.data['message'] = event.eligible_message
+    except:
+        response = Response()
+        response.status_code = 404
+        response.data['message'] = 'No Event Found!!'
+    return response
 
 @api_view(['GET'])
 def club_branch(request):

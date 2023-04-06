@@ -3,9 +3,10 @@ import Footer from '../footer';
 import Navbar from '../navbar';
 import Profile from './profile';
 import TabsProfile from './tabsProfile';
+import {useState} from 'react';
 import CircularProgress from '@mui/material/CircularProgress';
-import {useEffect, useState} from 'react';
 import API from '@/app/API';
+import useEffect from '../useEffect';
 const axios = new API.Axios();
 
 export default function ProfilePage(): JSX.Element {
@@ -13,19 +14,28 @@ export default function ProfilePage(): JSX.Element {
 	const [id, setId] = useState('-');
 	const [branch, setBranch] = useState('-');
 	const [fullName, setFullName] = useState('-');
-	useEffect(() => {
-		setRole(localStorage.getItem('role_name') || '-');
-		setFullName(localStorage.getItem('name') || '-');
-		setId(localStorage.getItem('id') || '-');
-		(async () => {
+
+  const [loader, setLoader] = useState(0);
+	const runOnce = true;
+
+	useEffect(
+		async () => {
+			setRole(localStorage.getItem('role_name') || '-');
+			setFullName(localStorage.getItem('name') || '-');
+			setId(localStorage.getItem('id') || '-');
+
 			const id = API.jwt(window.localStorage.getItem('access')).user_id;
 			const request = await axios.get(API.get_url('profile_detail', [id]));
 			setRole(request.data.role);
 			setId(request.data.college_id);
 			setBranch(request.data.branch);
 			setFullName(request.data.full_name);
-		})();
-	}, []);
+		},
+		[],
+		setLoader,
+		runOnce
+	);
+  
 	return (
 		<div>
 			<Navbar />

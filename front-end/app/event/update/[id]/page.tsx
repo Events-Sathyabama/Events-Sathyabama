@@ -1,6 +1,6 @@
 'use client';
 import Create from '../../create';
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 import {useRouter} from 'next/navigation';
 import API from '../../../API';
 import dayjs, {Dayjs} from 'dayjs';
@@ -10,8 +10,8 @@ import {
 	InterfaceOrganizer,
 	InterfaceData,
 } from '../../datainterface';
-
-const axios = new API.Axios();
+import useEffect from '@/app/useEffect';
+import ApiLoader from '@/app/apiLoader';
 
 export default function Page(props: {params: {id: number}}) {
 	const router = useRouter();
@@ -154,32 +154,46 @@ export default function Page(props: {params: {id: number}}) {
 		};
 		return [setData, getData, getError, setError, sendData];
 	})();
-	let initial_value: any = {};
-	useEffect(() => {
-		(async () => {
-			const request = await axios.get(
-				API.get_url('event:detail', [props.params.id])
-			);
-			const data = request.data;
-			initial_value = data;
-			setData.title(data.title);
-			// debugger;
-			setData.club({name: data.club});
-			setData.image(data.image);
-			setData.start_date(dayjs(data.start_date));
-			setData.end_date(dayjs(data.end_date));
-			setData.short_description(data.short_description);
-			setData.long_description(data.long_description);
-			setData.branch(data.branch);
-			setData.date(data.date);
-			setData.time(data.time);
-			setData.venue(data.venue);
-			setData.organizer([data.owner, ...data.organizer]);
-			console.log(data.owner);
-			setOwner(data.owner);
-		})();
-	}, []);
+	const [Loader, setLoader] = useState(0);
+	const axios = new API.Axios();
 
+	let initial_value: any = {};
+	const runOnce = true;
+	useEffect(
+		() => {
+			return (async () => {
+				try {
+					const request = await axios.get(
+						API.get_url('event:detail', [props.params.id])
+					);
+					const data = request.data;
+					initial_value = data;
+					setData.title(data.title);
+					// debugger;
+					setData.club({name: data.club});
+					setData.image(data.image);
+					setData.start_date(dayjs(data.start_date));
+					setData.end_date(dayjs(data.end_date));
+					setData.short_description(data.short_description);
+					setData.long_description(data.long_description);
+					setData.branch(data.branch);
+					setData.date(data.date);
+					setData.time(data.time);
+					setData.venue(data.venue);
+					setData.organizer([data.owner, ...data.organizer]);
+					console.log(data.owner);
+					setOwner(data.owner);
+				} catch (err) {
+					// debugger;
+					console.log('Update Page:', err);
+					throw err;
+				}
+			})();
+		},
+		[],
+		setLoader,
+		runOnce
+	);
 	const submitForm = async () => {
 		try {
 			const request = await axios.patch(
@@ -208,6 +222,8 @@ export default function Page(props: {params: {id: number}}) {
 
 	return (
 		<>
+			{<ApiLoader state={Loader} message="Setting Things up for you..." />}
+
 			<Create
 				getData={getData}
 				setData={setData}
@@ -215,6 +231,7 @@ export default function Page(props: {params: {id: number}}) {
 				setError={setError}
 				submitForm={submitForm}
 				buttonText={'Update Event'}
+				setLoader={setLoader}
 			/>
 		</>
 	);

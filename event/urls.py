@@ -13,5 +13,6 @@ urlpatterns = [
     path('detail/<int:pk>/', views.EventDetail.as_view()),
     path('create/', views.EventCreate.as_view()),
     path('update/<int:pk>/', views.EventUpdate.as_view()),
+    path('apply/<int:pk>/', views.apply_event),
     path('club/branch/', views.club_branch),
 ]

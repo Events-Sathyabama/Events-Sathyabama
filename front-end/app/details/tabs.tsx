@@ -4,6 +4,7 @@ import Tab from '@mui/material/Tab';
 import TabsContainer from '@mui/material/Tabs';
 import Coordinators from './coordinators';
 import Applications from './applications';
+import {InterfaceOrganizer} from '../event/datainterface';
 
 // TODO Fetch Coordinators in this way
 const coordinators = [
@@ -28,6 +29,7 @@ const dummyApplications = [
 	},
 ];
 
+// BUG this component has a big MUI error
 function TabPanel(props: any) {
 	const {children, value, index, ...other} = props;
 
@@ -52,6 +54,9 @@ export default function Tabs(props: {
 	coordinator: {name: string; role: string; college_id: string}[];
 	showSuccessPopup: Function;
 	showFailurePopup: Function;
+	isOrganizer: boolean;
+	appliedParticipant: InterfaceOrganizer[];
+	acceptedParticipant: InterfaceOrganizer[];
 }) {
 	const [value, setValue] = React.useState(0);
 
@@ -60,6 +65,7 @@ export default function Tabs(props: {
 	};
 
 	return (
+
 		<div className="flex flex-col w-full sm:items-center">
 			<TabsContainer
 				value={value}
