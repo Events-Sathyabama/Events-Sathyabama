@@ -67,9 +67,7 @@ export default function Main(props: {url: string; heading: string}) {
 
 	return (
 		<div className="flex flex-col w-full h-full items-center gap-3">
-			<h1 className="text-2xl text-center underline mt-3 z-30"
-			// HACK z-index
-			>{props.heading}</h1>
+			<h1 className="text-2xl text-center underline mt-3">{props.heading}</h1>
 			<div className="p-3 w-11/12 md:w-1/2 rounded-xl">
 				<TextField
 					autoComplete="off"
