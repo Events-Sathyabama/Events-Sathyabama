@@ -5,8 +5,8 @@ import {CircularProgress} from '@mui/material';
 export default function ApiLoader(props: {
 	state: number;
 	message?: string;
-	skelton?: JSX.Element;
 	className?: string;
+	children?: JSX.Element;
 }) {
 	const prevScrollPosition = React.useRef(0);
 	React.useEffect(() => {
@@ -33,7 +33,7 @@ export default function ApiLoader(props: {
 		0: (
 			<>
 				{/* Add your pulse loader here for different pages */}
-				{props.skelton ? props.skelton : <CircularProgress />}
+				{props.children ? props.children : <CircularProgress />}
 			</>
 		),
 		200: <></>,

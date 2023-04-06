@@ -6,7 +6,7 @@ import Button from '@mui/material/Button';
 export default function WebBackdrop(props: {message: string; id?: string}) {
 	return (
 		<div
-			className="z-50 top-0 left-0 fixed w-screen h-screen bg-[#202124] flex flex-col gap-4 text-white font-bold justify-center items-center text-lg tracking-wider"	// HACK added z-index
+			className="z-50 top-0 left-0 fixed w-screen h-screen bg-[#202124] flex flex-col gap-4 text-white font-bold justify-center items-center text-lg tracking-wider"
 			id={props.id || 'backdrop'}>
 			{' '}
 			{props.message}

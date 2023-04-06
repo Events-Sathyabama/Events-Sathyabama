@@ -48,7 +48,7 @@ export default function Main(props: {url: string; heading: string}) {
 	const [search, setSearch] = useState('');
 	const [Loader, setLoader] = useState(0);
 
-  const [showSearch, setShowSearch] = useState(false);
+	const [showSearch, setShowSearch] = useState(false);
 
 	useEffect(() => {
 		setShowSearch(true);
@@ -64,12 +64,10 @@ export default function Main(props: {url: string; heading: string}) {
 
 	const [numCards, setNumCards] = useState(4);
 	const cards = Array(numCards).fill(0);
-  
-  
+
 	useEffect(
 		() => {
 			const query = window.setTimeout(async () => {
-
 				try {
 					const response = await axios.get(API.get_url(props.url), {
 						page: pageNo,
@@ -106,7 +104,6 @@ export default function Main(props: {url: string; heading: string}) {
 
 	return (
 		<div className="flex flex-col w-full h-full items-center gap-3">
-
 			<h1 className="text-2xl text-center mt-3 underline animateFadeIn">
 				{props.heading}
 			</h1>
@@ -147,7 +144,7 @@ export default function Main(props: {url: string; heading: string}) {
 					<div className="h-12 animate-pulse bg-gray-300 rounded-xl w-full mb-4"></div>
 				</div>
 			)}
-			{data.length != 0 && (isLoading || data[0].pk === '') ? (
+			{data.length != 0 && (Loader || data[0].pk === '') ? (
 				<div className="flex flex-col justify-center items-center w-full min-h-[65vh]">
 					<div className="flex flex-wrap justify-center items-center gap-3">
 						{cards.map((_, index) => (
