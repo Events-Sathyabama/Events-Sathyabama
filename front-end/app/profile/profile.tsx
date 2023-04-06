@@ -35,12 +35,12 @@ export default function Profile(props: ProfileProps): JSX.Element {
 						<span className="text-lg font-semibold">
 							{role === 'Student' ? 'Register Number' : 'Employee ID'}
 						</span>
-						<span className="text-lg font-semibold ml-auto">{id}</span>
+						<span className="text-lg ml-auto">{id}</span>
 					</li>
 					{role === 'Student' && (
 						<li className="flex items-center py-2 px-3">
 							<span className="text-lg font-semibold">Branch</span>
-							<span className="text-lg font-semibold ml-auto">{branch}</span>
+							<span className="text-lg ml-auto">{branch}</span>
 						</li>
 					)}
 				</ul>
