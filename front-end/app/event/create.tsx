@@ -150,7 +150,7 @@ export default function Create(props: {
 								if (inputValue !== '' && !isExisting) {
 									filtered.push({
 										inputValue,
-										name: `Club Name was not Found in the list Add "${inputValue}"`,
+										name: `Your club or organiser's name was not found, Add "${inputValue}"`,
 									});
 								}
 
