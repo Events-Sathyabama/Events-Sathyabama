@@ -39,6 +39,7 @@ export default function details(props: {params: {id: number}}) {
 	const [totalStrenth, setTotalStrenth] = useState(0);
 	const [isApplied, setIsApplied] = useState(false);
 	const [isOrganizer, setIsOrganizer] = useState(false);
+	const [calledByApply, setCalledByApply] = useState(false);
 
 	const [applying, setApplying] = useState(false);
 
@@ -47,6 +48,8 @@ export default function details(props: {params: {id: number}}) {
 	const runOnce = true; // makes this useEffect only run once
 	useEffect(
 		async () => {
+		window.scrollTo(0, 0);
+      
 			const request = await axios.get(
 				API.get_url('event:detail', [props.params.id])
 			);
@@ -59,6 +62,7 @@ export default function details(props: {params: {id: number}}) {
 				setIsOrganizer(true);
 			} else {
 				setIsApplied(data.is_applied);
+
 			}
 
 			setAppliedCount(data.applied_count);
@@ -73,6 +77,7 @@ export default function details(props: {params: {id: number}}) {
 
 	async function applyToEvent() {
 		setApplying(true);
+    setCalledByApply(true);
 		try {
 			const response = await axios.get(API.get_url('event:apply', props.params.id));
 			console.log(response);
@@ -103,17 +108,28 @@ export default function details(props: {params: {id: number}}) {
 			<div className="flex flex-col w-full h-auto items-center justify-center">
 				<div className="flex flex-col w-full items-end">
 					{Spopup ? (
-						<Popup.Success
-							showpopup={setSpopup}
-							message={popupMessage}></Popup.Success>
-					) : null}
-					{Fpopup ? (
-						<Popup.Error showpopup={setFpopup} message={popupMessage}></Popup.Error>
-					) : null}
+					<Popup.Success
+						showpopup={setSpopup}
+						message={
+							calledByApply
+								? popupMessage
+								: 'Applications updated!'
+						}></Popup.Success>
+				) : null}
+				{Fpopup ? (
+					<Popup.Error
+						showpopup={setFpopup}
+						message={
+							calledByApply
+								? popupMessage
+								: 'Applications not updated!'
+						}></Popup.Error>
+				) : null}
 				</div>
 				<div className="flex flex-col w-11/12 h-auto">
 					<Header
 						club={data?.club?.name}
+
 						short_desc={data?.short_description}
 						title={data?.title}
 					/>
@@ -139,7 +155,7 @@ export default function details(props: {params: {id: number}}) {
 									</div>
 									<div className="flex flex-col">
 										<p className="text-2xl text-black font-medium">
-											Application Counts:
+											Head Count:
 										</p>
 										<p className="text-2xl text-black font-light">
 											{totalStrenth === 0
@@ -172,6 +188,7 @@ export default function details(props: {params: {id: number}}) {
 									</>
 								) : (
 									<></>
+
 								)}
 							</div>
 							<EventTime
