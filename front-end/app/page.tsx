@@ -9,6 +9,7 @@ import API from './API';
 import {useRouter} from 'next/navigation';
 import WebBackdrop from './backdrop';
 import useEffect from './useEffect';
+import ApiLoader from './apiLoader';
 
 export default function LoginPage(): JSX.Element {
 	const [loading, setLoading] = useState(true);

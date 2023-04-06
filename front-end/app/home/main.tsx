@@ -30,44 +30,36 @@ export default function Main(props: {url: string; heading: string}) {
 
 	useEffect(
 		() => {
-			let query: number;
-			const queryPromise = new Promise((resolve, reject) => {
-				query = window.setTimeout(async () => {
-					try {
-						const response = await axios.get(API.get_url(props.url), {
-							page: pageNo,
-							q: search,
-						});
-						console.log('query: ', search, response);
-						if (response.status === 200) {
-							if (!response.data.hasOwnProperty('results')) {
-								setPageNo(1);
-								return;
-							}
-							setTotalPage(response.data.total_pages);
-							setData(response.data.results);
-							if (response.data.count === 0) {
-								setLoader(404);
-							} else {
-								setLoader(200);
-							}
-						} else {
-							setLoader(response.status);
+			const query = window.setTimeout(async () => {
+				try {
+					const response = await axios.get(API.get_url(props.url), {
+						page: pageNo,
+						q: search,
+					});
+					if (response.status === 200) {
+						if (!response.data.hasOwnProperty('results')) {
+							setPageNo(1);
+							return;
 						}
-						resolve(response);
-					} catch (err) {
-						setPageNo(1);
-						reject(err);
+						setTotalPage(response.data.total_pages);
+						setData(response.data.results);
+						if (response.data.count === 0) {
+							setLoader(404);
+						} else {
+							setLoader(200);
+						}
+					} else {
+						setLoader(response.status);
 					}
-				}, 500);
-			});
-			return [
-				queryPromise,
-				() => {
-					console.log('cleanup: ', query);
-					window.clearInterval(query);
-				},
-			];
+				} catch (err) {
+					handleError(err, setLoader);
+					setPageNo(1);
+				}
+			}, 500);
+
+			return () => {
+				window.clearInterval(query);
+			};
 		},
 		[pageNo, search],
 		setLoader
@@ -75,7 +67,9 @@ export default function Main(props: {url: string; heading: string}) {
 
 	return (
 		<div className="flex flex-col w-full h-full items-center gap-3">
-			<h1 className="text-2xl text-center underline mt-3 z-30">{props.heading}</h1>
+			<h1 className="text-2xl text-center underline mt-3 z-30"
+			// HACK z-index
+			>{props.heading}</h1>
 			<div className="p-3 w-11/12 md:w-1/2 rounded-xl">
 				<TextField
 					autoComplete="off"

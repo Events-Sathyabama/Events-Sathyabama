@@ -1,79 +1,147 @@
 import React from 'react';
 import handleError from './handleError';
 
-export default function useEffect(
-	effect: Function,
-	deps: Array<any> | undefined,
-	LoadingCode?: Function
-) {
-	const alreadyRan = React.useRef(false);
-	const [effectFinished, setEffectFinished] = React.useState(false);
-
-	/*
-		0 Loading screen
-		200 success (hide loading screen)
-		404 Page not Found
-		403 Forbidden
-		500 Server Error
-		600 Network Error
-
-	*/
-	let setLoadingCode: Function;
-	let loadingCode: number = 200;
-	if (LoadingCode) {
-		setLoadingCode = LoadingCode;
-	} else {
-		[loadingCode, setLoadingCode] = React.useState(0);
-	}
-
-	React.useEffect(() => {
-		const handlePromise = (promise: Promise<any>) => {
-			promise
-				.then(() => {
-					setEffectFinished(true);
-				})
-				.catch((err: any) => {
-					handleError(err, setLoadingCode);
-					setEffectFinished(true);
-				});
-		};
-
-		if ((Array.isArray(deps) && deps.length !== 0) || alreadyRan.current === false) {
-			setLoadingCode(0); // loading screen
-			alreadyRan.current = true;
-			const cleanup = effect();
-
-			if (Array.isArray(cleanup)) {
-				for (let i = 0; i < cleanup.length; i++) {
-					if (typeof cleanup[i] === 'function') {
-						return cleanup[i];
-					} else if (cleanup instanceof Promise) {
-						handlePromise(cleanup[i]);
-					}
-				}
-			} else if (typeof cleanup === 'function') {
-				setEffectFinished(true);
-				return cleanup;
-			} else if (cleanup instanceof Promise) {
-				handlePromise(cleanup);
-			}
-		}
-	}, deps);
-
+/* this will set the LoadingCode to 200 when the document is ready to use and JS has taken over */
+const makeDocumentReady = (effectFinished: boolean, setLoadingCode: Function) => {
 	React.useEffect(() => {
 		if (!effectFinished) {
 			return;
 		}
-		setTimeout(function run() {
+		let codeUpdated = false;
+		const interval = setInterval(() => {
+			console.log('I am running');
 			if (document.readyState === 'complete') {
 				setTimeout(() => {
+					console.log('I ran');
 					setLoadingCode((prev: number) => (prev === 0 ? 200 : prev)); // success page ready
+					codeUpdated = true;
 				}, 400);
-			} else {
-				run();
 			}
 		}, 500);
+
+		return () => {
+			if (codeUpdated === true) {
+				console.log('I am deleted');
+				window.clearInterval(interval);
+			}
+		};
 	}, [effectFinished]);
+};
+
+const handleCallback = (
+	callback: Function,
+	setLoadingCode: React.Dispatch<React.SetStateAction<number>>,
+	setEffectFinished: Function
+) => {
+	const isAsync = callback.constructor.name === 'AsyncFunction';
+	let cleanup;
+	if (isAsync) {
+		callback()
+			//@ts-expect-error
+			.then((data) => {
+				setEffectFinished(true);
+				return data;
+			})
+			//@ts-expect-error
+			.catch((err) => {
+				handleError(err, setLoadingCode);
+				setEffectFinished(true);
+				throw err;
+			});
+	} else {
+		try {
+			cleanup = callback();
+		} catch (err) {
+			handleError(err, setLoadingCode);
+			throw err;
+		}
+	}
+	if (typeof cleanup === 'function') {
+		return cleanup;
+	}
+};
+
+const runOnceOrTwice = (runOnce: boolean, callback: Function, alreadyRan: any) => {
+	if (runOnce) {
+		if (alreadyRan.current === false) {
+			alreadyRan.current = true;
+			return callback();
+		}
+	} else {
+		return callback();
+	}
+};
+
+/* This can handle the Async callback function */
+const useEffectAsync = (
+	callback: Function,
+	deps: Array<any> | undefined,
+	setLoadingCode: React.Dispatch<React.SetStateAction<number>>,
+	cleanup: void | (() => void),
+	runOnce: boolean
+) => {
+	const [effectFinished, setEffectFinished] = React.useState(false);
+	const alreadyRan = React.useRef(false);
+
+	makeDocumentReady(effectFinished, setLoadingCode);
+
+	const call = () => handleCallback(callback, setLoadingCode, setEffectFinished);
+
+	React.useEffect(() => {
+		setLoadingCode(0);
+		runOnceOrTwice(runOnce, call, alreadyRan);
+		return cleanup;
+	}, deps);
+};
+
+/* This is a regular useEffect  */
+const useEffectNormal = (
+	callback: Function,
+	deps: Array<any> | undefined,
+	setLoadingCode: React.Dispatch<React.SetStateAction<number>>,
+	runOnce: boolean
+) => {
+	const [effectFinished, setEffectFinished] = React.useState(false);
+	const alreadyRan = React.useRef(false);
+
+	makeDocumentReady(effectFinished, setLoadingCode);
+
+	const call = () => handleCallback(callback, setLoadingCode, setEffectFinished);
+
+	React.useEffect(() => {
+		setLoadingCode(0);
+		return runOnceOrTwice(runOnce, call, alreadyRan);
+	}, deps);
+
+	makeDocumentReady(effectFinished, setLoadingCode);
+};
+
+const useEffect = (
+	callback: Function,
+	deps: Array<any> | undefined,
+	loadingCodeSetter?: React.Dispatch<React.SetStateAction<number>>,
+	runOnce?: boolean,
+	cleanup?: void | (() => void)
+) => {
+	let [loadingCode, setLoadingCode] = React.useState(0);
+	const isAsync = callback.constructor.name === 'AsyncFunction';
+
+	if (loadingCodeSetter !== undefined) setLoadingCode = loadingCodeSetter;
+
+	if (runOnce === undefined) runOnce = false;
+
+	if (runOnce && deps !== undefined && deps.length > 0)
+		throw 'runOnce parameter can only be used with empty dependencies';
+	if (cleanup && !isAsync)
+		throw 'cleanup Parameter can only be used with async function';
+
+	if (isAsync) {
+		useEffectAsync(callback, deps, setLoadingCode, cleanup, runOnce);
+	} else {
+		useEffectNormal(callback, deps, setLoadingCode, runOnce);
+	}
 
 	return loadingCode;
-}
+};
+
+export default useEffect;

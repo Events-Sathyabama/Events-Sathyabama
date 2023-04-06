@@ -33,7 +33,7 @@ export default function Create(props: {
 	setError: {[x: string]: Function};
 	submitForm: Function;
 	buttonText: string;
-	setLoader: Function;
+	setLoader: React.Dispatch<React.SetStateAction<number>>;
 }) {
 	// Data that has to be Fetched from server
 	const setData = props.setData;
@@ -49,16 +49,20 @@ export default function Create(props: {
 	const [coordinatorList, setCoordinatorList] = useState([]);
 
 	// API calls starts
-	useEffect(() => {
-		(async () => {
+	const runOnce = true; // to force this useEffect to only run once
+	useEffect(
+		async () => {
 			const request = await axios.get(API.get_url('event:club_branch'));
 			console.log(request.data);
 			if (request.status === 200) {
 				setClubList(request.data.club);
 				setBranchList(request.data.branch);
 			}
-		})();
-	}, []);
+		},
+		[],
+		props.setLoader,
+		runOnce
+	);
 
 	// API Calls ends
 

@@ -44,7 +44,7 @@ export default function details(props: {params: {id: number}}) {
 
 	const [data, setData] = useState<InterfaceData>();
 	const [Loader, setLoader] = useState(0);
-
+	const runOnce = true; // makes this useEffect only run once
 	useEffect(
 		async () => {
 			const request = await axios.get(
@@ -67,7 +67,8 @@ export default function details(props: {params: {id: number}}) {
 			setData(data);
 		},
 		[],
-		setLoader
+		setLoader,
+		runOnce
 	);
 
 	async function applyToEvent() {

@@ -5,19 +5,19 @@ import {CircularProgress} from '@mui/material';
 export default function ApiLoader(props: {
 	state: number;
 	message?: string;
+	skelton?: JSX.Element;
 	className?: string;
 }) {
+	const prevScrollPosition = React.useRef(0);
 	React.useEffect(() => {
-		let prevScrollPosition = 0;
-
 		if (props.state === 200) {
 			// Scroll to the previous scroll position
-			window.scrollTo(0, prevScrollPosition);
+			window.scrollTo(0, prevScrollPosition.current);
 			// Show the scroll
 			document.body.style.overflow = '';
 		} else {
 			// store the prev scroll position
-			prevScrollPosition =
+			prevScrollPosition.current =
 				window.pageYOffset ||
 				document.documentElement.scrollTop ||
 				document.body.scrollTop ||
@@ -32,7 +32,8 @@ export default function ApiLoader(props: {
 	const loading_screen: {[key: number | string]: JSX.Element} = {
 		0: (
 			<>
-				<CircularProgress />
+				{/* Add your pulse loader here for different pages */}
+				{props.skelton ? props.skelton : <CircularProgress />}
 			</>
 		),
 		200: <></>,

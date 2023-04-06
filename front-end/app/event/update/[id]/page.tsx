@@ -158,6 +158,7 @@ export default function Page(props: {params: {id: number}}) {
 	const axios = new API.Axios();
 
 	let initial_value: any = {};
+	const runOnce = true;
 	useEffect(
 		() => {
 			return (async () => {
@@ -190,7 +191,8 @@ export default function Page(props: {params: {id: number}}) {
 			})();
 		},
 		[],
-		setLoader
+		setLoader,
+		runOnce
 	);
 	const submitForm = async () => {
 		try {
