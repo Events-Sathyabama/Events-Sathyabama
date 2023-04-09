@@ -10,7 +10,7 @@ import {
 	InterfaceData,
 	InterfaceError,
 	InterfaceOrganizer,
-} from '../datainterface';
+} from '../../datainterface';
 import useEffect from '@/app/useEffect';
 import ApiLoader from '@/app/apiLoader';
 

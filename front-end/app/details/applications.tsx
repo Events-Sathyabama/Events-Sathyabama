@@ -2,16 +2,16 @@
 import {useState} from 'react';
 import Button from '@mui/material/Button';
 import Pagination from '@mui/material/Pagination';
+import {InterfaceParticipant} from '../datainterface';
+import API from '../API';
 
-interface Application {
-	name: string;
-	status: number;
-}
+const axios = new API.Axios();
 
 interface ApplicationProps {
 	showSuccessPopup: Function;
 	showFailurePopup: Function;
-	applications: Application[];
+	applications: InterfaceParticipant[];
+	eventId: number;
 }
 
 export default function Applications(props: ApplicationProps) {
@@ -25,6 +25,7 @@ export default function Applications(props: ApplicationProps) {
 	function submitApplications() {
 		//TODO make post request here, array name is updatedApplications
 		console.log(updatedApplications);
+		// axios.post(API.get_url('event:update_application', props.eventId), updatedApplications);
 		props.showSuccessPopup();
 		// for Failure popup
 		// props.showFailurePopup();
@@ -32,7 +33,7 @@ export default function Applications(props: ApplicationProps) {
 
 	const {applications} = props;
 	const [updatedApplications, setUpdatedApplications] =
-		useState<Application[]>(applications);
+		useState<InterfaceParticipant[]>(applications);
 
 	const handleAccept = (index: number) => {
 		const updatedStatus = [...updatedApplications];

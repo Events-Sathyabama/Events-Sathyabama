@@ -9,7 +9,7 @@ import {
 	InterfaceClub,
 	InterfaceOrganizer,
 	InterfaceData,
-} from '../../datainterface';
+} from '../../../datainterface';
 import useEffect from '@/app/useEffect';
 import ApiLoader from '@/app/apiLoader';
 

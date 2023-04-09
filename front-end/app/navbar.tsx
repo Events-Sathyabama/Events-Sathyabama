@@ -42,7 +42,7 @@ export default function Navbar() {
 	return (
 		<Disclosure
 			as="div"
-			className="border-b-2 border-gray-200 sticky top-0 backdrop-filter backdrop-blur-md">
+			className="border-b-2 border-gray-200 sticky top-0 backdrop-filter backdrop-blur-md z-10">
 			{({open}) => (
 				<>
 					<div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">

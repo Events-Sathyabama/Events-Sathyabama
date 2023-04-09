@@ -286,6 +286,9 @@ const url: {[key: string]: Function} = {
 	'event:apply': (id: Number) => {
 		return `event/apply/${id}/`;
 	},
+	'event:update_application': (id: Number) => {
+		return `event/application/${id}/`;
+	},
 	'user:organizer': () => {
 		return 'user/organizer/';
 	},

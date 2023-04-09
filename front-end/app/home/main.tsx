@@ -144,7 +144,7 @@ export default function Main(props: {url: string; heading: string}) {
 					<div className="h-12 animate-pulse bg-gray-300 rounded-xl w-full mb-4"></div>
 				</div>
 			)}
-			{data.length != 0 && (Loader || data[0].pk === '') ? (
+			{data.length != 0 && (Loader !== 200 || data[0].pk === '') ? (
 				<div className="flex flex-col justify-center items-center w-full min-h-[65vh]">
 					<div className="flex flex-wrap justify-center items-center gap-3">
 						{cards.map((_, index) => (

@@ -18,7 +18,7 @@ import {
 	InterfaceOrganizer,
 	InterfaceData,
 	InterfaceError,
-} from './datainterface';
+} from '../datainterface';
 import useEffect from '../useEffect';
 
 import dayjs, {Dayjs} from 'dayjs';
@@ -132,6 +132,7 @@ export default function Create(props: {
 						<Autocomplete
 							value={getData.club}
 							onChange={(event, newValue) => {
+								console.log('new Value is: ', newValue);
 								if (typeof newValue === 'string') {
 									setData.club({
 										name: newValue,

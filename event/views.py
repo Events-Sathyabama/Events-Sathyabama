@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework import generics
 from . import serializers
-from .models import Event, Club
+from .models import Event, Club, EventParticipant
 from user.models import Branch
 from django.utils import timezone
 from user.serializers import BranchSerializer
@@ -47,16 +47,21 @@ class EventDetail(generics.RetrieveAPIView):
     # 3 SQL queries
     def get_object(self):
         event_id = self.kwargs.get('pk')
-        return get_object_or_404(Event, pk=event_id)
+        try:
+            event = Event.objects.get(pk=event_id)
+            return event
+        except:
+            return Response(status=404, message={'message': "No event found!!"})
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
         context['request'] = self.request
+        self.request.user.pk
         return context
 
     def get_serializer_class(self):
         event = self.get_object()
-        if event.is_organizer(self.request.user):
+        if event.is_organizer(self.request.user) or  event.is_owner(self.request.user):
             return self.serializers['organizer']
         else:
             return self.serializers['student']
@@ -106,12 +111,13 @@ def apply_event(request, pk):
     response = Response({'message': 'Event Application Successfull!!'})
     try:
         event = Event.objects.get(pk=pk)
-        if event.is_eligible_to_apply(user=request.user):
-            event.applied_participant.add(request.user)
+        status, message = event.register_participant(user=request.user)
+        if status is True:
+            response.data['message'] = message
             response.status_code = 200
         else:
             response.status_code = 403
-            response.data['message'] = event.eligible_message
+            response.data['message'] = message
     except:
         response = Response()
         response.status_code = 404

@@ -8,22 +8,20 @@ const makeDocumentReady = (effectFinished: boolean, setLoadingCode: Function) =>
 			return;
 		}
 		let codeUpdated = false;
-		const interval = setInterval(() => {
-			console.log('I am running');
+		const interval = setTimeout(function run() {
 			if (document.readyState === 'complete') {
 				setTimeout(() => {
-					console.log('I ran');
 					setLoadingCode((prev: number) => (prev === 0 ? 200 : prev)); // success page ready
 					codeUpdated = true;
 				}, 400);
+			} else {
+				run();
 			}
 		}, 500);
 
 		return () => {
-			if (codeUpdated === true) {
-				console.log('I am deleted');
-				window.clearInterval(interval);
-			}
+			console.log('I am deleted');
+			window.clearInterval(interval);
 		};
 	}, [effectFinished]);
 };
