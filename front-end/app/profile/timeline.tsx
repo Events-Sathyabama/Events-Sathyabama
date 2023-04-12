@@ -12,6 +12,8 @@ const steps = [
 	'Approved by the Vice-Chancellor',
 	'Displayed to Students',
 	'Event Completed',
+	'Report Submited',
+	'Report Approved',
 	'Issued Certifications',
 ];
 
@@ -22,10 +24,16 @@ const errorLabel = [
 	'Rejected by the Vice-Chancellor',
 	'Event not displayed to Students',
 	'Event not completed',
+	'Report Not Submited',
+	'Report Not Approved',
 	'Certifications not issued',
 ];
 
-export default function Timeline(props: {current: number; failed?: number; failedLabel ?:string}) {
+export default function Timeline(props: {
+	current: number;
+	failed?: number;
+	failedLabel?: string;
+}) {
 	const isStepFailed = (step: number) => {
 		return step === props.failed;
 	};
@@ -41,8 +49,22 @@ export default function Timeline(props: {current: number; failed?: number; faile
 					if (isStepFailed(index)) {
 						label = errorLabel[index];
 						labelProps.optional = (
-							<Typography color="error" className='-mt-1 text-sm'>
-								{props.failedLabel}
+							<Typography color="error" className="-mt-1 text-sm">
+								{Array.isArray(props.failedLabel) ? (
+									<>
+										{props.failedLabel.map((message) => {
+											return <div>{message}</div>;
+										})}
+									</>
+								) : (
+									// WARN doing some dangerous stuff
+									// TODO remove it if you find better ways
+									
+									<div
+										dangerouslySetInnerHTML={{
+											__html: props.failedLabel || '',
+										}}></div>
+								)}
 							</Typography>
 						);
 						labelProps.error = true;

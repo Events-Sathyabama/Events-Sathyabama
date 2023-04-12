@@ -54,9 +54,10 @@ const organiser = [
 		organiser: 'Google Developers Student Club',
 		description:
 			'Lorem ipsum dolor sit amet consectetur adipisicing elit. Rem debitis fuga beatae vero quaerat! Minima impedit nulla magni molestiae iusto consectetur porro ea aliquid quis reiciendis natus provident laudantium, doloremque eos aspernatur delectus ratione facere expedita fuga quam dignissimos debitis. Assumenda fugiat ipsa optio cum incidunt ducimus perferendis velit officia.',
-		status: 1, //indicated last successfully completed step
-		failed : 1,// set -1 indicated no rejection till now //else place step where rejection
-		failedLabel: "Please reiterate your event",
+		// zero based indexing
+		status: 0, //indicated last successfully completed step
+		failed: -1, // set -1 indicated no rejection till now //else place step where rejection
+		failedLabel: 'Please reiterate your event',
 	},
 	{
 		eventName: 'Testing Event 5',
@@ -65,9 +66,9 @@ const organiser = [
 		organiser: 'ACM - SIST',
 		description:
 			'Lorem ipsum dolor sit amet consectetur adipisicing elit. Rem debitis fuga beatae vero quaerat! Minima impedit nulla magni molestiae iusto consectetur porro ea aliquid quis reiciendis natus provident laudantium, doloremque eos aspernatur delectus ratione facere expedita fuga quam dignissimos debitis. Assumenda fugiat ipsa optio cum incidunt ducimus perferendis velit officia.',
-		status: 3,
-		failed: 3,
-		failedLabel: "Please reiterate your event",
+		status: 4,
+		failed: 6,
+		failedLabel: 'Set Total <p/> Strength Set Venue Set Date and Time',
 	},
 	{
 		eventName: 'Event 3',
@@ -78,7 +79,8 @@ const organiser = [
 			'Lorem ipsum dolor sit amet consectetur adipisicing elit. Rem debitis fuga beatae vero quaerat! Minima impedit nulla magni molestiae iusto consectetur porro ea aliquid quis reiciendis natus provident laudantium, doloremque eos aspernatur delectus ratione facere expedita fuga quam dignissimos debitis. Assumenda fugiat ipsa optio cum incidunt ducimus perferendis velit officia.',
 		status: 4,
 		failed: 4,
-		failedLabel: "Please reiterate your event",
+		failedLabel:
+			'Lorem ipsum dolor sit amet consectetur adipisicing elit. Rem debitis fuga beatae vero quaerat! Minima impedit nulla magni molestiae iusto consectetur porro ea aliquid quis reiciendis natus provident laudantium, doloremque eos aspernatur delectus ratione facere expedita fuga quam dignissimos debitis. Assumenda fugiat ipsa optio cum incidunt ducimus perferendis velit officia.',
 	},
 	{
 		eventName: 'Event 4',
@@ -89,7 +91,7 @@ const organiser = [
 			'Lorem ipsum dolor sit amet consectetur adipisicing elit. Rem debitis fuga beatae vero quaerat! Minima impedit nulla magni molestiae iusto consectetur porro ea aliquid quis reiciendis natus provident laudantium, doloremque eos aspernatur delectus ratione facere expedita fuga quam dignissimos debitis. Assumenda fugiat ipsa optio cum incidunt ducimus perferendis velit officia.',
 		status: 6,
 		failed: -1,
-		failedLabel: "",
+		failedLabel: '',
 	},
 	{
 		eventName: 'Event 5',
@@ -100,7 +102,7 @@ const organiser = [
 			'Lorem ipsum dolor sit amet consectetur adipisicing elit. Rem debitis fuga beatae vero quaerat! Minima impedit nulla magni molestiae iusto consectetur porro ea aliquid quis reiciendis natus provident laudantium, doloremque eos aspernatur delectus ratione facere expedita fuga quam dignissimos debitis. Assumenda fugiat ipsa optio cum incidunt ducimus perferendis velit officia.',
 		status: 7,
 		failed: 6,
-		failedLabel: "Please reiterate your event",
+		failedLabel: 'Please reiterate your event',
 	},
 	{
 		eventName: 'Event 5',
@@ -111,7 +113,7 @@ const organiser = [
 			'Lorem ipsum dolor sit amet consectetur adipisicing elit. Rem debitis fuga beatae vero quaerat! Minima impedit nulla magni molestiae iusto consectetur porro ea aliquid quis reiciendis natus provident laudantium, doloremque eos aspernatur delectus ratione facere expedita fuga quam dignissimos debitis. Assumenda fugiat ipsa optio cum incidunt ducimus perferendis velit officia.',
 		status: 5,
 		failed: 5,
-		failedLabel: "Please reiterate your event",
+		failedLabel: 'Please reiterate your event',
 	},
 ];
 
