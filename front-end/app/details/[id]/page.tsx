@@ -110,7 +110,7 @@ export default function details(props: {params: {id: number}}) {
 
 	return (
 		<>
-			{<ApiLoader state={Loader} message="Fetching Data..." />}
+			{/* {<ApiLoader state={0} message="Fetching Data..." />} */}
 			<div className="flex flex-col w-full h-auto items-center justify-center">
 				<div className="flex flex-col w-full items-end">
 					{Spopup ? (
@@ -158,7 +158,7 @@ export default function details(props: {params: {id: number}}) {
 										<p className="text-2xl text-black font-medium">Head Count:</p>
 										<p className="text-2xl text-black font-light">
 											{totalStrenth === 0
-												? 'Total Strength have not been set yet'
+												? "Total capacity isn't set!"
 												: `${data?.accepted_count}/${totalStrenth}`}
 										</p>
 									</div>

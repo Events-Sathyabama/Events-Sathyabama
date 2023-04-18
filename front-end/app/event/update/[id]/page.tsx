@@ -254,7 +254,7 @@ export default function Page(props: {params: {id: number}}) {
 	const [message, setMessage] = useState<string>();
 	return (
 		<>
-			{<ApiLoader state={Loader} message="Setting Things up for you..." />}
+			{/* {<ApiLoader state={Loader} message="Setting Things up for you..." />} */}
 			{successPopUp ? (
 				<Popup.Success message={message || 'Success'} showpopup={setSuccessPopUp} />
 			) : (

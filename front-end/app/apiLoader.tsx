@@ -9,25 +9,25 @@ export default function ApiLoader(props: {
 	children?: JSX.Element;
 }) {
 	const prevScrollPosition = React.useRef(0);
-	React.useEffect(() => {
-		if (props.state === 200) {
-			// Scroll to the previous scroll position
-			window.scrollTo(0, prevScrollPosition.current);
-			// Show the scroll
-			document.body.style.overflow = '';
-		} else {
-			// store the prev scroll position
-			prevScrollPosition.current =
-				window.pageYOffset ||
-				document.documentElement.scrollTop ||
-				document.body.scrollTop ||
-				0;
-			// Scroll to the top
-			window.scrollTo(0, 0);
-			// Hide the scroll
-			document.body.style.overflow = 'hidden';
-		}
-	}, [props.state]);
+	// React.useEffect(() => {
+	// 	if (props.state === 200) {
+	// 		// Scroll to the previous scroll position
+	// 		window.scrollTo(0, prevScrollPosition.current);
+	// 		// Show the scroll
+	// 		document.body.style.overflow = '';
+	// 	} else {
+	// 		// store the prev scroll position
+	// 		prevScrollPosition.current =
+	// 			window.pageYOffset ||
+	// 			document.documentElement.scrollTop ||
+	// 			document.body.scrollTop ||
+	// 			0;
+	// 		// Scroll to the top
+	// 		window.scrollTo(0, 0);
+	// 		// Hide the scroll
+	// 		document.body.style.overflow = 'hidden';
+	// 	}
+	// }, [props.state]);
 
 	const loading_screen: {[key: number | string]: JSX.Element} = {
 		0: (
@@ -54,7 +54,7 @@ export default function ApiLoader(props: {
 				<div
 					className={
 						(props.className ? props.className : '') +
-						` fixed w-screen h-screen bg-white z-20 flex justify-center items-center`
+						` bg-white z-20 flex justify-center items-center`
 					}>
 					{loading_screen.hasOwnProperty(props.state)
 						? loading_screen[props.state]

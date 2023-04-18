@@ -20,7 +20,6 @@ const makeDocumentReady = (effectFinished: boolean, setLoadingCode: Function) =>
 		}, 500);
 
 		return () => {
-			console.log('I am deleted');
 			window.clearInterval(interval);
 		};
 	}, [effectFinished]);
