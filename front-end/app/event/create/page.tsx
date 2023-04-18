@@ -34,8 +34,8 @@ export default function Page() {
 			name: '',
 		});
 		const [image, setImage] = useState<File>();
-		const [startDate, setStartDate] = useState<Dayjs>(dayjs());
-		const [endDate, setEndDate] = useState<Dayjs>(dayjs());
+		const [startDate, setStartDate] = useState<Dayjs>();
+		const [endDate, setEndDate] = useState<Dayjs>();
 		const [shortDesc, setShortDesc] = useState<string>('');
 		const [longDesc, setLongDesc] = useState<string>('');
 		const [branchName, setBranchName] = useState<InterfaceBranch[]>([]);
@@ -220,16 +220,16 @@ export default function Page() {
 		setLoader
 	);
 
-	useEffect(() => {
-		setData.title('This is Test Title');
-		setData.organizer([
-			{name: 'Abhinav', college_id: '40110122', role: 'Teacher', pk: 2},
-		]);
-		setData.short_description('This is short');
-		setData.club({
-			name: 'SIST',
-		});
-	}, []);
+	// useEffect(() => {
+	// 	setData.title('This is Test Title');
+	// 	setData.organizer([
+	// 		{name: 'Abhinav', college_id: '40110122', role: 'Teacher', pk: 2},
+	// 	]);
+	// 	setData.short_description('This is short');
+	// 	setData.club({
+	// 		name: 'SIST',
+	// 	});
+	// }, []);
 
 	return (
 		<>
