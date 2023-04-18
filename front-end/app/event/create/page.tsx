@@ -201,7 +201,7 @@ export default function Page() {
 
 	return (
 		<>
-			{<ApiLoader state={Loader} message="Setting Things up for you..." />}
+			{/* {<ApiLoader state={Loader} message="Setting Things up for you..." />} */}
 			<Create
 				getData={getData}
 				setData={setData}

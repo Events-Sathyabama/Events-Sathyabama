@@ -222,8 +222,7 @@ export default function Page(props: {params: {id: number}}) {
 
 	return (
 		<>
-			{<ApiLoader state={Loader} message="Setting Things up for you..." />}
-
+			{/* {<ApiLoader state={Loader} message="Setting Things up for you..." />} */}
 			<Create
 				getData={getData}
 				setData={setData}

@@ -13,7 +13,7 @@ import handleError from '../handleError';
 
 function LoadingCard() {
 	return (
-		<div className="flex flex-col border border-gray-400 rounded-md bg-white transition-all duration-300 w-80 justify-center items-center animateFadeIn p-2">
+		<div className="flex flex-col border border-gray-400 rounded-md bg-white transition-all duration-300 w-80 justify-center items-center p-2">
 			<div className="w-72 truncate h-8 animate-pulse bg-gray-300 rounded-xl mb-2 mt-2"></div>
 			<div className="w-72 truncate h-4 animate-pulse bg-gray-200 rounded-xl mb-4"></div>
 			<div className="flex items-center h-96 w-11/12 border border-gray-300 p-2 animate-pulse">
@@ -51,7 +51,6 @@ export default function Main(props: {url: string; heading: string}) {
 	const [showSearch, setShowSearch] = useState(false);
 
 	useEffect(() => {
-		setShowSearch(true);
 		const width = window.innerWidth;
 		if (width >= 1200) {
 			setNumCards(4);
@@ -80,6 +79,7 @@ export default function Main(props: {url: string; heading: string}) {
 						}
 						setTotalPage(response.data.total_pages);
 						setData(response.data.results);
+						setShowSearch(true);
 						if (response.data.count === 0) {
 							setLoader(404);
 						} else {
@@ -104,47 +104,54 @@ export default function Main(props: {url: string; heading: string}) {
 
 	return (
 		<div className="flex flex-col w-full h-full items-center gap-3">
-			<h1 className="text-2xl text-center mt-3 underline animateFadeIn">
-				{props.heading}
-			</h1>
 			{showSearch ? (
-				<div className="p-3 w-11/12 md:w-1/2 rounded-xl animateFadeIn">
-					<TextField
-						autoComplete="off"
-						onChange={(e) => setSearch(e.target.value)}
-						label="Search for events by name, club, branch, or description."
-						value={search}
-						placeholder="Start typing..."
-						size="medium"
-						className="w-full"
-						InputProps={{
-							startAdornment: (
-								<InputAdornment position="start">
-									<svg
-										xmlns="http://www.w3.org/2000/svg"
-										fill="none"
-										viewBox="0 0 24 24"
-										strokeWidth={1.5}
-										stroke="currentColor"
-										className="w-6 h-6">
-										<path
-											strokeLinecap="round"
-											strokeLinejoin="round"
-											d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
-										/>
-									</svg>
-								</InputAdornment>
-							),
-						}}
-						variant="standard"
-					/>
-				</div>
+				<>
+					<h1 className="text-2xl text-center mt-3 underline animateFadeIn">
+						{props.heading}
+					</h1>
+					<div className="p-3 w-11/12 md:w-1/2 rounded-xl animateFadeIn">
+						<TextField
+							autoComplete="off"
+							onChange={(e) => setSearch(e.target.value)}
+							label="Search for events by name, club, branch, or description."
+							value={search}
+							placeholder="Start typing..."
+							size="medium"
+							className="w-full"
+							InputProps={{
+								startAdornment: (
+									<InputAdornment position="start">
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											fill="none"
+											viewBox="0 0 24 24"
+											strokeWidth={1.5}
+											stroke="currentColor"
+											className="w-6 h-6">
+											<path
+												strokeLinecap="round"
+												strokeLinejoin="round"
+												d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
+											/>
+										</svg>
+									</InputAdornment>
+								),
+							}}
+							variant="standard"
+						/>
+					</div>
+				</>
 			) : (
-				<div className="p-3 w-11/12 md:w-1/2 rounded-xl animateFadeIn">
-					<div className="h-12 animate-pulse bg-gray-300 rounded-xl w-full mb-4"></div>
-				</div>
+				<>
+					<div className="mt-3 w-48 rounded-xl">
+						<div className="h-10 animate-pulse bg-gray-300 rounded-xl w-full"></div>
+					</div>
+					<div className="p-3 pt-0 w-11/12 md:w-1/2 rounded-xl">
+						<div className="h-12 animate-pulse bg-gray-300 rounded-xl w-full mb-4"></div>
+					</div>
+				</>
 			)}
-			{data.length != 0 && (Loader || data[0].pk === '') ? (
+			{data.length != 0 && (Loader !== 200 || data[0].pk === '') ? (
 				<div className="flex flex-col justify-center items-center w-full min-h-[65vh]">
 					<div className="flex flex-wrap justify-center items-center gap-3">
 						{cards.map((_, index) => (
@@ -154,7 +161,7 @@ export default function Main(props: {url: string; heading: string}) {
 				</div>
 			) : (
 				<div className="flex justify-center flex-col items-center gap-4">
-					<div className="flex flex-row flex-wrap m-3 justify-center gap-3">
+					<div className="flex flex-row flex-wrap justify-center gap-3">
 						{data.length !== 0 && data[0].pk != '' ? (
 							data.map((card) => (
 								<HomeCard
@@ -168,11 +175,12 @@ export default function Main(props: {url: string; heading: string}) {
 								/>
 							))
 						) : (
-							<div className="flex flex-col justify-center items-center w-full h-[58vh] animateFadeIn">
+							<div className="flex flex-col justify-center items-center w-full h-[61vh] animateFadeIn">
 								<Image
 									src="/eventsNotFound.avif"
 									width={500}
 									height={500}
+									priority
 									alt=""></Image>
 								<p className="text-2xl font-light text-[#60adf5] mt-4">
 									No events found!!

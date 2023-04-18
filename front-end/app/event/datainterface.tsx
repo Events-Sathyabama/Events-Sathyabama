@@ -1,4 +1,4 @@
-import dayjs, {Dayjs} from 'dayjs';
+import {Dayjs} from 'dayjs';
 export interface InterfaceBranch{
     name: string;
 	batch: string;
@@ -18,22 +18,48 @@ export interface InterfaceClub {
 	inputValue?: string;
 }
 
+export interface InterfaceParticipant{
+	name: string;
+	college_id: string;
+	role: string;
+	pk: number;
+	status: number
+}
+
 export interface InterfaceData {
-	title: string | undefined;
-	club: InterfaceClub | undefined;
+	pk: number;
+	date: string;
+	long_description: string;
+	organizer: InterfaceOrganizer[];
+	branch: InterfaceBranch[];
+	owner: InterfaceOrganizer;
+	applied_count: number;
+	accepted_count: number;
+	total_strength: string;
 	image: File | string | undefined;
+	title: string | undefined;
+	short_description: string | undefined;
+	club: InterfaceClub | undefined;
+	venue: string | undefined;
 	start_date: Dayjs | undefined;
 	end_date: Dayjs | undefined;
-	short_description: string | undefined;
-	long_description: string | undefined;
-	branch: InterfaceBranch[];
-	date: string | undefined;
 	time: string | undefined;
-	venue: string | undefined;
-	organizer: InterfaceOrganizer[];
-	owner: InterfaceOrganizer;
-	applied_participant?: InterfaceOrganizer[];
-	accepted_participant?: InterfaceOrganizer[];
+	fcfs: boolean;
+	status: string;
+
+	// For students only
+	is_applied?:boolean,
+	is_accepted?:boolean,
+	is_declined?:boolean,
+	
+	// for organizers only
+	
+	approval_message?:any,
+	participant?: InterfaceParticipant[];
+	accepted_role?: string[];
+	declined_count?:number ,
+	pending_count?: number,
+
 }
 
 export interface InterfaceError {
@@ -49,6 +75,8 @@ export interface InterfaceError {
 	time: string | null;
 	venue: string | null;
 	organizer: string | null;
+	fcfs:string | null;
+	total_strength: string | null
 }
 
 export default {};

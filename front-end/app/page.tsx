@@ -74,8 +74,6 @@ export default function LoginPage(): JSX.Element {
 						</div>
 					) : (
 						<>
-							{/* TODO Login Backdrop Work Here */}
-							{/* <WebBackdrop message="Verifying login status..."></WebBackdrop> */}
 							{validBackdrop ? (
 								<WebBackdrop message="Verifying Credentials..."></WebBackdrop>
 							) : null}

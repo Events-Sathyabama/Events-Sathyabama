@@ -7,7 +7,7 @@ import './globals.css';
 export const metadata = {
 	title: 'Events@Sathyabama',
 	description:
-		'Event@Sathyabama is useful for planning, implementing, and carrying out effective events.',
+		'Welcome to Events@Sathyabama. The one-stop Event Management System for all events at Sathyabama University',
 };
 export default function RootLayout({children}: {children: React.ReactNode}) {
 	return (
