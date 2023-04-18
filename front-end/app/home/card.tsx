@@ -17,7 +17,6 @@ interface HomeCardProps {
 export default function HomeCard(props: HomeCardProps) {
 	const {title, subheader, imageUrl, description, date, learnMoreLink} = props;
 	const [expanded, setExpanded] = React.useState(false);
-
 	const handleExpandClick = () => {
 		setExpanded(!expanded);
 	};

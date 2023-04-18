@@ -3,14 +3,16 @@ import Create from '../create';
 import {useState} from 'react';
 import {useRouter} from 'next/navigation';
 import API from '../../API';
-import {Dayjs} from 'dayjs';
+import dayjs, {Dayjs} from 'dayjs';
 import {
 	InterfaceClub,
 	InterfaceBranch,
 	InterfaceData,
 	InterfaceError,
 	InterfaceOrganizer,
-} from '../datainterface';
+	InterfaceCreateEvent,
+	InterfaceCreateUpdateSendData,
+} from '../../datainterface';
 import useEffect from '@/app/useEffect';
 import ApiLoader from '@/app/apiLoader';
 
@@ -25,20 +27,24 @@ export default function Page() {
 		pk: -1,
 	});
 	const [setData, getData, getError, setError, sendData] = (() => {
-		const [title, setTitle] = useState<string>();
-		const [clubName, setClubName] = useState<InterfaceClub>();
+		const [title, setTitle] = useState<string>('');
+		const [totalStrength, setTotalStrength] = useState<number>(50);
+		const [fcfs, setFcfs] = useState<boolean>(true);
+		const [clubName, setClubName] = useState<InterfaceClub>({
+			name: '',
+		});
 		const [image, setImage] = useState<File>();
-		const [startDate, setStartDate] = useState<Dayjs>();
-		const [endDate, setEndDate] = useState<Dayjs>();
-		const [shortDesc, setShortDesc] = useState<string>();
-		const [longDesc, setLongDesc] = useState<string>();
+		const [startDate, setStartDate] = useState<Dayjs>(dayjs());
+		const [endDate, setEndDate] = useState<Dayjs>(dayjs());
+		const [shortDesc, setShortDesc] = useState<string>('');
+		const [longDesc, setLongDesc] = useState<string>('');
 		const [branchName, setBranchName] = useState<InterfaceBranch[]>([]);
-		const [date, setDate] = useState<string>();
-		const [duration, setDuration] = useState<string>();
-		const [venue, setVenue] = useState<string>();
+		const [date, setDate] = useState<string>('');
+		const [duration, setDuration] = useState<string>('');
+		const [venue, setVenue] = useState<string>('');
 		const [coordinator, setCoordinator] = useState<InterfaceOrganizer[]>([]);
 
-		const getData: InterfaceData = {
+		const getData: InterfaceCreateEvent = {
 			title: title,
 			club: clubName,
 			image: image,
@@ -52,6 +58,8 @@ export default function Page() {
 			venue: venue,
 			organizer: coordinator,
 			owner: owner,
+			fcfs: fcfs,
+			total_strength: totalStrength,
 		};
 
 		const sendData = () => {
@@ -60,19 +68,20 @@ export default function Page() {
 				const rv = [];
 				for (let i = 0; i < coordinator.length; i++) {
 					if (coordinator[i].college_id !== owner.college_id) {
-						rv.push(String(coordinator[i].college_id));
+						rv.push(parseInt(coordinator[i].college_id));
 					}
 				}
 				return rv;
 			};
 			const branch = () => {
-				const rv: string[] = [];
+				const rv: number[] = [];
 				for (let i = 0; i < branchName.length; i++) {
-					rv.push(String(branchName[i].pk));
+					rv.push(branchName[i].pk);
 				}
 				return rv;
 			};
-			const value = {
+
+			const value: InterfaceCreateUpdateSendData = {
 				organizer: organizer(),
 				image: image,
 				title: title,
@@ -85,6 +94,8 @@ export default function Page() {
 				date: date,
 				time: duration,
 				branch: branch(),
+				fcfs: fcfs,
+				total_strength: totalStrength,
 			};
 			// @ts-expect-error
 			if (coordinator.length > 1) formData.append('organizer', organizer());
@@ -115,9 +126,15 @@ export default function Page() {
 			time: setDuration,
 			venue: setVenue,
 			organizer: setCoordinator,
+			fcfs: setFcfs,
+			total_strength: setTotalStrength,
 		};
 
 		const [titleError, setTitleError] = useState<null | string>(null);
+		const [fcfsError, setFcfsError] = useState<null | string>(null);
+		const [totalStrengthError, setTotalStrengthError] = useState<null | string>(
+			null
+		);
 		const [clubNameError, setClubNameError] = useState<null | string>(null);
 		const [imageError, setImageError] = useState<null | string>(null);
 		const [startDateError, setStartDateError] = useState<null | string>(null);
@@ -143,6 +160,8 @@ export default function Page() {
 			time: durationError,
 			venue: venueError,
 			organizer: coordinatorError,
+			fcfs: fcfsError,
+			total_strength: totalStrengthError,
 		};
 		const setError: {[x: string]: Function} = {
 			title: setTitleError,
@@ -157,6 +176,8 @@ export default function Page() {
 			time: setDurationError,
 			venue: setVenueError,
 			organizer: setCoordinatorError,
+			fcfs: setFcfsError,
+			total_strength: setTotalStrengthError,
 		};
 		return [setData, getData, getError, setError, sendData];
 	})();
@@ -173,7 +194,7 @@ export default function Page() {
 				setError[field](null);
 			}
 			for (let field in error.response.data) {
-				setError[field](error.response.data[field]);
+				setError[field](API.extract_error(error.response.data[field]));
 			}
 			window.scroll({
 				top: 0,
@@ -198,6 +219,17 @@ export default function Page() {
 		[],
 		setLoader
 	);
+
+	useEffect(() => {
+		setData.title('This is Test Title');
+		setData.organizer([
+			{name: 'Abhinav', college_id: '40110122', role: 'Teacher', pk: 2},
+		]);
+		setData.short_description('This is short');
+		setData.club({
+			name: 'SIST',
+		});
+	}, []);
 
 	return (
 		<>

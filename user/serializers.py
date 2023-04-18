@@ -22,18 +22,35 @@ class BranchSerializer(serializers.ModelSerializer):
 
     
     
-class OrganizerSerializer(serializers.Serializer):
+class OrganizerSerializer(serializers.ModelSerializer):
     name = serializers.CharField(source='full_name')
-    role = serializers.CharField(source='get_role_display')
-    college_id = serializers.CharField()
-    pk = serializers.ReadOnlyField()
-
+    
     def to_representation(self, instance):
         data = super().to_representation(instance)
         if data['role'] != 'Student':
             data['role'] = 'Faculty'
         return data
+    
+    class Meta:
+        model = User
+        fields = [
+            'name',
+            'role',
+            'college_id',
+            'pk'
+        ]
 
 class OwnerSerializer(serializers.Serializer):
     name = serializers.CharField(source='full_name')
     college_id = serializers.CharField()
+
+
+class ParticipantSerializer(OrganizerSerializer):
+    status = serializers.SerializerMethodField()
+
+    def get_status(self, obj):
+        request = self.context.get('request')
+        if obj.accepted_participant.filter(pk=request.user.pk).exists():
+            return 1
+        return 0
+

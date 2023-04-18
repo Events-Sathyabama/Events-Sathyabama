@@ -11,7 +11,7 @@ import Fab from '@mui/material/Fab';
 import Link from 'next/link';
 import LoadingButton from '@mui/lab/LoadingButton';
 import ProgressBar from '../progressBar';
-import {InterfaceData, InterfaceOrganizer} from '@/app/event/datainterface';
+import {InterfaceData, InterfaceOrganizer} from '@/app/datainterface';
 import ApiLoader from '../../apiLoader';
 import handleError from '@/app/handleError';
 
@@ -38,6 +38,8 @@ export default function details(props: {params: {id: number}}) {
 	const [appliedCount, setAppliedCount] = useState(0);
 	const [totalStrenth, setTotalStrenth] = useState(0);
 	const [isApplied, setIsApplied] = useState(false);
+	const [isAccepted, setIsAccepted] = useState(false);
+	const [isDeclined, setIsDeclined] = useState(false);
 	const [isOrganizer, setIsOrganizer] = useState(false);
 	const [calledByApply, setCalledByApply] = useState(false);
 
@@ -48,8 +50,8 @@ export default function details(props: {params: {id: number}}) {
 	const runOnce = true; // makes this useEffect only run once
 	useEffect(
 		async () => {
-		window.scrollTo(0, 0);
-      
+			window.scrollTo(0, 0);
+
 			const request = await axios.get(
 				API.get_url('event:detail', [props.params.id])
 			);
@@ -61,8 +63,9 @@ export default function details(props: {params: {id: number}}) {
 			if (!data.hasOwnProperty('is_applied')) {
 				setIsOrganizer(true);
 			} else {
+				setIsAccepted(data.is_accepted);
 				setIsApplied(data.is_applied);
-
+				setIsDeclined(data.is_declined);
 			}
 
 			setAppliedCount(data.applied_count);
@@ -77,13 +80,16 @@ export default function details(props: {params: {id: number}}) {
 
 	async function applyToEvent() {
 		setApplying(true);
-    setCalledByApply(true);
+		setCalledByApply(true);
 		try {
 			const response = await axios.get(API.get_url('event:apply', props.params.id));
 			console.log(response);
 			setPopupMessage(response.data.message);
 			setSpopup(true);
-			setAppliedCount((prev) => prev + 1);
+			if (data?.fcfs) {
+				setAppliedCount((prev) => prev + 1);
+				setIsAccepted(true);
+			}
 			setIsApplied(true);
 		} catch (err: any) {
 			console.log(err);
@@ -108,28 +114,23 @@ export default function details(props: {params: {id: number}}) {
 			<div className="flex flex-col w-full h-auto items-center justify-center">
 				<div className="flex flex-col w-full items-end">
 					{Spopup ? (
-					<Popup.Success
-						showpopup={setSpopup}
-						message={
-							calledByApply
-								? popupMessage
-								: 'Applications updated!'
-						}></Popup.Success>
-				) : null}
-				{Fpopup ? (
-					<Popup.Error
-						showpopup={setFpopup}
-						message={
-							calledByApply
-								? popupMessage
-								: 'Applications not updated!'
-						}></Popup.Error>
-				) : null}
+						<Popup.Success
+							showpopup={setSpopup}
+							message={
+								calledByApply ? popupMessage : 'Applications updated!'
+							}></Popup.Success>
+					) : null}
+					{Fpopup ? (
+						<Popup.Error
+							showpopup={setFpopup}
+							message={
+								calledByApply ? popupMessage : 'Applications not updated!'
+							}></Popup.Error>
+					) : null}
 				</div>
 				<div className="flex flex-col w-11/12 h-auto">
 					<Header
 						club={data?.club?.name}
-
 						short_desc={data?.short_description}
 						title={data?.title}
 					/>
@@ -154,24 +155,32 @@ export default function details(props: {params: {id: number}}) {
 										</svg>
 									</div>
 									<div className="flex flex-col">
-										<p className="text-2xl text-black font-medium">
-											Head Count:
-										</p>
+										<p className="text-2xl text-black font-medium">Head Count:</p>
 										<p className="text-2xl text-black font-light">
 											{totalStrenth === 0
 												? 'Total Strength have not been set yet'
-												: `${appliedCount}/${totalStrenth}`}
+												: `${data?.accepted_count}/${totalStrenth}`}
 										</p>
 									</div>
 								</div>
 								<ProgressBar
-									registeredStudents={appliedCount || 0}
+									registeredStudents={data?.accepted_count || 0}
 									totalCapacity={totalStrenth || 1}></ProgressBar>
 								{!isOrganizer ? (
 									<>
 										{isApplied ? (
-											<p className="w-full border border-green-500 p-2 rounded-md text-center shadow-lg text-white bg-green-600 transition-all duration-1000">
-												APPLIED
+											<p
+												className={
+													'w-full border  p-2 rounded-md text-center shadow-lg text-white bg-green-600 transition-all duration-1000' +
+													(isDeclined
+														? ' border-red-500 bg-red-600'
+														: ' border-green-500 bg-green-600')
+												}>
+												{(() => {
+													if (isDeclined) return 'Declined';
+													if (isAccepted) return 'Accepted';
+													if (isApplied) return 'Applied';
+												})()}
 											</p>
 										) : (
 											<LoadingButton
@@ -188,7 +197,6 @@ export default function details(props: {params: {id: number}}) {
 									</>
 								) : (
 									<></>
-
 								)}
 							</div>
 							<EventTime
@@ -200,16 +208,17 @@ export default function details(props: {params: {id: number}}) {
 								coordinator={(() => {
 									const rv = [];
 									if (data !== undefined) {
-										rv.push(...data.organizer);
-										rv.push(data.owner);
+										if (data.organizer.length > 0) rv.push(...data.organizer);
+										if (data.owner) rv.push(data.owner);
 									}
 									return rv;
 								})()}
 								showSuccessPopup={() => setSpopup(true)}
 								showFailurePopup={() => setFpopup(true)}
 								isOrganizer={isOrganizer}
-								appliedParticipant={data?.applied_participant || []}
-								acceptedParticipant={data?.accepted_participant || []}
+								participant={data?.participant || []}
+								fcfs={data?.fcfs || false}
+								eventId={props.params.id}
 							/>
 						</div>
 						{isOrganizer ? (
