@@ -27,8 +27,8 @@ export default function LoginForm(props: {
 
 	const formik = useFormik({
 		initialValues: {
-			id: '',
-			password: '',
+			id: ' ',
+			password: ' ',
 			submit: null,
 		},
 		validationSchema: Yup.object({

@@ -11,6 +11,7 @@ const steps = [
 	'Approved by the Dean',
 	'Approved by the Vice-Chancellor',
 	'Displayed to Students',
+	'OnGoing',
 	'Event Completed',
 	'Report Submited',
 	'Report Approved',
@@ -23,6 +24,7 @@ const errorLabel = [
 	'Rejected by the Dean',
 	'Rejected by the Vice-Chancellor',
 	'Event not displayed to Students',
+	'onGoing',
 	'Event not completed',
 	'Report Not Submited',
 	'Report Not Approved',
@@ -59,7 +61,7 @@ export default function Timeline(props: {
 								) : (
 									// WARN doing some dangerous stuff
 									// TODO remove it if you find better ways
-									
+
 									<div
 										dangerouslySetInnerHTML={{
 											__html: props.failedLabel || '',

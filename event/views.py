@@ -84,27 +84,37 @@ class EventCreate(generics.CreateAPIView):
             else:
                 data[i] = self.request.data.get(i)
         kwargs['data'] = data
-        return super().get_serializer(*args, **kwargs)
+        ser = super().get_serializer(*args, **kwargs)
+        return ser
 
     def perform_create(self, serializer):
-        event = serializer.save(owner=self.request.user)
+        event = serializer.save()
+        event.set_owner(self.request.user)
+
 
 
 class EventUpdate(generics.UpdateAPIView):
     queryset = Event.objects.all()
     serializer_class = serializers.EventUpdateSerializer
+    lookup_field =  'pk'
 
-    def get_serializer(self, *args, **kwargs):
+    def patch(self, request, *args, **kwargs):
+        # Modify request.data before validation
         data = {}
         data['branch'] = []
         data['organizer'] = []
-        for i in self.request.data:
+        for i in request.data:
             if i.endswith('[]'):
-                data[i[:-2]] = self.request.data.getlist(i)
+                data[i[:-2]] = request.data.getlist(i)
             else:
-                data[i] = self.request.data.get(i)
-        kwargs['data'] = data
-        return super().get_serializer(*args, **kwargs)
+                data[i] = request.data.get(i)
+        request._data = data
+        return super().patch(request, *args, **kwargs)
+
+    def update(self, *args, **kwargs):
+        x = super().update(*args, **kwargs)
+        return x
+
 
 @api_view(['GET'])    
 def apply_event(request, pk):

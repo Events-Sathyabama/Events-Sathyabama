@@ -47,15 +47,16 @@ class Event(models.Model):
         (1, 'Pending'),
         (2, 'Approved'),
         (3, 'Rejected'),
-        (4, 'Completed'),
-        (5, 'Cancel'),
-        (6, 'Certified'),
-        (7, 'Ongoing'),
+        (4, 'Displayed'),
+        (5, 'Completed'),
+        (6, 'Report Submitted'),
+        (7, 'Report Approved'),
+        (8, 'Certified'),
+        (9, 'Canceled'),
     )
     ROLE_CHOICES = User.ROLE_CHOICE
 
     status = models.PositiveIntegerField(choices=STATUS_CHOICES, default=1)
-    
 
     # this will only contain accepted participant
     participants = models.ManyToManyField(User, through='EventParticipant', blank=True)
@@ -80,16 +81,23 @@ class Event(models.Model):
 
     branch = models.ManyToManyField(Branch, blank=True)
 
-    messages = models.JSONField(blank=True, null=True)  # [{'message':'', from:'', datetime:'', status:'Rejected}]
+    history = models.JSONField(blank=True, null=True)
+
+    '''
+    {
+        0: {datetime:'', status: 1},
+        1: {datetime:'', status: 1},
+        2: {datetime:'', status: 1},
+        3: {datetime:'', status: 1},
+        4: {datetime:'', status: 1},
+        5: {datetime:'', status: 0, error_message: ''},
+    }
+    '''
+
     hod_verified = models.BooleanField(default=False)
     dean_verified = models.BooleanField(default=False)
     vc_verified = models.BooleanField(default=False)
     require_number = models.BooleanField(default=False)
-
-
-    
-        
- 
 
     def get_participant_data(self):
         if not hasattr(self, '_participants_dict'):
@@ -117,14 +125,14 @@ class Event(models.Model):
 
         return self._participants_dict
 
-
-
     @property
     def accepted_participant(self):
         return self.get_participant_data()['accepted']
+
     @property
     def applied_participant(self):
         return self.get_participant_data()['applied']
+
     @property
     def declined_participant(self):
         return self.get_participant_data()['declined']
@@ -145,7 +153,6 @@ class Event(models.Model):
             return False
         return self.owner.pk == user.pk 
     
-
     # def clean(self, *args, **kwargs):
     #     cleanData = super().save(*args, **kwargs)
     #     for participant in self.accepted_participant.all():
@@ -159,7 +166,6 @@ class Event(models.Model):
             self.participants.add(user, through_defaults={'status': status})
             return [True, 'You are Enrolled to the Event' if self.fcfs else 'Event Application Successfull!!']
         return [False, message]
-
 
     def is_eligible_to_apply(self, user):
         if user.role not in self.accepted_role:
@@ -175,6 +181,23 @@ class Event(models.Model):
         if self.require_number and not user.has_phone():
             return "Update Whatsapp Number to Apply to this Event"
         return True
+
+    def set_owner(self, user):
+        """
+        Sets the owner of the event. If the owner already exists, it will be updated.
+        """
+        # Check if an owner already exists
+        try:
+            owner = EventParticipant.objects.get(event=self, owner=True)
+            # Update the existing owner
+            if owner.user != user:
+                owner.user = user
+                owner.save()
+        except EventParticipant.DoesNotExist:
+            # If no owner exists, create a new owner entry
+            owner = EventParticipant(event=self, user=user, owner=True)
+            owner.save()
+    
 
     def __str__(self):
         return f"{self.title} ({self.owner})"

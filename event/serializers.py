@@ -170,9 +170,9 @@ class EventDetailSerializerOrganizer(EventDetailSerializerStudent):
     declined_count = serializers.SerializerMethodField()
     
     def get_approval_message(self, obj):
-        if obj.messages is None:
+        if obj.history is None:
             return []
-        return obj.messages
+        return obj.history
     
     def get_accepted_role(self, obj):
         rv = []
@@ -233,9 +233,17 @@ class EventCreateSerializer(serializers.ModelSerializer):
             'date',
             'time',
             'branch',
+            'fcfs',
+            'total_strength',
         ]
 
     
+    def to_representation(self, instance):
+        # Override to_representation method to customize serialized output
+        representation = super().to_representation(instance)
+        representation['organizer'] = user_serializer.OrganizerSerializer(instance.organizer.all(), many=True).data
+        return representation
+
 
     def validate_title(self, value):
         value = value.strip()
@@ -248,6 +256,31 @@ class EventCreateSerializer(serializers.ModelSerializer):
 class EventUpdateSerializer(EventCreateSerializer):
     pass        
 
+
+class EventProgressSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Event
+        fields = [
+            'title',
+            'link',
+            'club', # Club name
+            'short_desc',
+            'status',
+            'failed', # -1 or (progress + 1)
+            'failedLabel',
+        ]
+
+    def get_status(self, obj):
+        progress = 0
+        if obj.status == 5: # completed
+            progress = 5
+        if obj.status == 6: # Reported Submitted
+            progress = 6
+        if obj.status == 7: # Report Approved
+            progress = 7 
+        if obj.status == 8: # Certified
+            progress = 8
+        
 
 
 class ClubSerializer(serializers.ModelSerializer):

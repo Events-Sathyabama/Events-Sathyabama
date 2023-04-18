@@ -244,12 +244,37 @@ const user_detail = () => {
 	}
 };
 
+const extractError = (err: any) => {
+	let rv = '';
+
+	function rec(obj: any) {
+		if (typeof obj === 'string') {
+			if (rv === '') {
+				rv = obj;
+			} else {
+				rv = ', ' + obj;
+			}
+		} else if (Array.isArray(obj)) {
+			for (let i = 0; i < obj.length; i++) {
+				rec(obj[i]);
+			}
+		} else if (typeof obj === 'object') {
+			for (let field in obj) {
+				rec(obj[field]);
+			}
+		}
+	}
+	rec(err);
+	return rv;
+};
+
 const API: {[key: string]: any} = {
 	Axios: AxiosInstance,
 	jwt: parseJwt,
 	get_url: get_url,
 	is_logged_in: is_logged_in,
 	get_user_detail: user_detail,
+	extract_error: extractError,
 };
 
 const url: {[key: string]: Function} = {

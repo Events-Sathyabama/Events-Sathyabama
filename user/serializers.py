@@ -23,10 +23,8 @@ class BranchSerializer(serializers.ModelSerializer):
     
     
 class OrganizerSerializer(serializers.ModelSerializer):
-
-    def __init__(self, *args, **kwargs):
-        return super().__init__(*args, **kwargs)
-
+    name = serializers.CharField(source='full_name')
+    
     def to_representation(self, instance):
         data = super().to_representation(instance)
         if data['role'] != 'Student':
@@ -36,7 +34,7 @@ class OrganizerSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = [
-            'full_name',
+            'name',
             'role',
             'college_id',
             'pk'

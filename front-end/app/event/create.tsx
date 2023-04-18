@@ -18,17 +18,25 @@ import {
 	InterfaceOrganizer,
 	InterfaceData,
 	InterfaceError,
+	InterfaceCreateEvent,
 } from '../datainterface';
 import useEffect from '../useEffect';
 
 import dayjs, {Dayjs} from 'dayjs';
+import {
+	FormControl,
+	FormHelperText,
+	InputLabel,
+	MenuItem,
+	Select,
+} from '@mui/material';
 const axios = new API.Axios();
 const filter = createFilterOptions<InterfaceClub>();
 
 const organizerSelected = new Set<string>([]);
 export default function Create(props: {
 	setData: {[x: string]: Function};
-	getData: InterfaceData;
+	getData: InterfaceCreateEvent;
 	getError: InterfaceError;
 	setError: {[x: string]: Function};
 	submitForm: Function;
@@ -52,8 +60,8 @@ export default function Create(props: {
 	const runOnce = true; // to force this useEffect to only run once
 	useEffect(
 		async () => {
+			searchOrganizer('');
 			const request = await axios.get(API.get_url('event:club_branch'));
-			console.log(request.data);
 			if (request.status === 200) {
 				setClubList(request.data.club);
 				setBranchList(request.data.branch);
@@ -66,11 +74,10 @@ export default function Create(props: {
 
 	// API Calls ends
 
-	async function searchOrganizer(event: React.ChangeEvent<HTMLInputElement>) {
+	async function searchOrganizer(val: string) {
 		const request = await axios.get(API.get_url('user:organizer'), {
-			q: event?.target?.value,
+			q: val,
 		});
-
 		setCoordinatorList(request.data.results);
 	}
 
@@ -98,7 +105,6 @@ export default function Create(props: {
 	};
 	const handleSubmit = async (event: any) => {
 		event.preventDefault();
-		console.log('hi');
 		await props.submitForm();
 	};
 
@@ -130,7 +136,7 @@ export default function Create(props: {
 							}
 						/>
 						<Autocomplete
-							value={getData.club}
+							value={getData.club?.name}
 							onChange={(event, newValue) => {
 								console.log('new Value is: ', newValue);
 								if (typeof newValue === 'string') {
@@ -359,7 +365,7 @@ export default function Create(props: {
 							renderInput={(params) => (
 								<TextField
 									{...params}
-									onChange={searchOrganizer}
+									onChange={(e) => searchOrganizer(e.target.value)}
 									error={getError.organizer !== null}
 									label={
 										getError.organizer || 'Faculty and Student Coordinators Here'
@@ -368,6 +374,39 @@ export default function Create(props: {
 								/>
 							)}
 						/>
+						<TextField
+							inputProps={{inputMode: 'numeric', pattern: '[0-9]*'}}
+							id="outlined-required"
+							label="Total Strength"
+							error={getError.total_strength !== null}
+							onChange={(e) => {
+								setData.total_strength(e.target.value);
+								setError.total_strength(null);
+							}}
+							value={getData.total_strength}
+							helperText={getError.total_strength || 'Number of Students'}
+							type="number"
+						/>
+
+						<FormControl fullWidth>
+							<InputLabel htmlFor="firstComeFirstServe-select">
+								First Come First Serve
+							</InputLabel>
+							<Select
+								label="First Come First Serve"
+								id="firstComeFirstServe-select"
+								value={getData.fcfs}
+								onChange={(e: any) => {
+									setData.fcfs(e.target.value);
+									setError.fcfs(null);
+								}}>
+								<MenuItem value={'true'}>True</MenuItem>
+								<MenuItem value={'false'}>False</MenuItem>
+							</Select>
+							<FormHelperText>
+								Choose whether to enable First Come First Serve option.
+							</FormHelperText>
+						</FormControl>
 
 						<TextField
 							id="outlined-multiline-flexible"

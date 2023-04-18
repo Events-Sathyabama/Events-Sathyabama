@@ -26,10 +26,49 @@ export interface InterfaceParticipant{
 	status: number
 }
 
+export interface InterfaceCreateUpdateSendData{
+	pk?: number | undefined,
+	organizer: number[],
+	image: File | string | undefined,
+	title: string,
+	short_description: string,
+	long_description: string,
+	club: string,
+	venue: string,
+	start_date: string,
+	end_date: string,
+	date: string,
+	time: string,
+	branch: number[],
+	fcfs: boolean;
+	total_strength: number;
+}
+
+export interface InterfaceCreateEvent{
+	pk?: number | undefined,
+	organizer: InterfaceOrganizer[],
+	image: File | string | undefined,
+	title: string | undefined,
+	short_description: string | undefined,
+	long_description: string | undefined,
+	club: InterfaceClub | undefined,
+	venue: string | undefined,
+	start_date: Dayjs | undefined,
+	end_date: Dayjs | undefined,
+	date: string | undefined,
+	time: string | undefined,
+	branch: InterfaceBranch[],
+	owner: InterfaceOrganizer;
+	fcfs: boolean;
+	total_strength: number | undefined;
+
+
+}
+
 export interface InterfaceData {
 	pk: number;
-	date: string;
-	long_description: string;
+	date: string | undefined;
+	long_description: string | undefined;
 	organizer: InterfaceOrganizer[];
 	branch: InterfaceBranch[];
 	owner: InterfaceOrganizer;
