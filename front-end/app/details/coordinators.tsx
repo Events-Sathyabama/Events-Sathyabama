@@ -10,7 +10,7 @@ interface CoordinatorProps {
 
 export default function Coordinators(props: CoordinatorProps) {
 	const {coordinators} = props;
-
+	console.log(coordinators);
 	return (
 		<div className="flex flex-col w-full -mt-3">
 			{coordinators.map((coordinator, index) => (

@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework import generics
 from . import serializers
-from .models import Event, Club
+from .models import Event, Club, EventParticipant
 from user.models import Branch
 from django.utils import timezone
 from user.serializers import BranchSerializer
@@ -47,16 +47,21 @@ class EventDetail(generics.RetrieveAPIView):
     # 3 SQL queries
     def get_object(self):
         event_id = self.kwargs.get('pk')
-        return get_object_or_404(Event, pk=event_id)
+        try:
+            event = Event.objects.get(pk=event_id)
+            return event
+        except:
+            return Response(status=404, message={'message': "No event found!!"})
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
         context['request'] = self.request
+        self.request.user.pk
         return context
 
     def get_serializer_class(self):
         event = self.get_object()
-        if event.is_organizer(self.request.user):
+        if event.is_organizer(self.request.user) or  event.is_owner(self.request.user):
             return self.serializers['organizer']
         else:
             return self.serializers['student']
@@ -79,39 +84,50 @@ class EventCreate(generics.CreateAPIView):
             else:
                 data[i] = self.request.data.get(i)
         kwargs['data'] = data
-        return super().get_serializer(*args, **kwargs)
+        ser = super().get_serializer(*args, **kwargs)
+        return ser
 
     def perform_create(self, serializer):
-        event = serializer.save(owner=self.request.user)
+        event = serializer.save()
+        event.set_owner(self.request.user)
+
 
 
 class EventUpdate(generics.UpdateAPIView):
     queryset = Event.objects.all()
     serializer_class = serializers.EventUpdateSerializer
+    lookup_field =  'pk'
 
-    def get_serializer(self, *args, **kwargs):
+    def patch(self, request, *args, **kwargs):
+        # Modify request.data before validation
         data = {}
         data['branch'] = []
         data['organizer'] = []
-        for i in self.request.data:
+        for i in request.data:
             if i.endswith('[]'):
-                data[i[:-2]] = self.request.data.getlist(i)
+                data[i[:-2]] = request.data.getlist(i)
             else:
-                data[i] = self.request.data.get(i)
-        kwargs['data'] = data
-        return super().get_serializer(*args, **kwargs)
+                data[i] = request.data.get(i)
+        request._data = data
+        return super().patch(request, *args, **kwargs)
+
+    def update(self, *args, **kwargs):
+        x = super().update(*args, **kwargs)
+        return x
+
 
 @api_view(['GET'])    
 def apply_event(request, pk):
     response = Response({'message': 'Event Application Successfull!!'})
     try:
         event = Event.objects.get(pk=pk)
-        if event.is_eligible_to_apply(user=request.user):
-            event.applied_participant.add(request.user)
+        status, message = event.register_participant(user=request.user)
+        if status is True:
+            response.data['message'] = message
             response.status_code = 200
         else:
             response.status_code = 403
-            response.data['message'] = event.eligible_message
+            response.data['message'] = message
     except:
         response = Response()
         response.status_code = 404

@@ -9,12 +9,15 @@ import {
 	InterfaceClub,
 	InterfaceOrganizer,
 	InterfaceData,
-} from '../../datainterface';
+	InterfaceCreateEvent,
+	InterfaceError,
+	InterfaceCreateUpdateSendData,
+} from '../../../datainterface';
 import useEffect from '@/app/useEffect';
 import ApiLoader from '@/app/apiLoader';
+import Popup from '@/app/popup';
 
 export default function Page(props: {params: {id: number}}) {
-	const router = useRouter();
 	const [owner, setOwner] = useState<InterfaceOrganizer>({
 		name: '-',
 		college_id: '-',
@@ -23,12 +26,14 @@ export default function Page(props: {params: {id: number}}) {
 	});
 	const [setData, getData, getError, setError, sendData] = (() => {
 		const [title, setTitle] = useState<string>('');
-		const [clubName, setClubName] = useState<{name: string; inputValue?: string}>({
+		const [clubName, setClubName] = useState<InterfaceClub>({
 			name: '',
 		});
 		const [image, setImage] = useState<File>();
-		const [startDate, setStartDate] = useState<Dayjs>();
-		const [endDate, setEndDate] = useState<Dayjs>();
+		const [totalStrength, setTotalStrength] = useState<number>(0);
+		const [fcfs, setFcfs] = useState<boolean>(true);
+		const [startDate, setStartDate] = useState<Dayjs>(dayjs());
+		const [endDate, setEndDate] = useState<Dayjs>(dayjs());
 		const [shortDesc, setShortDesc] = useState<string>('');
 		const [longDesc, setLongDesc] = useState<string>('');
 		const [branchName, setBranchName] = useState<InterfaceBranch[]>([]);
@@ -37,7 +42,7 @@ export default function Page(props: {params: {id: number}}) {
 		const [venue, setVenue] = useState<string>('');
 		const [coordinator, setCoordinator] = useState<InterfaceOrganizer[]>([]);
 
-		const getData: InterfaceData = {
+		const getData: InterfaceCreateEvent = {
 			title: title,
 			club: clubName,
 			image: image,
@@ -51,6 +56,8 @@ export default function Page(props: {params: {id: number}}) {
 			venue: venue,
 			organizer: coordinator,
 			owner: owner,
+			fcfs: fcfs,
+			total_strength: totalStrength,
 		};
 
 		const sendData = () => {
@@ -70,7 +77,7 @@ export default function Page(props: {params: {id: number}}) {
 				}
 				return rv;
 			};
-			const data = {
+			const data: InterfaceCreateUpdateSendData = {
 				organizer: organizer(),
 				image: image,
 				title: title,
@@ -83,6 +90,8 @@ export default function Page(props: {params: {id: number}}) {
 				date: date,
 				time: duration,
 				branch: branch(),
+				fcfs: fcfs,
+				total_strength: totalStrength,
 			};
 			if (typeof image === 'string') delete data['image'];
 			for (let val in data) {
@@ -109,9 +118,15 @@ export default function Page(props: {params: {id: number}}) {
 			time: setDuration,
 			venue: setVenue,
 			organizer: setCoordinator,
+			fcfs: setFcfs,
+			total_strength: setTotalStrength,
 		};
 
 		const [titleError, setTitleError] = useState<null | string>(null);
+		const [fcfsError, setFcfsError] = useState<null | string>(null);
+		const [totalStrengthError, setTotalStrengthError] = useState<null | string>(
+			null
+		);
 		const [clubNameError, setClubNameError] = useState<null | string>(null);
 		const [imageError, setImageError] = useState<null | string>(null);
 		const [startDateError, setStartDateError] = useState<null | string>(null);
@@ -124,7 +139,7 @@ export default function Page(props: {params: {id: number}}) {
 		const [venueError, setVenueError] = useState<null | string>(null);
 		const [coordinatorError, setCoordinatorError] = useState<null | string>(null);
 
-		const getError = {
+		const getError: InterfaceError = {
 			title: titleError,
 			club: clubNameError,
 			image: imageError,
@@ -137,6 +152,8 @@ export default function Page(props: {params: {id: number}}) {
 			time: durationError,
 			venue: venueError,
 			organizer: coordinatorError,
+			fcfs: fcfsError,
+			total_strength: totalStrengthError,
 		};
 		const setError: {[x: string]: Function} = {
 			title: setTitleError,
@@ -151,6 +168,8 @@ export default function Page(props: {params: {id: number}}) {
 			time: setDurationError,
 			venue: setVenueError,
 			organizer: setCoordinatorError,
+			fcfs: setFcfsError,
+			total_strength: setTotalStrengthError,
 		};
 		return [setData, getData, getError, setError, sendData];
 	})();
@@ -170,7 +189,7 @@ export default function Page(props: {params: {id: number}}) {
 					initial_value = data;
 					setData.title(data.title);
 					// debugger;
-					setData.club({name: data.club});
+					setData.club(data.club);
 					setData.image(data.image);
 					setData.start_date(dayjs(data.start_date));
 					setData.end_date(dayjs(data.end_date));
@@ -181,6 +200,8 @@ export default function Page(props: {params: {id: number}}) {
 					setData.time(data.time);
 					setData.venue(data.venue);
 					setData.organizer([data.owner, ...data.organizer]);
+					setData.total_strength(data.total_strength);
+					setData.fcfs(data.fcfs);
 					console.log(data.owner);
 					setOwner(data.owner);
 				} catch (err) {
@@ -203,26 +224,50 @@ export default function Page(props: {params: {id: number}}) {
 					'Content-Type': 'multipart/form-data',
 				}
 			);
+			setMessage('Updated Successfully');
+			setErrorPopUp(false);
+			setSuccessPopUp(true);
 			// router.push(`details/${request.data.pk}`);
 		} catch (error: any) {
-			console.error(error.response);
-			for (let field in setError) {
-				setError[field](null);
+			console.error(error);
+			if (error.message === 'Network Error') {
+				setMessage('Check your Internet Connection!!');
+				setSuccessPopUp(false);
+				setErrorPopUp(true);
+			} else {
+				for (let field in setError) {
+					setError[field](null);
+				}
+				for (let field in error.response.data) {
+					setError[field](API.extract_error(error.response.data[field]));
+				}
+				window.scroll({
+					top: 0,
+					left: 0,
+					behavior: 'smooth',
+				});
 			}
-			for (let field in error.response.data) {
-				setError[field](error.response.data[field]);
-			}
-			window.scroll({
-				top: 0,
-				left: 0,
-				behavior: 'smooth',
-			});
 		}
 	};
-
+	const [successPopUp, setSuccessPopUp] = useState(false);
+	const [errorPopUp, setErrorPopUp] = useState(false);
+	const [message, setMessage] = useState<string>();
 	return (
 		<>
 			{/* {<ApiLoader state={Loader} message="Setting Things up for you..." />} */}
+			{successPopUp ? (
+				<Popup.Success message={message || 'Success'} showpopup={setSuccessPopUp} />
+			) : (
+				<></>
+			)}
+			{errorPopUp ? (
+				<Popup.Error
+					message={message || 'Something went Wrong!!'}
+					showpopup={setErrorPopUp}
+				/>
+			) : (
+				<></>
+			)}
 			<Create
 				getData={getData}
 				setData={setData}
