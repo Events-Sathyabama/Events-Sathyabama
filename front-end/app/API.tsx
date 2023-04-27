@@ -209,7 +209,8 @@ function parseJwt(token: string) {
 
 function get_url(key: string, params?: Array<string>) {
 	if (params) {
-		return url[key](...params);
+		if (typeof params === 'object') return url[key](...params);
+		return url[key](params);
 	}
 	return url[key]();
 }
@@ -281,7 +282,7 @@ const url: {[key: string]: Function} = {
 	'login': () => {
 		return 'user/token/';
 	},
-	'profile_detail': (id: Number) => {
+	'profile_detail': (id: string) => {
 		return `user/detail/${id}/`;
 	},
 	'token_refresh': () => {
@@ -296,7 +297,7 @@ const url: {[key: string]: Function} = {
 	'event:upcoming_list': () => {
 		return 'event/upcoming/list/';
 	},
-	'event:detail': (id: Number) => {
+	'event:detail': (id: string) => {
 		return `event/detail/${id}/`;
 	},
 	'event:club_branch': () => {
@@ -305,13 +306,13 @@ const url: {[key: string]: Function} = {
 	'event:create': () => {
 		return 'event/create/';
 	},
-	'event:update': (id: Number) => {
+	'event:update': (id: string) => {
 		return `event/update/${id}/`;
 	},
-	'event:apply': (id: Number) => {
+	'event:apply': (id: string) => {
 		return `event/apply/${id}/`;
 	},
-	'event:update_application': (id: Number) => {
+	'event:update_application': (id: string) => {
 		return `event/application/${id}/`;
 	},
 	'user:organizer': () => {

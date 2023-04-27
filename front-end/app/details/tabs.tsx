@@ -56,7 +56,7 @@ export default function Tabs(props: {
 	isOrganizer: boolean;
 	participant: InterfaceParticipant[];
 	fcfs: boolean;
-	eventId: number;
+	eventId: string;
 }) {
 	const [value, setValue] = React.useState(0);
 	const handleChange = (event: React.SyntheticEvent, newValue: number) => {

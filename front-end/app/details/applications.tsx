@@ -11,7 +11,7 @@ interface ApplicationProps {
 	showSuccessPopup: Function;
 	showFailurePopup: Function;
 	applications: InterfaceParticipant[];
-	eventId: number;
+	eventId: string;
 }
 
 export default function Applications(props: ApplicationProps) {
