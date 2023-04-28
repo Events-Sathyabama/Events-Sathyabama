@@ -97,7 +97,7 @@ export default function details(props: {params: {id: number}}) {
 				if (err.response.data.message !== undefined) {
 					setPopupMessage(err.response.data.message);
 				} else {
-					setPopupMessage('Something went Wrong!!');
+					setPopupMessage('Something went wrong!');
 				}
 			} else {
 				setPopupMessage(err.message);

@@ -51,7 +51,7 @@ class EventDetail(generics.RetrieveAPIView):
             event = Event.objects.get(pk=event_id)
             return event
         except:
-            return Response(status=404, message={'message': "No event found!!"})
+            return Response(status=404, message={'message': "No Event was found!"})
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
@@ -118,7 +118,7 @@ class EventUpdate(generics.UpdateAPIView):
 
 @api_view(['GET'])    
 def apply_event(request, pk):
-    response = Response({'message': 'Event Application Successfull!!'})
+    response = Response({'message': 'Event application successfull!!'})
     try:
         event = Event.objects.get(pk=pk)
         status, message = event.register_participant(user=request.user)
@@ -131,7 +131,7 @@ def apply_event(request, pk):
     except:
         response = Response()
         response.status_code = 404
-        response.data['message'] = 'No Event Found!!'
+        response.data['message'] = 'No Event was found!'
     return response
 
 @api_view(['GET'])

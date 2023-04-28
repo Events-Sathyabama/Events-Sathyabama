@@ -106,10 +106,10 @@ export default function Main(props: {url: string; heading: string}) {
 		<div className="flex flex-col w-full h-full items-center gap-3">
 			{showSearch ? (
 				<>
-					<h1 className="text-2xl text-center mt-3 underline animateFadeIn">
+					<h1 className="text-2xl text-center mt-3 animateFadeIn">
 						{props.heading}
 					</h1>
-					<div className="p-3 w-11/12 md:w-1/2 rounded-xl animateFadeIn">
+					<div className="p-3 w-11/12 md:w-1/2 -mt-2 rounded-xl animateFadeIn">
 						<TextField
 							autoComplete="off"
 							onChange={(e) => setSearch(e.target.value)}
@@ -144,7 +144,7 @@ export default function Main(props: {url: string; heading: string}) {
 			) : (
 				<>
 					<div className="mt-3 w-48 rounded-xl">
-						<div className="h-10 animate-pulse bg-gray-300 rounded-xl w-full"></div>
+						<div className="h-12 animate-pulse bg-gray-300 rounded-xl w-full"></div>
 					</div>
 					<div className="p-3 pt-0 w-11/12 md:w-1/2 rounded-xl">
 						<div className="h-12 animate-pulse bg-gray-300 rounded-xl w-full mb-4"></div>

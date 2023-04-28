@@ -45,7 +45,7 @@ export default function ApiLoader(props: {
 			</div>
 		),
 		401: <span>Unauthorised 401</span>,
-		default: <span className="text-2xl">Something went Wrong {props.state}</span>,
+		default: <span className="text-2xl">Something went wrong {props.state}</span>,
 	};
 
 	return (
