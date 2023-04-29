@@ -137,7 +137,7 @@ export default function Navbar() {
 															active ? 'bg-gray-100' : '',
 															'block px-4 py-2 text-lg text-gray-700'
 														)}>
-														Your Profile
+														Profile
 													</Link>
 												)}
 											</Menu.Item>
@@ -150,7 +150,7 @@ export default function Navbar() {
 																active ? 'bg-gray-100' : '',
 																'block px-4 py-2 text-lg text-gray-700'
 															)}>
-															Create Event
+															Create event
 														</Link>
 													)}
 												</Menu.Item>
@@ -164,7 +164,7 @@ export default function Navbar() {
 															active ? 'bg-gray-100' : '',
 															'block px-4 py-2 text-lg text-gray-700 w-full text-left'
 														)}>
-														Sign out
+														Sign-out
 													</button>
 												)}
 											</Menu.Item>

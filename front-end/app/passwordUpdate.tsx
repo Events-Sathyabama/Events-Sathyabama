@@ -63,7 +63,7 @@ export default function PasswordPage(props: {
 					onChange={formik.handleChange}
 					type={'text'}
 					value={formik.values.password}
-					autoComplete="on"
+					autoComplete="off"
 				/>
 				<TextField
 					error={!!(formik.touched.confirmPassword && formik.errors.confirmPassword)}
@@ -77,7 +77,7 @@ export default function PasswordPage(props: {
 					onChange={formik.handleChange}
 					type={'text'}
 					value={formik.values.confirmPassword}
-					autoComplete="on"
+					autoComplete="off"
 				/>
 				<Button
 					size="large"

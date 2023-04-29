@@ -1,3 +1,5 @@
+import LetterAvatar from './avatar';
+
 interface ProfileProps {
 	id: string;
 	branch?: string;
@@ -12,11 +14,7 @@ export default function Profile(props: ProfileProps): JSX.Element {
 		<div className="flex flex-col w-72 md:w-96">
 			<div className="bg-white p-3 border border-blue-400 rounded shadow-lg">
 				<div className="flex flex-col items-center">
-					<img
-						className="h-32 w-32 rounded-full border border-gray-300"
-						src="/Profile.png"
-						alt=""
-					/>
+					<LetterAvatar name={name}></LetterAvatar>
 					<p className="text-gray-900 text-center truncate w-64 font-bold text-2xl my-2">
 						{name}
 					</p>
