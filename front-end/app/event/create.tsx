@@ -48,6 +48,7 @@ export default function Create(props: {
 	const getData = props.getData;
 	const getError = props.getError;
 	const setError = props.setError;
+	const [imageName, setImageName] = useState('');
 	const [clubList, setClubList] = useState<InterfaceClub[]>([
 		{name: 'Loading...', abbreviation: ''},
 	]);
@@ -94,6 +95,7 @@ export default function Create(props: {
 			setImageBlob(reader.result as string);
 		};
 		reader.readAsDataURL(file);
+		setImageName(file.name);
 	};
 
 	// converts date to 21 Mar '23 format
@@ -111,9 +113,7 @@ export default function Create(props: {
 	return (
 		<>
 			<div className="flex flex-col w-full justify-center items-center gap-4 px-2">
-				<h1 className="text-2xl text-center underline mt-3">
-					Create/Edit your Event
-				</h1>
+				<h1 className="text-2xl text-center mt-3">Create / Update your Event</h1>
 				<div className="flex flex-col md:flex-row w-full sm:px-4 gap-4 md:gap-0 items-center md:items-start">
 					<form
 						onSubmit={handleSubmit}
@@ -212,7 +212,7 @@ export default function Create(props: {
 								(getError.image !== null ? 'border-red-700 text-red-700' : '') +
 								' w-auto max-w-xl'
 							}>
-							Upload your Event Poster Here*
+							{imageName ? imageName : 'Upload your Event Poster Here*'}
 							<input
 								hidden
 								accept="image/*"
@@ -466,7 +466,7 @@ export default function Create(props: {
 					</form>
 					<div className="block max-w-sm md:max-w-fit">
 						<div className="flex flex-col gap-2 items-center justify-center bg-blue-50 p-3 rounded-md">
-							<p className="text-2xl underline">Preview</p>
+							<p className="text-2xl">Preview</p>
 							<Card
 								title={getData.title || "Event's Name Here"}
 								subheader={getData.club?.name || "Organiser/Club's Name Here"}

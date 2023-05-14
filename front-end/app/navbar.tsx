@@ -5,6 +5,9 @@ import {Bars3Icon, XMarkIcon} from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import {usePathname, useRouter} from 'next/navigation';
 import useEffect from './useEffect';
+import LetterAvatar from './avatar';
+import NotificationIconButton from './notifications';
+import Notifications from './notificationPop';
 
 function classNames(...classes: any) {
 	return classes.filter(Boolean).join(' ');
@@ -39,10 +42,14 @@ export default function Navbar() {
 			setAdmin(true);
 		}
 	}, []);
+
+	// TODO fetch notification count
+	const [notificationCount, setNotificationCount] = useState(11);
+
 	return (
 		<Disclosure
 			as="div"
-			className="z-10 border-b-2 border-gray-200 sticky top-0 backdrop-filter backdrop-blur-md bg-white bg-opacity-40">
+			className="z-10 border-b-2 border-gray-200 sticky top-0 backdrop-filter backdrop-blur-md bg-white bg-opacity-70">
 			{({open}) => (
 				<>
 					<div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
@@ -99,25 +106,33 @@ export default function Navbar() {
 									</div>
 								</div>
 							</div>
-							<div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+							<div className="absolute inset-y-0 right-0 flex items-center pr-5 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
 								{/* Profile dropdown */}
+								<Menu as="div" className="relative ml-3">
+									<Menu.Button>
+										<NotificationIconButton notificationCount={notificationCount} />
+									</Menu.Button>
+									<Transition
+										as={Fragment}
+										enter="transition ease-out duration-100"
+										enterFrom="transform opacity-0 scale-95"
+										enterTo="transform opacity-100 scale-100"
+										leave="transition ease-in duration-75"
+										leaveFrom="transform opacity-100 scale-100"
+										leaveTo="transform opacity-0 scale-95">
+										<Menu.Items>
+											<Notifications></Notifications>
+										</Menu.Items>
+									</Transition>
+								</Menu>
 								<Menu as="div" className="relative ml-3">
 									<div>
 										<Menu.Button className="flex rounded-full text-sm">
 											<span className="sr-only">Open user menu</span>
-											<svg
-												xmlns="http://www.w3.org/2000/svg"
-												fill="none"
-												viewBox="0 0 24 24"
-												strokeWidth={1.5}
-												stroke="currentColor"
-												className="w-10 h-10">
-												<path
-													strokeLinecap="round"
-													strokeLinejoin="round"
-													d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z"
-												/>
-											</svg>
+											<LetterAvatar
+												width="2.5rem"
+												height="2.5rem"
+												fontSize="1rem"></LetterAvatar>
 										</Menu.Button>
 									</div>
 									<Transition
@@ -128,13 +143,13 @@ export default function Navbar() {
 										leave="transition ease-in duration-75"
 										leaveFrom="transform opacity-100 scale-100"
 										leaveTo="transform opacity-0 scale-95">
-										<Menu.Items className="absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+										<Menu.Items className="border border-gray-200 absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
 											<Menu.Item>
 												{({active}) => (
 													<Link
 														href="/profile"
 														className={classNames(
-															active ? 'bg-gray-100' : '',
+															active ? 'bg-blue-50' : '',
 															'block px-4 py-2 text-lg text-gray-700'
 														)}>
 														Profile
@@ -147,7 +162,7 @@ export default function Navbar() {
 														<Link
 															href="/event/create"
 															className={classNames(
-																active ? 'bg-gray-100' : '',
+																active ? 'bg-blue-50' : '',
 																'block px-4 py-2 text-lg text-gray-700'
 															)}>
 															Create event
@@ -161,7 +176,7 @@ export default function Navbar() {
 														id="Sign-Out"
 														onClick={() => signOut()}
 														className={classNames(
-															active ? 'bg-gray-100' : '',
+															active ? 'bg-blue-50' : '',
 															'block px-4 py-2 text-lg text-gray-700 w-full text-left'
 														)}>
 														Sign-out
@@ -181,7 +196,7 @@ export default function Navbar() {
 								href="/home/upcoming"
 								className={classNames(
 									currentPage === 1 ? 'bg-gray-900 text-white' : 'text-black',
-									'block rounded-md px-3 py-2 text-base font-medium'
+									'block rounded-md px-3 py-2 text-base'
 								)}>
 								Upcoming Events
 							</Disclosure.Button>
@@ -190,7 +205,7 @@ export default function Navbar() {
 								href="/home/ongoing"
 								className={classNames(
 									currentPage === 2 ? 'bg-gray-900 text-white' : 'text-black',
-									'block rounded-md px-3 py-2 text-base font-medium'
+									'block rounded-md px-3 py-2 text-base'
 								)}>
 								Ongoing Events
 							</Disclosure.Button>
@@ -199,7 +214,7 @@ export default function Navbar() {
 								href="/home/completed"
 								className={classNames(
 									currentPage === 3 ? 'bg-gray-900 text-white' : 'text-black',
-									'block rounded-md px-3 py-2 text-base font-medium'
+									'block rounded-md px-3 py-2 text-base'
 								)}>
 								Completed Events
 							</Disclosure.Button>

@@ -39,7 +39,7 @@ export default function ProfilePage(): JSX.Element {
 	return (
 		<div>
 			<Navbar />
-			<div className="container mx-auto my-5 p-5">
+			<div className="container mx-auto p-5">
 				<div className="md:flex no-wrap md:-mx-2 ">
 					{role === '-' ? (
 						<div className="flex flex-col justify-center items-center w-full min-h-[65vh] sm:min-h-[75vh]">

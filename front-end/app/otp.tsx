@@ -14,8 +14,8 @@ export default function OtpField(props: any): JSX.Element {
 		console.log(finalValue);
 		setTimeout(() => {
 			props.setBackdrop(false);
-            // if correct move to password filling page
-            props.changetoPassword();
+			// if correct move to password filling page
+			props.changetoPassword();
 			//else show error
 			// props.showPopUp(true, 'Invalid OTP, Please try again!');
 		}, 3000);
@@ -31,12 +31,13 @@ export default function OtpField(props: any): JSX.Element {
 	};
 
 	return (
-		<MuiOtpInput
-			value={value}
-			onChange={handleChange}
-			onComplete={handleComplete}
-			length={4}
-			validateChar={validateChar}
-		/>
+			<MuiOtpInput
+				value={value}
+				onChange={handleChange}
+				onComplete={handleComplete}
+				length={4}
+				validateChar={validateChar}
+				autoFocus={true}
+			/>
 	);
 }

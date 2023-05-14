@@ -1,3 +1,9 @@
+import * as React from 'react';
+import List from '@mui/material/List';
+import ListItemAvatar from '@mui/material/ListItemAvatar';
+import Divider from '@mui/material/Divider';
+import LetterAvatar from '../avatar';
+
 interface Coordinator {
 	name: string;
 	role: string;
@@ -10,15 +16,25 @@ interface CoordinatorProps {
 
 export default function Coordinators(props: CoordinatorProps) {
 	const {coordinators} = props;
-	console.log(coordinators);
 	return (
-		<div className="flex flex-col w-full -mt-3">
+		<List className="w-full border border-gray-400 rounded-md">
 			{coordinators.map((coordinator, index) => (
-				<div key={index} className="mt-3">
-					<h1 className="text-xl">{coordinator.name}</h1>
-					<p className="-mt-1 text-gray-500">{coordinator.role + ' Coordinator'}</p>
+				<div className="flex flex-row pl-4 mb-2">
+					<ListItemAvatar>
+						<LetterAvatar
+							width="2.5rem"
+							height="2.5rem"
+							fontSize="1rem"
+							name={coordinator.name}></LetterAvatar>
+					</ListItemAvatar>
+					<div key={index} className="-mt-1 -ml-1">
+						<h1 className="text-xl">{coordinator.name}</h1>
+						<p className="-mt-1 text-gray-500">
+							{coordinator.role + ' Coordinator'}
+						</p>
+					</div>
 				</div>
 			))}
-		</div>
+		</List>
 	);
 }

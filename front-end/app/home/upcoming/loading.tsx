@@ -42,7 +42,7 @@ export default function Loading() {
 				<div className="h-12 animate-pulse bg-gray-300 rounded-xl w-full"></div>
 			</div>
 			<div className="p-3 pt-0 w-11/12 md:w-1/2 rounded-xl animateFadeIn">
-				<div className="h-12 animate-pulse bg-gray-300 rounded-xl w-full mb-4"></div>
+				<div className="h-12 animate-pulse bg-gray-300 rounded-xl w-full"></div>
 			</div>
 			<div className="flex flex-col justify-center items-center w-full min-h-[65vh]">
 				<div className="flex flex-wrap justify-center items-center gap-3">
