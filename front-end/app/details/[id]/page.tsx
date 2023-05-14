@@ -14,6 +14,8 @@ import ProgressBar from '../progressBar';
 import {InterfaceData, InterfaceOrganizer} from '@/app/datainterface';
 import ApiLoader from '../../apiLoader';
 import handleError from '@/app/handleError';
+import Description from '../description';
+import Coordinators from '../coordinators';
 
 const axios = new API.Axios();
 
@@ -50,8 +52,6 @@ export default function details(props: {params: {id: number}}) {
 	const runOnce = true; // makes this useEffect only run once
 	useEffect(
 		async () => {
-			window.scrollTo(0, 0);
-
 			const request = await axios.get(
 				API.get_url('event:detail', [props.params.id])
 			);
@@ -97,7 +97,7 @@ export default function details(props: {params: {id: number}}) {
 				if (err.response.data.message !== undefined) {
 					setPopupMessage(err.response.data.message);
 				} else {
-					setPopupMessage('Something went Wrong!!');
+					setPopupMessage('Something went wrong!');
 				}
 			} else {
 				setPopupMessage(err.message);
@@ -107,11 +107,53 @@ export default function details(props: {params: {id: number}}) {
 		}
 		setApplying(false);
 	}
+	const progress = (data?.accepted_count || 0 / totalStrenth) * 100;
 
 	return (
 		<>
 			{/* {<ApiLoader state={0} message="Fetching Data..." />} */}
 			<div className="flex flex-col w-full h-auto items-center justify-center">
+				{/* <div className="flex flex-row justify-between bg-gray-50 items-center fixed bottom-0 z-50 w-full h-16 -translate-x-1/2 border border-blue-300 left-1/2">
+					<div className="flex flex-row items-center gap-3 ml-5">
+						<p className="text-2xl text-black font-semibold">
+							{totalStrenth === 0
+								? "Total capacity isn't set!"
+								: `${Math.round(progress)}%`}
+						</p>
+					</div>
+					{!isOrganizer ? (
+						<>
+							{isApplied ? (
+								<p
+									className={
+										'w-full border p-2 rounded-md text-center shadow-lg text-white bg-green-600 transition-all duration-1000' +
+										(isDeclined
+											? ' border-red-500 bg-red-600'
+											: ' border-green-500 bg-green-600')
+									}>
+									{(() => {
+										if (isDeclined) return 'Declined';
+										if (isAccepted) return 'Accepted';
+										if (isApplied) return 'Applied';
+									})()}
+								</p>
+							) : (
+								<LoadingButton
+									loadingIndicator="Applying…"
+									variant="contained"
+									className="w-48 mr-5"
+									onClick={applyToEvent}
+									loading={applying}
+									size="large"
+									style={!applying ? {backgroundColor: '#1565c0'} : {}}>
+									<span>Apply for Event</span>
+								</LoadingButton>
+							)}
+						</>
+					) : (
+						<></>
+					)}
+				</div> */}
 				<div className="flex flex-col w-full items-end">
 					{Spopup ? (
 						<Popup.Success
@@ -135,76 +177,32 @@ export default function details(props: {params: {id: number}}) {
 						title={data?.title}
 					/>
 					<div className="flex flex-col md:flex-row w-full h-auto mt-2 items-center gap-3 md:items-start justify-center">
-						<Poster image={data?.image} />
-						<div className="flex flex-col w-full justify-center items-center mt-2 gap-3">
-							<div className="flex flex-col items-start bg-blue-50 w-full p-4 rounded-lg gap-3">
-								<div className="flex flex-row items-center gap-3">
-									<div className="flex items-center justify-center w-12 h-12 bg-white rounded-full shrink-0">
-										<svg
-											xmlns="http://www.w3.org/2000/svg"
-											fill="none"
-											viewBox="0 0 24 24"
-											strokeWidth={1.5}
-											stroke="currentColor"
-											className="w-8 h-8">
-											<path
-												strokeLinecap="round"
-												strokeLinejoin="round"
-												d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"
-											/>
-										</svg>
-									</div>
-									<div className="flex flex-col">
-										<p className="text-2xl text-black font-medium">Head Count:</p>
-										<p className="text-2xl text-black font-light">
-											{totalStrenth === 0
-												? "Total capacity isn't set!"
-												: `${data?.accepted_count}/${totalStrenth}`}
-										</p>
-									</div>
-								</div>
+						<div className="flex flex-col gap-5 w-72 sm:w-96 justify-center items-center">
+							<Poster image={data?.image} />
+							{totalStrenth === 0 ? (
+								<div className='flex justify-center items-center rounded-md bg-gray-100 h-12 border border-gray-300 w-full'>Total capacity isn't set!</div>
+							) : (
 								<ProgressBar
 									registeredStudents={data?.accepted_count || 0}
 									totalCapacity={totalStrenth || 1}></ProgressBar>
-								{!isOrganizer ? (
-									<>
-										{isApplied ? (
-											<p
-												className={
-													'w-full border  p-2 rounded-md text-center shadow-lg text-white bg-green-600 transition-all duration-1000' +
-													(isDeclined
-														? ' border-red-500 bg-red-600'
-														: ' border-green-500 bg-green-600')
-												}>
-												{(() => {
-													if (isDeclined) return 'Declined';
-													if (isAccepted) return 'Accepted';
-													if (isApplied) return 'Applied';
-												})()}
-											</p>
-										) : (
-											<LoadingButton
-												loadingIndicator="Applying…"
-												variant="contained"
-												className="w-full"
-												onClick={applyToEvent}
-												loading={applying}
-												size="large"
-												style={!applying ? {backgroundColor: '#1565c0'} : {}}>
-												<span>Apply for Event</span>
-											</LoadingButton>
-										)}
-									</>
-								) : (
-									<></>
-								)}
-							</div>
+							)}
+						</div>
+						<div className="flex flex-col w-full justify-center items-center mt-2 gap-3">
 							<EventTime
 								dates={data?.date}
 								venue={data?.venue}
 								time={data?.time}></EventTime>
-							<Tabs
-								long_desc={data?.long_description}
+							<Description long_desc={data?.long_description}></Description>
+							<Coordinators
+								coordinators={(() => {
+									const rv = [];
+									if (data !== undefined) {
+										if (data.organizer.length > 0) rv.push(...data.organizer);
+										if (data.owner) rv.push(data.owner);
+									}
+									return rv;
+								})()}></Coordinators>
+							{/* <Tabs
 								coordinator={(() => {
 									const rv = [];
 									if (data !== undefined) {
@@ -219,7 +217,7 @@ export default function details(props: {params: {id: number}}) {
 								participant={data?.participant || []}
 								fcfs={data?.fcfs || false}
 								eventId={props.params.id}
-							/>
+							/> */}
 						</div>
 						{isOrganizer ? (
 							<Link href={`/event/update/${props.params.id}`}>

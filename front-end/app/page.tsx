@@ -1,5 +1,4 @@
 'use client';
-import Link from 'next/link';
 import {useState} from 'react';
 import LoginForm from './loginForm';
 import LandingNav from './landingNav';
@@ -9,13 +8,19 @@ import API from './API';
 import {useRouter} from 'next/navigation';
 import WebBackdrop from './backdrop';
 import useEffect from './useEffect';
+import {IconButton} from '@mui/material';
 import ApiLoader from './apiLoader';
+import OtpField from './otp';
+import PasswordPage from './passwordUpdate';
 
 export default function LoginPage(): JSX.Element {
 	const [loading, setLoading] = useState(true);
 	const [fPopUp, setFPopUp] = useState(false);
 	const [popUpMessage, setPopUpMessage] = useState('');
 	const [validBackdrop, setValidBackdrop] = useState(false);
+	const [userMail, setUserMail] = useState('');
+	const [otp, setOtpPage] = useState(false);
+	const [passwordPage, setPasswordPage] = useState(false);
 	const router = useRouter();
 	useEffect(() => {
 		if (API.is_logged_in()) {
@@ -33,10 +38,22 @@ export default function LoginPage(): JSX.Element {
 		}
 	}
 
+	const [forgot, setForgot] = useState(false);
+	function handleForgot() {
+		setForgot(true);
+	}
+
+	function changetoOtp() {
+		setOtpPage(true);
+	}
+
+	function changetoPassword() {
+		setPasswordPage(true);
+	}
+
 	return (
 		<div className="flex flex-col w-full min-h-screen">
 			<LandingNav></LandingNav>
-
 			<div className="flex flex-col flex-grow w-full h-full justify-center items-center relative">
 				{fPopUp ? (
 					<div className="right-5 absolute z-10 top-0">
@@ -75,17 +92,87 @@ export default function LoginPage(): JSX.Element {
 					) : (
 						<>
 							{validBackdrop ? (
-								<WebBackdrop message="Verifying Credentials..."></WebBackdrop>
+								<WebBackdrop
+									message={
+										passwordPage
+											? 'Redirecting to Home...'
+											: otp
+											? 'Validating OTP...'
+											: forgot
+											? 'Sending E-mail...'
+											: 'Verifying Credentials...'
+									}></WebBackdrop>
 							) : null}
-							<h1 className="font-roboto text-4xl font-semibold">Sign-in</h1>
-							<LoginForm
-								setBackdrop={(state: boolean) => setValidBackdrop(state)}
-								showPopUp={handleChange}></LoginForm>
-							<Link href="/forgot" className="mt-2">
-								<span className="text-blue-600 font-roboto text-sm hover:underline">
+							<div className="flex flex-row w-full items-center gap-3">
+								{forgot && !otp ? (
+									<IconButton
+										className="cursor-pointer p-1 rounded-md"
+										onClick={() => setForgot(false)}>
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											fill="none"
+											viewBox="0 0 24 24"
+											strokeWidth={1.5}
+											stroke="currentColor"
+											className="w-8 h-8 text-black">
+											<path
+												strokeLinecap="round"
+												strokeLinejoin="round"
+												d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
+											/>
+										</svg>
+									</IconButton>
+								) : (
+									<></>
+								)}
+								<h1 className="font-roboto text-4xl font-semibold">
+									{passwordPage
+										? 'Change Password'
+										: otp
+										? "Verifying it's you!"
+										: forgot
+										? 'Forgot Password?'
+										: 'Sign-in'}
+								</h1>
+							</div>
+							{passwordPage && (
+								<PasswordPage
+									setBackdrop={(state: boolean) => setValidBackdrop(state)}
+									showPopUp={handleChange}></PasswordPage>
+							)}
+							{otp && !passwordPage ? (
+								<div className="flex flex-col mt-1 gap-3">
+									<p>
+										Enter the <span className="font-medium">OTP</span> sent to{' '}
+										<span className="text-[#017efc]">{userMail}</span>
+									</p>
+									<OtpField
+										setBackdrop={(state: boolean) => setValidBackdrop(state)}
+										showPopUp={handleChange}
+										changetoPassword={changetoPassword}></OtpField>
+								</div>
+							) : (
+								<></>
+							)}
+							{!otp ? (
+								<LoginForm
+									setBackdrop={(state: boolean) => setValidBackdrop(state)}
+									showPopUp={handleChange}
+									userMail={setUserMail}
+									changetoOtp={changetoOtp}
+									variant={forgot ? 'forgot' : 'login'}></LoginForm>
+							) : (
+								<></>
+							)}
+							{!forgot && !otp ? (
+								<span
+									onClick={handleForgot}
+									className="text-blue-600 mt-2 cursor-pointer font-roboto text-sm hover:underline">
 									Forgot Password?
 								</span>
-							</Link>
+							) : (
+								<></>
+							)}
 						</>
 					)}
 				</div>

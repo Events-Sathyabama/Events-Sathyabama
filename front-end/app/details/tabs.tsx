@@ -2,34 +2,9 @@
 import * as React from 'react';
 import Tab from '@mui/material/Tab';
 import TabsContainer from '@mui/material/Tabs';
-import Coordinators from './coordinators';
 import Applications from './applications';
 import {InterfaceParticipant} from '../datainterface';
 
-// TODO Fetch Coordinators in this way
-const coordinators = [
-	{name: 'Dr. Revathy', role: 'Faculty Coordinator'},
-	{name: 'Bandepalli Surya Anjani Kumar', role: 'Student Coordinator'},
-	{name: 'Aryan Amish', role: 'Student Coordinator'},
-];
-
-// TODO Fetch Dummy Applications this way
-const dummyApplications = [
-	{
-		name: 'Bandepalli Surya Anjani Kumar',
-		status: 0,
-	},
-	{
-		name: 'Aryan Amish',
-		status: 0,
-	},
-	{
-		name: 'Bob Smith',
-		status: 0,
-	},
-];
-
-// BUG this component has a big MUI error
 function TabPanel(props: any) {
 	const {children, value, index, ...other} = props;
 	return (
@@ -49,8 +24,6 @@ function TabPanel(props: any) {
 }
 
 export default function Tabs(props: {
-	long_desc: string | undefined;
-	coordinator: {name: string; role: string; college_id: string}[];
 	showSuccessPopup: Function;
 	showFailurePopup: Function;
 	isOrganizer: boolean;
@@ -143,12 +116,6 @@ export default function Tabs(props: {
 				)}
 			</TabsContainer>
 			<div className="w-full pt-3 border-t border-gray-300">
-				<TabPanel value={value} index={0}>
-					{props.long_desc}
-				</TabPanel>
-				<TabPanel value={value} index={1}>
-					<Coordinators coordinators={props.coordinator}></Coordinators>
-				</TabPanel>
 				{props.isOrganizer ? (
 					<TabPanel value={value} index={2}>
 						<Applications

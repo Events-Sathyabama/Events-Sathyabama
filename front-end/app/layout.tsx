@@ -3,6 +3,7 @@ import {useState} from 'react';
 import API from './API';
 import {useRouter} from 'next/navigation';
 import './globals.css';
+import ScrollToTop from './scrollToTop';
 
 export const metadata = {
 	title: 'Events@Sathyabama',
@@ -13,7 +14,8 @@ export default function RootLayout({children}: {children: React.ReactNode}) {
 	return (
 		<html lang="en">
 			<body>
-				<WebBackdrop message={'Verifying Login Status...'} id="global-backdrop" />
+				{/* <WebBackdrop message={'Verifying Login Status...'} id="global-backdrop" /> */}
+				<ScrollToTop></ScrollToTop>
 				<script src="/login.js"></script>
 				<div className="flex flex-col">{children}</div>
 			</body>

@@ -41,11 +41,11 @@ export default function ApiLoader(props: {
 		404: (
 			<div className="flex flex-col justify-center items-center w-96 h-[58vh]">
 				<Image src="/eventsNotFound.svg" width={500} height={500} alt=""></Image>
-				<p className="text-2xl font-light text-blue-400 mt-4">No events found!!</p>
+				<p className="text-2xl font-light text-blue-500 mt-4">No events found!!</p>
 			</div>
 		),
 		401: <span>Unauthorised 401</span>,
-		default: <span className="text-2xl">Something went Wrong {props.state}</span>,
+		default: <span className="text-2xl">Something went wrong {props.state}</span>,
 	};
 
 	return (

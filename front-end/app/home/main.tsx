@@ -106,10 +106,10 @@ export default function Main(props: {url: string; heading: string}) {
 		<div className="flex flex-col w-full h-full items-center gap-3">
 			{showSearch ? (
 				<>
-					<h1 className="text-2xl text-center mt-3 underline animateFadeIn">
+					<h1 className="text-2xl text-center mt-3 animateFadeIn">
 						{props.heading}
 					</h1>
-					<div className="p-3 w-11/12 md:w-1/2 rounded-xl animateFadeIn">
+					<div className="p-3 w-11/12 md:w-1/2 -mt-2 rounded-xl animateFadeIn">
 						<TextField
 							autoComplete="off"
 							onChange={(e) => setSearch(e.target.value)}
@@ -144,10 +144,10 @@ export default function Main(props: {url: string; heading: string}) {
 			) : (
 				<>
 					<div className="mt-3 w-48 rounded-xl">
-						<div className="h-10 animate-pulse bg-gray-300 rounded-xl w-full"></div>
+						<div className="h-12 animate-pulse bg-gray-300 rounded-xl w-full"></div>
 					</div>
 					<div className="p-3 pt-0 w-11/12 md:w-1/2 rounded-xl">
-						<div className="h-12 animate-pulse bg-gray-300 rounded-xl w-full mb-4"></div>
+						<div className="h-12 animate-pulse bg-gray-300 rounded-xl w-full"></div>
 					</div>
 				</>
 			)}
@@ -177,12 +177,12 @@ export default function Main(props: {url: string; heading: string}) {
 						) : (
 							<div className="flex flex-col justify-center items-center w-full h-[61vh] animateFadeIn">
 								<Image
-									src="/eventsNotFound.avif"
+									src="/eventsNotFound.svg"
 									width={500}
 									height={500}
 									priority
 									alt=""></Image>
-								<p className="text-2xl font-light text-[#60adf5] mt-4">
+								<p className="text-2xl font-light text-[#017efc] mt-4">
 									No events found!!
 								</p>
 							</div>
