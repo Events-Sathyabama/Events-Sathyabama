@@ -263,7 +263,7 @@ export default function Page(props: {params: {id: string}}) {
 			)}
 			{errorPopUp ? (
 				<Popup.Error
-					message={message || 'Something went Wrong!!'}
+					message={message || 'Something went wrong!'}
 					showpopup={setErrorPopUp}
 				/>
 			) : (

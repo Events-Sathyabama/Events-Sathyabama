@@ -6,16 +6,16 @@ import StepLabel from '@mui/material/StepLabel';
 import Typography from '@mui/material/Typography';
 
 const steps = [
-	'Event Created',
+	'Event created',
 	'Approved by the Head of Department',
 	'Approved by the Dean',
 	'Approved by the Vice-Chancellor',
-	'Displayed to Students',
-	'OnGoing',
-	'Event Completed',
-	'Report Submited',
-	'Report Approved',
-	'Issued Certifications',
+	'Displayed to students',
+	'Event ongoing',
+	'Event completed',
+	'Report submited',
+	'Report approved',
+	'Issued certifications',
 ];
 
 const errorLabel = [
@@ -23,11 +23,11 @@ const errorLabel = [
 	'Rejected by the Head of Department',
 	'Rejected by the Dean',
 	'Rejected by the Vice-Chancellor',
-	'Event not displayed to Students',
-	'onGoing',
+	'Event not displayed to students',
+	'Ongoing',
 	'Event not completed',
-	'Report Not Submited',
-	'Report Not Approved',
+	'Report not submited',
+	'Report not approved',
 	'Certifications not issued',
 ];
 

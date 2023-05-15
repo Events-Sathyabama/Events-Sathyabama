@@ -169,7 +169,7 @@ class OrganizingEvent(generics.ListAPIView):
 
 @api_view(['GET'])
 def apply_event(request, pk):
-    response = Response({'message': 'Event Application Successfull!!'})
+    response = Response({'message': 'Event application successfull!!'})
     try:
         event = Event.objects.get(pk=pk)
         status, message = event.register_participant(user=request.user)

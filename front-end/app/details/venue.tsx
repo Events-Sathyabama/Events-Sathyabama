@@ -1,20 +1,23 @@
+import ProgressBar from './progressBar';
+
 export default function EventTime(props: {
 	dates: string | undefined;
 	time: string | undefined;
 	venue: string | undefined;
 }) {
 	return (
-		<div className="relative w-full">
+		<div className="relative w-full p-3 border border-blue-300 rounded-md">
+			<div className="absolute -z-10 top-0 left-0 w-full h-full bg-gradient-to-l from-blue-50 to-white filter blur-md"></div>
 			<div className="flex flex-col ml-10 pt-4 border border-y-0 border-r-0 border-gray-700">
 				<ol className="flex flex-col -ml-11 gap-3 w-full">
-					<li className="flex flex-col ml-6 gap-2">
+					<li className="flex flex-col ml-6 gap-1">
 						<div className="flex flex-row h-full items-center gap-4">
-							<div className="flex items-center justify-center border border-gray-800 w-10 h-10 bg-blue-100 rounded-full ring-8 ring-gray-100 shrink-0">
+							<div className="flex items-center justify-center border w-10 h-10 border-gray-400 bg-blue-100 rounded-full ring-8 ring-gray-100 shrink-0">
 								<svg
 									xmlns="http://www.w3.org/2000/svg"
 									fill="none"
 									viewBox="0 0 24 24"
-									strokeWidth={1.5}
+									strokeWidth={1}
 									stroke="currentColor"
 									className="w-6 h-6">
 									<path
@@ -24,23 +27,23 @@ export default function EventTime(props: {
 									/>
 								</svg>
 							</div>
-							<h3 className="flex items-center mb-1 text-2xl font-normal text-blue-500">
+							<h3 className="flex items-center -mt-5 mb-1 text-xl font-normal text-blue-500">
 								{' '}
-								Date:
+								When?
 							</h3>
 						</div>
-						<p className="ml-14 -mt-3 text-lg font-normal text-gray-800">
+						<p className="ml-14 -mt-6 text-lg font-normal text-gray-800 mb-3">
 							{props.dates}
 						</p>
 					</li>
-					<li className="flex flex-col ml-6 gap-2">
+					<li className="flex flex-col ml-6 gap-1">
 						<div className="flex flex-row h-full items-center gap-4">
-							<div className="flex items-center justify-center border border-gray-800 w-10 h-10 bg-blue-100 rounded-full ring-8 ring-gray-100 shrink-0">
+							<div className="flex items-center justify-center w-10 h-10 border border-gray-400 bg-blue-100 rounded-full ring-8 ring-gray-100 shrink-0">
 								<svg
 									xmlns="http://www.w3.org/2000/svg"
 									fill="none"
 									viewBox="0 0 24 24"
-									strokeWidth={1.5}
+									strokeWidth={1}
 									stroke="currentColor"
 									className="w-6 h-6">
 									<path
@@ -50,23 +53,23 @@ export default function EventTime(props: {
 									/>
 								</svg>
 							</div>
-							<h3 className="flex items-center mb-1 text-2xl font-normal text-blue-500">
+							<h3 className="flex items-center -mt-5 mb-1 text-xl font-normal text-blue-500">
 								{' '}
-								Duration:
+								How long?
 							</h3>
 						</div>
-						<p className="ml-14 -mt-3 text-lg font-normal text-gray-800">
+						<p className="ml-14 -mt-6 text-lg font-normal text-gray-800 mb-3">
 							{props.time}
 						</p>
 					</li>
-					<li className="flex flex-col ml-6 gap-2">
+					<li className="flex flex-col ml-6 gap-1">
 						<div className="flex flex-row h-full items-center gap-4">
-							<div className="flex items-center justify-center border border-gray-800 w-10 h-10 bg-blue-100 rounded-full ring-8 ring-gray-100 shrink-0">
+							<div className="flex items-center justify-center w-10 h-10 border border-gray-400 bg-blue-100 rounded-full ring-8 ring-gray-100 shrink-0">
 								<svg
 									xmlns="http://www.w3.org/2000/svg"
 									fill="none"
 									viewBox="0 0 24 24"
-									strokeWidth={1.5}
+									strokeWidth={1}
 									stroke="currentColor"
 									className="w-6 h-6">
 									<path
@@ -81,12 +84,12 @@ export default function EventTime(props: {
 									/>
 								</svg>
 							</div>
-							<h3 className="flex items-center mb-1 text-2xl font-normal text-blue-500">
+							<h3 className="flex items-center -mt-5 mb-1 text-xl font-normal text-blue-500">
 								{' '}
-								Venue:
+								Where?
 							</h3>
 						</div>
-						<p className="ml-14 -mt-3 text-lg font-normal text-gray-800">
+						<p className="ml-14 -mt-6 text-lg font-normal text-gray-800 mb-3">
 							{props.venue}
 						</p>
 					</li>
