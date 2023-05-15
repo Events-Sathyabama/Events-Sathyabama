@@ -260,6 +260,8 @@ class EventProgressSerializer(serializers.ModelSerializer):
         model = Event
         fields = [
             'title',
+            'applicationStatus',
+            'eventStatus',
             'link',
             'club',  # Club name
             'short_desc',
@@ -278,6 +280,35 @@ class EventProgressSerializer(serializers.ModelSerializer):
             progress = 7
         if obj.status == 8:  # Certified
             progress = 8
+
+
+class EventRegisterdCompleted(serializers.ModelSerializer):
+    applicationStatus = serializers.SerializerMethodField()
+    eventStatus = serializers.CharField(source='get_status_display')
+    # def to_representation(self, instance):
+
+    class Meta:
+        model = Event
+        fields = [
+            'pk',
+            'title',
+            'applicationStatus',
+            'club',
+            'eventStatus'
+        ]
+
+    def get_applicationStatus(self, obj):
+        request = self.context.get('request')
+        user_id = request.user.pk
+        if obj.declined_participant.filter(pk=user_id).exists():
+            return 'Rejected'
+        elif obj.accepted_participant.filter(pk=user_id).exists():
+            return 'Accepted'
+        elif obj.applied_participant.filter(pk=user_id).exists():
+            return "Pending"
+        else:
+            return ""
+
 
 
 class ClubSerializer(serializers.ModelSerializer):

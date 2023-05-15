@@ -49,7 +49,7 @@ class EventDetail(generics.RetrieveAPIView):
     def get_object(self):
         event_id = self.kwargs.get('pk')
         try:
-            event = Event.objects.get(pk=event_id)
+            event = Event.objects.prefetch_related('eventparticipant_set__user').get(pk=event_id)
             return event
         except:
             raise Http404("No Event Found!!!")
@@ -57,7 +57,6 @@ class EventDetail(generics.RetrieveAPIView):
     def get_serializer_context(self):
         context = super().get_serializer_context()
         context['request'] = self.request
-        self.request.user.pk
         return context
 
     def get_serializer_class(self):
@@ -114,6 +113,58 @@ class EventUpdate(generics.UpdateAPIView):
     def update(self, *args, **kwargs):
         x = super().update(*args, **kwargs)
         return x
+
+
+class RegisteredEvent(generics.ListAPIView):
+    serializer_class = serializers.EventRegisterdCompleted
+
+    def get_queryset(self):
+        q = (Q(participants__id=self.request.user.pk) 
+            & Q(eventparticipant__owner=False) 
+            & Q(eventparticipant__organizer=False) 
+            & Q(status__in=[4, 9])
+            & Q(eventparticipant__status__in=['3', '2', '1'])
+        )
+        event = Event.objects.filter(q)
+        return event
+    
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['request'] = self.request
+        return context
+
+class CompletedEvent(generics.ListAPIView):
+    serializer_class = serializers.EventRegisterdCompleted
+
+    def get_queryset(self):
+        q = (Q(participants__id=self.request.user.pk) 
+                & Q(eventparticipant__owner=False) 
+                & Q(eventparticipant__organizer=False) 
+                & Q(status__in=[5, 6, 7, 8])
+                & Q(eventparticipant__status='3')
+        )
+        event = Event.objects.filter(q)
+        return event
+    
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['request'] = self.request
+        return context
+
+class OrganizingEvent(generics.ListAPIView):
+    serializer_class = serializers.EventRegisterdCompleted
+
+    def get_queryset(self):
+        q = (Q(participants__id=self.request.user.pk) 
+                & (Q(eventparticipant__owner=True) | Q(eventparticipant__organizer=True))
+        )
+        event = Event.objects.filter(q)
+        return event
+    
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['request'] = self.request
+        return context
 
 
 @api_view(['GET'])

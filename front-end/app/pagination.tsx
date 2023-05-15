@@ -6,7 +6,7 @@ interface pageProps {
 	setPageNo: Function;
 }
 
-export default function Page(props: pageProps) {
+export default function Paginator(props: pageProps) {
 	return (
 		<Pagination
 			count={props.totalPage}

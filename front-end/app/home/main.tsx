@@ -2,7 +2,7 @@
 import HomeCard from './card';
 import {useState} from 'react';
 import API from '../API';
-import Page from './pagination';
+import Paginator from '../pagination';
 import TextField from '@mui/material/TextField';
 const axios = new API.Axios();
 import InputAdornment from '@mui/material/InputAdornment';
@@ -188,7 +188,7 @@ export default function Main(props: {url: string; heading: string}) {
 							</div>
 						)}
 					</div>
-					<Page totalPage={totalPage} pageNo={pageNo} setPageNo={setPageNo} />
+					<Paginator totalPage={totalPage} pageNo={pageNo} setPageNo={setPageNo} />
 				</div>
 			)}
 		</div>

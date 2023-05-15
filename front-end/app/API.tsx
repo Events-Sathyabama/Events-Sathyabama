@@ -315,6 +315,15 @@ const url: {[key: string]: Function} = {
 	'event:update_application': (id: string) => {
 		return `event/application/${id}/`;
 	},
+	'event:registered': () => {
+		return 'event/registered/';
+	},
+	'event:completed': () => {
+		return 'event/completed/';
+	},
+	'event:organizing': () => {
+		return 'event/organizing/';
+	},
 	'user:organizer': () => {
 		return 'user/organizer/';
 	},

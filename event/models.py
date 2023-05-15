@@ -20,14 +20,15 @@ def default_accepted_role():
     return [0]
 
 class EventParticipant(models.Model):
-    event = models.ForeignKey('Event', on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
     STATUS_CHOICES = (
         ('0', 'Not Applicable'),
         ('1', 'Declined'),
         ('2', 'Applied'),
         ('3', 'Accepted'),
     )
+
+    event = models.ForeignKey('Event', on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     status = models.CharField(max_length=1, choices=STATUS_CHOICES, default='2')
     owner = models.BooleanField(default=False)
     organizer = models.BooleanField(default=False)
@@ -83,6 +84,11 @@ class Event(models.Model):
 
     history = models.JSONField(blank=True, null=True)
 
+
+    hod_verified = models.BooleanField(default=False)
+    dean_verified = models.BooleanField(default=False)
+    vc_verified = models.BooleanField(default=False)
+    require_number = models.BooleanField(default=False)
     '''
     {
         0: {datetime:'', status: 1},
@@ -93,11 +99,6 @@ class Event(models.Model):
         5: {datetime:'', status: 0, error_message: ''},
     }
     '''
-
-    hod_verified = models.BooleanField(default=False)
-    dean_verified = models.BooleanField(default=False)
-    vc_verified = models.BooleanField(default=False)
-    require_number = models.BooleanField(default=False)
 
     def get_participant_data(self):
         if not hasattr(self, '_participants_dict'):
