@@ -3,6 +3,7 @@ from rest_framework import generics
 from . import serializers
 from .models import Event, Club, EventParticipant
 from user.models import Branch
+from django.http import Http404
 from django.utils import timezone
 from user.serializers import BranchSerializer
 from rest_framework.response import Response
@@ -15,7 +16,7 @@ from django.shortcuts import get_object_or_404
 
 class CompletedEventList(SearchQueryMixins, generics.ListAPIView):
     serializer_class = serializers.EventCardSerializer
-    
+
     def get_queryset(self):
         query = super().get_queryset()
         return query.filter(end_date__lt=timezone.now()).order_by('-end_date')
@@ -31,7 +32,7 @@ class OngoingEventList(SearchQueryMixins, generics.ListAPIView):
 
 class UpcomingEventList(SearchQueryMixins, generics.ListAPIView):
     serializer_class = serializers.EventCardSerializer
-    
+
     def get_queryset(self):
         query = super().get_queryset()
         return query.filter(start_date__gt=timezone.now()).order_by('start_date')
@@ -48,24 +49,23 @@ class EventDetail(generics.RetrieveAPIView):
     def get_object(self):
         event_id = self.kwargs.get('pk')
         try:
-            event = Event.objects.get(pk=event_id)
+            event = Event.objects.prefetch_related('eventparticipant_set__user').get(pk=event_id)
             return event
         except:
-            return Response(status=404, message={'message': "No Event was found!"})
+            raise Http404("No Event Found!!!")
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
         context['request'] = self.request
-        self.request.user.pk
         return context
 
     def get_serializer_class(self):
         event = self.get_object()
-        if event.is_organizer(self.request.user) or  event.is_owner(self.request.user):
+        if event.is_organizer(self.request.user) or event.is_owner(self.request.user):
             return self.serializers['organizer']
         else:
             return self.serializers['student']
-            
+
     # serializer_class = serializers.EventDetailSerializer
 
 
@@ -92,11 +92,10 @@ class EventCreate(generics.CreateAPIView):
         event.set_owner(self.request.user)
 
 
-
 class EventUpdate(generics.UpdateAPIView):
     queryset = Event.objects.all()
     serializer_class = serializers.EventUpdateSerializer
-    lookup_field =  'pk'
+    lookup_field = 'pk'
 
     def patch(self, request, *args, **kwargs):
         # Modify request.data before validation
@@ -116,7 +115,59 @@ class EventUpdate(generics.UpdateAPIView):
         return x
 
 
-@api_view(['GET'])    
+class RegisteredEvent(generics.ListAPIView):
+    serializer_class = serializers.EventRegisterdCompleted
+
+    def get_queryset(self):
+        q = (Q(participants__id=self.request.user.pk) 
+            & Q(eventparticipant__owner=False) 
+            & Q(eventparticipant__organizer=False) 
+            & Q(status__in=[4, 9])
+            & Q(eventparticipant__status__in=['3', '2', '1'])
+        )
+        event = Event.objects.filter(q)
+        return event
+    
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['request'] = self.request
+        return context
+
+class CompletedEvent(generics.ListAPIView):
+    serializer_class = serializers.EventRegisterdCompleted
+
+    def get_queryset(self):
+        q = (Q(participants__id=self.request.user.pk) 
+                & Q(eventparticipant__owner=False) 
+                & Q(eventparticipant__organizer=False) 
+                & Q(status__in=[5, 6, 7, 8])
+                & Q(eventparticipant__status='3')
+        )
+        event = Event.objects.filter(q)
+        return event
+    
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['request'] = self.request
+        return context
+
+class OrganizingEvent(generics.ListAPIView):
+    serializer_class = serializers.EventRegisterdCompleted
+
+    def get_queryset(self):
+        q = (Q(participants__id=self.request.user.pk) 
+                & (Q(eventparticipant__owner=True) | Q(eventparticipant__organizer=True))
+        )
+        event = Event.objects.filter(q)
+        return event
+    
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['request'] = self.request
+        return context
+
+
+@api_view(['GET'])
 def apply_event(request, pk):
     response = Response({'message': 'Event application successfull!!'})
     try:
@@ -129,13 +180,12 @@ def apply_event(request, pk):
             response.status_code = 403
             response.data['message'] = message
     except:
-        response = Response()
-        response.status_code = 404
-        response.data['message'] = 'No Event was found!'
+        response = Response(status=404, data={'message': 'No Event Found!!'})
     return response
+
 
 @api_view(['GET'])
 def club_branch(request):
     club = serializers.ClubSerializer(Club.objects.all(), many=True)
     branch = BranchSerializer(Branch.objects.all(), many=True)
-    return Response({'club': club.data, 'branch':branch.data})
+    return Response({'club': club.data, 'branch': branch.data})

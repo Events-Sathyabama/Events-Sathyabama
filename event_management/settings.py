@@ -50,8 +50,12 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'user',
     'debug_toolbar',
+    'django_extensions',
     'event',
 ]
+
+SHELL_PLUS_PRE_IMPORTS = [('event_management.query_count', '*')]
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -156,7 +160,7 @@ REST_FRAMEWORK = {
 
     ),
     "DEFAULT_PAGINATION_CLASS": "event_management.pagination.CustomPagination",
-    "PAGE_SIZE": 12,
+    "PAGE_SIZE": 2,
 }
 
 

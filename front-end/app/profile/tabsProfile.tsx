@@ -3,55 +3,70 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Image from 'next/image';
 import ProfileCards from './profileCards';
+import useEffect from '../useEffect';
+import API from '../API';
+import Paginator from '../pagination';
+import {
+	InterfaceCompletedRegisteredEvent,
+	InterfaceEventProgress,
+	InterfacePaginatedData,
+} from '../datainterface';
 
+const axios = new API.Axios();
 // TODO fetch the application status of students in this way
 const rows = [
 	{
-		eventName: 'Madhugai - The Strength',
+		title: 'Madhugai - The Strength',
 		applicationStatus: 'Pending',
-		link: '/details/5',
-		organiser: 'Google Developers Student Club',
+		pk: '5',
+		club: 'Google Developers Student Club',
+		eventStatus: 'Pending',
 	},
 	{
-		eventName: 'Testing Event 5',
+		title: 'Testing Event 5',
 		applicationStatus: 'Rejected',
-		link: '/details/5',
-		organiser: 'ACM - SIST',
+		pk: '5',
+		club: 'ACM - SIST',
+		eventStatus: 'Pending',
 	},
 	{
-		eventName: 'Event 3',
+		title: 'Event 3',
 		applicationStatus: 'Accepted',
-		link: '/details/5',
-		organiser: 'Student Development Cell',
+		pk: '5',
+		club: 'Student Development Cell',
+		eventStatus: 'Pending',
 	},
 	{
-		eventName: 'Event 4',
+		title: 'Event 4',
 		applicationStatus: 'Pending',
-		link: '/details/5',
-		organiser: 'Microsoft Club - Sathyabama',
+		pk: '5',
+		club: 'Microsoft Club - Sathyabama',
+		eventStatus: 'Pending',
 	},
 	{
-		eventName: 'Event 5',
+		title: 'Event 5',
 		applicationStatus: 'Completed',
-		link: '/details/5',
-		organiser: 'Community Development Club',
+		pk: '5',
+		club: 'Community Development Club',
+		eventStatus: 'Pending',
 	},
 	{
-		eventName: 'Event 5',
+		title: 'Event 5',
 		applicationStatus: 'Certified',
-		link: '/details/5',
-		organiser: 'Development Club',
+		pk: '5',
+		club: 'Development Club',
+		eventStatus: 'Pending',
 	},
 ];
 
-// TODO Fetch Organiser in this way
+// TODO Fetch Event Status in this way
 // used 0 based indexing
 const organiser = [
 	{
-		eventName: 'Madhugai - The Strength',
-		applicationStatus: 'Pending',
-		link: '/details/5',
-		organiser: 'Google Developers Student Club',
+		title: 'Madhugai - The Strength',
+		eventStatus: 'canceled',
+		pk: '/details/5',
+		club: 'Google Developers Student Club',
 		description:
 			'Lorem ipsum dolor sit amet consectetur adipisicing elit. Rem debitis fuga beatae vero quaerat! Minima impedit nulla magni molestiae iusto consectetur porro ea aliquid quis reiciendis natus provident laudantium, doloremque eos aspernatur delectus ratione facere expedita fuga quam dignissimos debitis. Assumenda fugiat ipsa optio cum incidunt ducimus perferendis velit officia.',
 		// zero based indexing
@@ -60,10 +75,10 @@ const organiser = [
 		failedLabel: 'Please reiterate your event',
 	},
 	{
-		eventName: 'Testing Event 5',
-		applicationStatus: 'Rejected',
-		link: '/details/5',
-		organiser: 'ACM - SIST',
+		title: 'Testing Event 5',
+		eventStatus: 'canceled',
+		pk: '/details/5',
+		club: 'ACM - SIST',
 		description:
 			'Lorem ipsum dolor sit amet consectetur adipisicing elit. Rem debitis fuga beatae vero quaerat! Minima impedit nulla magni molestiae iusto consectetur porro ea aliquid quis reiciendis natus provident laudantium, doloremque eos aspernatur delectus ratione facere expedita fuga quam dignissimos debitis. Assumenda fugiat ipsa optio cum incidunt ducimus perferendis velit officia.',
 		status: 4,
@@ -71,10 +86,10 @@ const organiser = [
 		failedLabel: 'Set Total <p/> Strength Set Venue Set Date and Time',
 	},
 	{
-		eventName: 'Event 3',
-		applicationStatus: 'Accepted',
-		link: '/details/5',
-		organiser: 'Student Development Cell',
+		title: 'Event 3',
+		eventStatus: 'Accepted',
+		pk: '/details/5',
+		club: 'Student Development Cell',
 		description:
 			'Lorem ipsum dolor sit amet consectetur adipisicing elit. Rem debitis fuga beatae vero quaerat! Minima impedit nulla magni molestiae iusto consectetur porro ea aliquid quis reiciendis natus provident laudantium, doloremque eos aspernatur delectus ratione facere expedita fuga quam dignissimos debitis. Assumenda fugiat ipsa optio cum incidunt ducimus perferendis velit officia.',
 		status: 4,
@@ -83,10 +98,10 @@ const organiser = [
 			'Lorem ipsum dolor sit amet consectetur adipisicing elit. Rem debitis fuga beatae vero quaerat! Minima impedit nulla magni molestiae iusto consectetur porro ea aliquid quis reiciendis natus provident laudantium, doloremque eos aspernatur delectus ratione facere expedita fuga quam dignissimos debitis. Assumenda fugiat ipsa optio cum incidunt ducimus perferendis velit officia.',
 	},
 	{
-		eventName: 'Event 4',
-		applicationStatus: 'Pending',
-		link: '/details/5',
-		organiser: 'Microsoft Club - Sathyabama',
+		title: 'Event 4',
+		eventStatus: 'Pending',
+		pk: '/details/5',
+		club: 'Microsoft Club - Sathyabama',
 		description:
 			'Lorem ipsum dolor sit amet consectetur adipisicing elit. Rem debitis fuga beatae vero quaerat! Minima impedit nulla magni molestiae iusto consectetur porro ea aliquid quis reiciendis natus provident laudantium, doloremque eos aspernatur delectus ratione facere expedita fuga quam dignissimos debitis. Assumenda fugiat ipsa optio cum incidunt ducimus perferendis velit officia.',
 		status: 6,
@@ -94,10 +109,10 @@ const organiser = [
 		failedLabel: '',
 	},
 	{
-		eventName: 'Event 5',
-		applicationStatus: 'Completed',
-		link: '/details/5',
-		organiser: 'Community Development Club',
+		title: 'Event 5',
+		eventStatus: 'Completed',
+		pk: '/details/5',
+		club: 'Community Development Club',
 		description:
 			'Lorem ipsum dolor sit amet consectetur adipisicing elit. Rem debitis fuga beatae vero quaerat! Minima impedit nulla magni molestiae iusto consectetur porro ea aliquid quis reiciendis natus provident laudantium, doloremque eos aspernatur delectus ratione facere expedita fuga quam dignissimos debitis. Assumenda fugiat ipsa optio cum incidunt ducimus perferendis velit officia.',
 		status: 7,
@@ -105,10 +120,10 @@ const organiser = [
 		failedLabel: 'Please reiterate your event',
 	},
 	{
-		eventName: 'Event 5',
-		applicationStatus: 'Certified',
-		link: '/details/5',
-		organiser: 'Development Club',
+		title: 'Event 5',
+		eventStatus: 'Certified',
+		pk: '/details/5',
+		club: 'Development Club',
 		description:
 			'Lorem ipsum dolor sit amet consectetur adipisicing elit. Rem debitis fuga beatae vero quaerat! Minima impedit nulla magni molestiae iusto consectetur porro ea aliquid quis reiciendis natus provident laudantium, doloremque eos aspernatur delectus ratione facere expedita fuga quam dignissimos debitis. Assumenda fugiat ipsa optio cum incidunt ducimus perferendis velit officia.',
 		status: 5,
@@ -119,7 +134,6 @@ const organiser = [
 
 function TabPanel(props: any) {
 	const {children, value, index, ...other} = props;
-
 	return (
 		<div
 			role="tabpanel"
@@ -139,11 +153,90 @@ function TabPanel(props: any) {
 function Student() {
 	const [value, setValue] = React.useState(0);
 	const [cards, setCards] = React.useState([]);
+	const [registeredEvent, setRegisteredEvent] =
+		React.useState<InterfaceCompletedRegisteredEvent>();
+	const [completedEvent, setCompletedEvent] =
+		React.useState<InterfaceCompletedRegisteredEvent>();
+	const [organizedEvent, setOrganizedEvent] =
+		React.useState<InterfaceEventProgress>();
 
 	const handleChange = (event: React.SyntheticEvent, newValue: number) => {
 		setValue(newValue);
 	};
+	const [Loader1, setLoader1] = React.useState(0);
+	const [Loader2, setLoader2] = React.useState(0);
+	const [Loader3, setLoader3] = React.useState(0);
+	const [registeredPageNo, setRegisteredPageNo] = React.useState(1);
+	const [completedPageNo, setCompletedPageNo] = React.useState(1);
+	const [organizingPageNo, setOrganizingPageNo] = React.useState(1);
+	const runOnce = true;
+	useEffect(
+		() => {
+			const query = window.setTimeout(async () => {
+				const response = await axios.get(API.get_url('event:registered'), {
+					page: registeredPageNo,
+				});
+				const data: InterfacePaginatedData = response.data;
+				setRegisteredEvent({
+					pageNo: registeredPageNo,
+					totalPageNo: data.total_pages,
+					data: response.data.results,
+					setPageNo: setRegisteredPageNo,
+				});
+				console.log('registered: ', data, 'Pageno: ', registeredPageNo);
+			});
+			return () => {
+				window.clearInterval(query);
+			};
+		},
+		[registeredPageNo],
+		setLoader1
+	);
+	useEffect(
+		() => {
+			const query = window.setTimeout(async () => {
+				const response = await axios.get(API.get_url('event:completed'), {
+					page: completedPageNo,
+				});
+				const data: InterfacePaginatedData = response.data;
+				setCompletedEvent({
+					pageNo: completedPageNo,
+					totalPageNo: data.total_pages,
+					data: response.data.results,
+					setPageNo: setCompletedPageNo,
+				});
+				console.log('Completed: ', data);
+			});
+			return () => {
+				window.clearInterval(query);
+			};
+		},
+		[completedPageNo],
+		setLoader2
+	);
 
+	useEffect(
+		() => {
+			const query = window.setTimeout(async () => {
+				const response = await axios.get(API.get_url('event:organizing'), {
+					page: organizingPageNo,
+				});
+				const data: InterfacePaginatedData = response.data;
+				setOrganizedEvent({
+					pageNo: organizingPageNo,
+					totalPageNo: data.total_pages,
+					data: response.data.results,
+					setPageNo: setOrganizingPageNo,
+				});
+				console.log('registered: ', data, 'Pageno: ', organizingPageNo);
+			});
+			return () => {
+				window.clearInterval(query);
+			};
+		},
+		[organizingPageNo],
+		setLoader3
+	);
 	return (
 		<div className="flex flex-col w-full sm:items-center">
 			<Tabs
@@ -223,24 +316,18 @@ function Student() {
 				<TabPanel value={value} index={0}>
 					{/* Events which the student has opted-in to participate. (Will contain pending
 					for approval, accepted) */}
-					{rows.length > 0 ? (
-						rows.map(
-							(row: {
-								eventName: string;
-								applicationStatus: string;
-								link: string;
-								organiser: string;
-							}) => {
-								return (
-									<ProfileCards
-										eventName={row.eventName}
-										organiser={row.organiser}
-										link={row.link}
-										applicationStatus={row.applicationStatus}
-									/>
-								);
-							}
-						)
+					{registeredEvent !== undefined && registeredEvent.data.length > 0 ? (
+						registeredEvent.data.map((event) => {
+							return (
+								<ProfileCards
+									title={event.title}
+									club={event.club}
+									pk={event.pk}
+									applicationStatus={event.applicationStatus}
+									eventStatus={event.eventStatus}
+								/>
+							);
+						})
 					) : (
 						<div className="flex flex-col w-full py-4 sm:py-0 sm:min-h-[68vh] items-center justify-center">
 							<Image
@@ -253,27 +340,28 @@ function Student() {
 							</p>
 						</div>
 					)}
+					{registeredEvent !== undefined && (
+						<Paginator
+							pageNo={registeredEvent.pageNo}
+							totalPage={registeredEvent.totalPageNo}
+							setPageNo={registeredEvent.setPageNo}
+						/>
+					)}
 				</TabPanel>
 				<TabPanel value={value} index={1}>
 					{/* Events which the student has opted-in and has completed. */}
-					{rows.length > 0 ? (
-						rows.map(
-							(row: {
-								eventName: string;
-								applicationStatus: string;
-								link: string;
-								organiser: string;
-							}) => {
-								return (
-									<ProfileCards
-										eventName={row.eventName}
-										organiser={row.organiser}
-										link={row.link}
-										applicationStatus={row.applicationStatus}
-									/>
-								);
-							}
-						)
+					{completedEvent !== undefined && completedEvent.data.length > 0 ? (
+						completedEvent.data.map((event) => {
+							return (
+								<ProfileCards
+									title={event.title}
+									club={event.club}
+									pk={event.pk}
+									applicationStatus={event.applicationStatus}
+									eventStatus={event.eventStatus}
+								/>
+							);
+						})
 					) : (
 						<div className="flex flex-col w-full py-4 sm:py-0 sm:min-h-[68vh] items-center justify-center">
 							<Image
@@ -286,19 +374,26 @@ function Student() {
 							</p>
 						</div>
 					)}
+					{completedEvent !== undefined && (
+						<Paginator
+							pageNo={completedEvent.pageNo}
+							totalPage={completedEvent.totalPageNo}
+							setPageNo={completedEvent.setPageNo}
+						/>
+					)}
 				</TabPanel>
 				<TabPanel value={value} index={2}>
 					{/* Events which the student is organising i.e. Student Coordinator */}
-					{organiser.length > 0 ? (
-						organiser.map((event) => {
+					{organizedEvent !== undefined && organizedEvent.data.length > 0 ? (
+						organizedEvent.data.map((event) => {
 							return (
 								<ProfileCards
 									variant="organiser"
 									current={event.status}
-									eventName={event.eventName}
-									organiser={event.organiser}
-									link={event.link}
-									applicationStatus={event.applicationStatus}
+									title={event.title}
+									club={event.club}
+									pk={event.pk}
+									eventStatus={event.eventStatus}
 									description={event.description}
 									failed={event.failed}
 									failedLabel={event.failedLabel}

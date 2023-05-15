@@ -15,4 +15,8 @@ urlpatterns = [
     path('update/<int:pk>/', views.EventUpdate.as_view()),
     path('apply/<int:pk>/', views.apply_event),
     path('club/branch/', views.club_branch),
+    path('registered/', views.RegisteredEvent.as_view()),
+    path('completed/', views.CompletedEvent.as_view()),
+    path('organizing/', views.OrganizingEvent.as_view()),
+
 ]
