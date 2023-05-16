@@ -6,29 +6,29 @@ import StepLabel from '@mui/material/StepLabel';
 import Typography from '@mui/material/Typography';
 
 const steps = [
-	'Event created',
+	'Event Created',
 	'Approved by the Head of Department',
 	'Approved by the Dean',
 	'Approved by the Vice-Chancellor',
-	'Displayed to students',
-	'Event ongoing',
-	'Event completed',
-	'Report submited',
-	'Report approved',
-	'Issued certifications',
+	'Displayed to Students',
+	'Event Ongoing',
+	'Event Completed',
+	'Report Submitted',
+	'Report Approved',
+	'Issued Certifications',
 ];
 
 const errorLabel = [
-	'Event not created',
+	'Event not Created',
 	'Rejected by the Head of Department',
 	'Rejected by the Dean',
 	'Rejected by the Vice-Chancellor',
-	'Event not displayed to students',
-	'Ongoing',
-	'Event not completed',
-	'Report not submited',
-	'Report not approved',
-	'Certifications not issued',
+	'Event not displayed to Students',
+	'Event not Ongoing',
+	'Event not Completed',
+	'Report not Submitted',
+	'Report not Approved',
+	'Certifications not Issued',
 ];
 
 export default function Timeline(props: {
