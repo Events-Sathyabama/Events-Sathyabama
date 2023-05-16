@@ -30,7 +30,7 @@ function Success(props: SuccessProps) {
 
 	return (
 		<>
-			{open && (
+			{open === true && (
 				<Snackbar
 					open={open}
 					autoHideDuration={6000}
@@ -67,7 +67,7 @@ function Error(props: ErrorProps) {
 
 	return (
 		<>
-			{open && (
+			{open === true && (
 				<Snackbar
 					open={open}
 					autoHideDuration={6000}

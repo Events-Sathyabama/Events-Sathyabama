@@ -6,6 +6,14 @@ from . import serializers
 from django.utils import timezone
 # Create your views here.
 from rest_framework import permissions
+from django.core.mail import send_mail
+from django.http import HttpResponse
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from django.contrib.auth import get_user_model
+from rest_framework.permissions import AllowAny
+from django.shortcuts import get_object_or_404
+
+User = get_user_model()
 
 User = get_user_model()
 class UserListView(generics.RetrieveAPIView):
@@ -36,3 +44,36 @@ class GetOrganizer(generics.ListAPIView):
                     Q(college_id__icontains=keyword) | 
                     Q(email__icontains=keyword))
         return query.filter(q & self.get_active_user_query())
+
+
+@api_view(['POST'])
+@authentication_classes([])
+@permission_classes([AllowAny])
+def verify_otp(request):
+    college_id = request.data.get('college_id')
+    try:
+        user = get_object_or_404(User, college_id=college_id)
+        otp = request.data.get('otp')
+        if user.verify_otp(otp):
+            return HttpResponse('Verified', status=200)
+    except:
+        return HttpResponse("Something Went Wrong", status=500)
+    return HttpResponse('Invalid OTP',  status=400)
+
+@api_view(['POST'])
+@authentication_classes([])
+@permission_classes([AllowAny])  
+def reset_password(request):
+    try:
+        otp = request.data.get('otp')
+        college_id = request.data.get('college_id')
+        password1 = request.data.get('password1')
+        password2 = request.data.get('password2')
+        if password1 == password2:
+            user = get_object_or_404(User, college_id=college_id)
+            if user.verify_otp(otp):
+                user.new_password(password1)
+                return HttpResponse('Password reset successfully', status=200)
+        return HttpResponse('Passwords do not match', status=400)
+    except:
+        return HttpResponse('Something went wrong', status=500)

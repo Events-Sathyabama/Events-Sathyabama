@@ -137,11 +137,13 @@ class CompletedEvent(generics.ListAPIView):
     serializer_class = serializers.EventRegisterdCompleted
 
     def get_queryset(self):
+
         q = (Q(participants__id=self.request.user.pk) 
-                & Q(eventparticipant__owner=False) 
-                & Q(eventparticipant__organizer=False) 
                 & Q(status__in=[5, 6, 7, 8])
-                & Q(eventparticipant__status='3')
+                & (
+                    (Q(eventparticipant__status='3') & Q(eventparticipant__owner=False) & Q(eventparticipant__organizer=False))
+                    | (Q(eventparticipant__owner=True) | Q(eventparticipant__organizer=True))
+                )
         )
         event = Event.objects.filter(q)
         return event
@@ -157,7 +159,37 @@ class OrganizingEvent(generics.ListAPIView):
     def get_queryset(self):
         q = (Q(participants__id=self.request.user.pk) 
                 & (Q(eventparticipant__owner=True) | Q(eventparticipant__organizer=True))
+                & Q(status__in=[2,4])
+                # & Q(hod_verified=True)
+                # & Q(dean_verified=True)
+                # & Q(vc_verified=True)
+
         )
+        event = Event.objects.filter(q)
+        return event
+    
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['request'] = self.request
+        return context
+class PendingEvent(generics.ListAPIView):
+    serializer_class = serializers.EventRegisterdCompleted
+
+    def get_queryset(self):
+        if self.request.user.role == 2: # HOD
+            q = Q(status=1) & Q(hod_verified=False)
+        elif self.request.user.role == 3: #Dean
+            q = Q(status=1) & Q(dean_verified=False) & Q(hod_verified=True)
+        elif self.request.user.role == 4: # VC
+            q = Q(status=1) & Q(vc_verified=False) & Q(dean_verified=True)
+        else:
+            q = (Q(participants__id=self.request.user.pk) 
+                    & (Q(eventparticipant__owner=True) | Q(eventparticipant__organizer=True))
+                    & Q(status__in=[1])
+
+            )
+        if self.request.user.branch:
+            q = q & (Q(branch__in=[self.request.user.branch]) | Q(branch__isnull=True))
         event = Event.objects.filter(q)
         return event
     

@@ -126,9 +126,13 @@ export interface InterfaceCompletedRegisteredEvent{
 			club: string,
 			eventStatus: string,
 		}[],
+	next: string | null,
+	previous: string | null,
 	pageNo: number,
 	totalPageNo: number,
-	setPageNo: Function
+	setPageNo: Function,
+	count: number,
+
 }
 
 export interface InterfaceEventProgress{
@@ -144,7 +148,10 @@ export interface InterfaceEventProgress{
 		}[],
 	pageNo: number,
 	totalPageNo: number,
-	setPageNo: Function
+	setPageNo: Function,
+	next: string | null,
+	previous: string | null,
+	count: number,
 }
 
 export interface InterfacePaginatedData{
