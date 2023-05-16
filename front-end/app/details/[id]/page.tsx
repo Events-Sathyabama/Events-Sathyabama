@@ -16,6 +16,7 @@ import handleError from '@/app/handleError';
 import Description from '../description';
 import Coordinators from '../coordinators';
 import Alert from '@mui/material/Alert';
+import BatchesComponent from '../batches';
 
 const axios = new API.Axios();
 
@@ -172,16 +173,19 @@ export default function details(props: {params: {id: string}}) {
 												);
 										})()
 									) : (
-										<LoadingButton
-											loadingIndicator="Applying…"
-											variant="contained"
-											className="w-48 mr-5"
-											onClick={applyToEvent}
-											loading={applying}
-											size="large"
-											style={!applying ? {backgroundColor: '#1565c0'} : {}}>
-											<span>Apply for Event</span>
-										</LoadingButton>
+										<div className="flex flex-col lg:flex-row bg-slate-50 border border-slate-300 py-2 justify-between items-center lg:items-start rounded-md w-full">
+											<BatchesComponent></BatchesComponent>
+											<LoadingButton
+												loadingIndicator="Applying…"
+												variant="contained"
+												className="w-10/12 lg:w-5/12 h-10 m-2"
+												onClick={applyToEvent}
+												loading={applying}
+												size="large"
+												style={!applying ? {backgroundColor: '#1565c0'} : {}}>
+												<span>Apply for Event</span>
+											</LoadingButton>
+										</div>
 									)}
 								</>
 							) : (
