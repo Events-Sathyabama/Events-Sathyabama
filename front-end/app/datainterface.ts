@@ -118,4 +118,40 @@ export interface InterfaceError {
 	total_strength: string | null
 }
 
+export interface InterfaceCompletedRegisteredEvent{
+	data: {
+			pk: number,
+			title: string,
+			applicationStatus: string,
+			club: string,
+			eventStatus: string,
+		}[],
+	pageNo: number,
+	totalPageNo: number,
+	setPageNo: Function
+}
+
+export interface InterfaceEventProgress{
+	data: {
+			status: number,
+			title: string,
+			club: string,
+			pk: number,
+			eventStatus: number,
+			description: string,
+			failed: number,
+			failedLabel: string | Array<string>,
+		}[],
+	pageNo: number,
+	totalPageNo: number,
+	setPageNo: Function
+}
+
+export interface InterfacePaginatedData{
+	count: number,
+	next:string | null,
+	total_pages: number,
+	previous: string | null,
+	results: any[],
+}
 export default {};

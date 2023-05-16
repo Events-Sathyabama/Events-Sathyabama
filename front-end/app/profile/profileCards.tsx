@@ -32,20 +32,26 @@ export default function ProfileCards(props: any) {
 	};
 
 	const [alert, setAlert] = React.useState(0); // 0 indicates not to show alert, 1 approve, 2 reject
-
+	const link = '/details/' + props.pk;
 	return (
 		<Link
-			href={props.variant === 'organiser' ? '/profile' : props.link}
+			href={props.variant === 'organiser' ? '/profile' : link}
 			className={
 				props.variant === 'organiser'
 					? 'w-full border border-gray-300 sm:hover:border-blue-300 sm:hover:shadow-md transition-all duration-300 rounded-sm cursor-default'
 					: 'w-full border border-gray-300 sm:hover:border-blue-300 sm:hover:shadow-md transition-all duration-300 rounded-sm'
 			}>
-			<Card sx={{boxShadow: 'none'}}>
+			<Card
+				sx={{boxShadow: 'none'}}
+				className={
+					props.eventStatus.toLowerCase() === 'canceled'
+						? 'shadow-sm border border-1 border-red-800 shadow-red-800'
+						: ''
+				}>
 				<CardHeader
 					action={
 						props.variant === 'organiser' ? (
-							<Link href={props.link} passHref>
+							<Link href={link} passHref>
 								<IconButton className="flex p-2 text-gray-500">
 									<svg
 										xmlns="http://www.w3.org/2000/svg"
@@ -64,7 +70,7 @@ export default function ProfileCards(props: any) {
 							</Link>
 						) : (
 							<div className="flex flex-row gap-2 justify-center items-center shadow-sm border border-gray-300 w-36 py-2 rounded-md ml-1">
-								{props.applicationStatus === 'Pending' ? (
+								{props.eventStatus === 'Pending' ? (
 									<svg
 										xmlns="http://www.w3.org/2000/svg"
 										fill="none"
@@ -79,7 +85,7 @@ export default function ProfileCards(props: any) {
 										/>
 									</svg>
 								) : null}
-								{props.applicationStatus === 'Accepted' ? (
+								{props.eventStatus === 'Accepted' ? (
 									<svg
 										xmlns="http://www.w3.org/2000/svg"
 										fill="none"
@@ -94,7 +100,7 @@ export default function ProfileCards(props: any) {
 										/>
 									</svg>
 								) : null}
-								{props.applicationStatus === 'Rejected' ? (
+								{props.eventStatus === 'Rejected' ? (
 									<svg
 										xmlns="http://www.w3.org/2000/svg"
 										fill="none"
@@ -109,7 +115,7 @@ export default function ProfileCards(props: any) {
 										/>
 									</svg>
 								) : null}
-								{props.applicationStatus === 'Completed' ? (
+								{props.eventStatus === 'Completed' ? (
 									<svg
 										xmlns="http://www.w3.org/2000/svg"
 										fill="none"
@@ -124,7 +130,7 @@ export default function ProfileCards(props: any) {
 										/>
 									</svg>
 								) : null}
-								{props.applicationStatus === 'Certified' ? (
+								{props.eventStatus === 'Certified' ? (
 									<svg
 										xmlns="http://www.w3.org/2000/svg"
 										fill="none"
@@ -139,12 +145,15 @@ export default function ProfileCards(props: any) {
 										/>
 									</svg>
 								) : null}
-								<p className="text-lg">{props.applicationStatus}</p>
+								<p className="text-lg">{props.eventStatus}</p>
 							</div>
 						)
 					}
-					title={props.eventName}
-					subheader={props.organiser}
+					title={
+						props.title +
+						(props.eventStatus.toLowerCase() === 'canceled' ? ' (Canceled)' : '')
+					}
+					subheader={props.club}
 				/>
 				{props.variant === 'organiser' ? (
 					<>

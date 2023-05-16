@@ -12,6 +12,8 @@ import {LocalizationProvider} from '@mui/x-date-pickers/LocalizationProvider';
 import {AdapterDayjs} from '@mui/x-date-pickers/AdapterDayjs';
 import Chip from '@mui/material/Chip';
 import API from '../API';
+import {usePathname} from 'next/navigation';
+
 import {
 	InterfaceClub,
 	InterfaceBranch,
@@ -43,6 +45,7 @@ export default function Create(props: {
 	buttonText: string;
 	setLoader: React.Dispatch<React.SetStateAction<number>>;
 }) {
+	const currentPage = usePathname();
 	// Data that has to be Fetched from server
 	const setData = props.setData;
 	const getData = props.getData;
@@ -506,7 +509,9 @@ export default function Create(props: {
 									eventDate = eventDate || "Event's Date Here";
 									return eventDate;
 								})()}
-								hover={false}></Card>
+								hover={false}
+								learnMoreLink={currentPage}
+							/>
 						</div>
 					</div>
 				</div>

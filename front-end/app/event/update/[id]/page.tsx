@@ -17,7 +17,7 @@ import useEffect from '@/app/useEffect';
 import ApiLoader from '@/app/apiLoader';
 import Popup from '@/app/popup';
 
-export default function Page(props: {params: {id: number}}) {
+export default function Page(props: {params: {id: string}}) {
 	const [owner, setOwner] = useState<InterfaceOrganizer>({
 		name: '-',
 		college_id: '-',
@@ -185,6 +185,7 @@ export default function Page(props: {params: {id: number}}) {
 					const request = await axios.get(
 						API.get_url('event:detail', [props.params.id])
 					);
+					console.log(request.data);
 					const data = request.data;
 					initial_value = data;
 					setData.title(data.title);

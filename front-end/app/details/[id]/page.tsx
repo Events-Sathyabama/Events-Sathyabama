@@ -33,7 +33,7 @@ const isUserFound = (
 	return false;
 };
 
-export default function details(props: {params: {id: number}}) {
+export default function details(props: {params: {id: string}}) {
 	const [Spopup, setSpopup] = useState(false);
 	const [Fpopup, setFpopup] = useState(false);
 	const [popupMessage, setPopupMessage] = useState('');
@@ -82,6 +82,7 @@ export default function details(props: {params: {id: number}}) {
 		setApplying(true);
 		setCalledByApply(true);
 		try {
+			console.log(API.get_url('event:apply', props.params.id));
 			const response = await axios.get(API.get_url('event:apply', props.params.id));
 			console.log(response);
 			setPopupMessage(response.data.message);
