@@ -1,7 +1,6 @@
 'use client';
 import Header from '../header';
 import Poster from '../poster';
-import Tabs from '../tabs';
 import {useState} from 'react';
 import useEffect from '../../useEffect';
 import API from '../../API';
@@ -16,6 +15,7 @@ import ApiLoader from '../../apiLoader';
 import handleError from '@/app/handleError';
 import Description from '../description';
 import Coordinators from '../coordinators';
+import Alert from '@mui/material/Alert';
 
 const axios = new API.Axios();
 
@@ -107,53 +107,10 @@ export default function details(props: {params: {id: number}}) {
 		}
 		setApplying(false);
 	}
-	const progress = (data?.accepted_count || 0 / totalStrenth) * 100;
 
 	return (
 		<>
-			{/* {<ApiLoader state={0} message="Fetching Data..." />} */}
-			<div className="flex flex-col w-full h-auto items-center justify-center">
-				{/* <div className="flex flex-row justify-between bg-gray-50 items-center fixed bottom-0 z-50 w-full h-16 -translate-x-1/2 border border-blue-300 left-1/2">
-					<div className="flex flex-row items-center gap-3 ml-5">
-						<p className="text-2xl text-black font-semibold">
-							{totalStrenth === 0
-								? "Total capacity isn't set!"
-								: `${Math.round(progress)}%`}
-						</p>
-					</div>
-					{!isOrganizer ? (
-						<>
-							{isApplied ? (
-								<p
-									className={
-										'w-full border p-2 rounded-md text-center shadow-lg text-white bg-green-600 transition-all duration-1000' +
-										(isDeclined
-											? ' border-red-500 bg-red-600'
-											: ' border-green-500 bg-green-600')
-									}>
-									{(() => {
-										if (isDeclined) return 'Declined';
-										if (isAccepted) return 'Accepted';
-										if (isApplied) return 'Applied';
-									})()}
-								</p>
-							) : (
-								<LoadingButton
-									loadingIndicator="Applying…"
-									variant="contained"
-									className="w-48 mr-5"
-									onClick={applyToEvent}
-									loading={applying}
-									size="large"
-									style={!applying ? {backgroundColor: '#1565c0'} : {}}>
-									<span>Apply for Event</span>
-								</LoadingButton>
-							)}
-						</>
-					) : (
-						<></>
-					)}
-				</div> */}
+			<div className="flex flex-col w-full h-auto items-center justify-center min-h-[85vh]">
 				<div className="flex flex-col w-full items-end">
 					{Spopup ? (
 						<Popup.Success
@@ -180,7 +137,9 @@ export default function details(props: {params: {id: number}}) {
 						<div className="flex flex-col gap-5 w-72 sm:w-96 justify-center items-center">
 							<Poster image={data?.image} />
 							{totalStrenth === 0 ? (
-								<div className='flex justify-center items-center rounded-md bg-gray-100 h-12 border border-gray-300 w-full'>Total capacity isn't set!</div>
+								<div className="flex justify-center items-center rounded-md bg-gray-100 h-12 border border-gray-300 w-full">
+									Total capacity isn't set!
+								</div>
 							) : (
 								<ProgressBar
 									registeredStudents={data?.accepted_count || 0}
@@ -188,6 +147,45 @@ export default function details(props: {params: {id: number}}) {
 							)}
 						</div>
 						<div className="flex flex-col w-full justify-center items-center mt-2 gap-3">
+							{!isOrganizer ? (
+								<>
+									{isApplied ? (
+										(() => {
+											if (isDeclined)
+												return (
+													<Alert severity="error" className="w-full">
+														Your application has been denied for this event.
+													</Alert>
+												);
+											if (isAccepted)
+												return (
+													<Alert severity="success" className="w-full">
+														You have been approved to participate in this event.
+													</Alert>
+												);
+											if (isApplied)
+												return (
+													<Alert severity="warning" className="w-full">
+														You have already submitted an application for this event.
+													</Alert>
+												);
+										})()
+									) : (
+										<LoadingButton
+											loadingIndicator="Applying…"
+											variant="contained"
+											className="w-48 mr-5"
+											onClick={applyToEvent}
+											loading={applying}
+											size="large"
+											style={!applying ? {backgroundColor: '#1565c0'} : {}}>
+											<span>Apply for Event</span>
+										</LoadingButton>
+									)}
+								</>
+							) : (
+								<></>
+							)}
 							<EventTime
 								dates={data?.date}
 								venue={data?.venue}

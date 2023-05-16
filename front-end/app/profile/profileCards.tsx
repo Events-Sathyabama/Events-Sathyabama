@@ -63,7 +63,7 @@ export default function ProfileCards(props: any) {
 								</IconButton>
 							</Link>
 						) : (
-							<div className="flex flex-row gap-2 justify-center items-center shadow-sm border border-gray-300 w-36 py-2 rounded-md">
+							<div className="flex flex-row gap-2 justify-center items-center shadow-sm border border-gray-300 w-36 py-2 rounded-md ml-1">
 								{props.applicationStatus === 'Pending' ? (
 									<svg
 										xmlns="http://www.w3.org/2000/svg"
