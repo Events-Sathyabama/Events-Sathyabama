@@ -1,5 +1,6 @@
 import * as React from 'react';
 import Button from '@mui/material/Button';
+import LoadingButton from '@mui/lab/LoadingButton';
 import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -21,7 +22,9 @@ export default function OrganiserDialog(props: {title: any}) {
 		setOpen(false);
 	};
 
-    // TODO for comments you can use react query to get the value of textfield else use useRef for textfield
+	const [loading, setLoading] = React.useState(false);
+
+	// TODO for comments you can use react query to get the value of textfield else use useRef for textfield
 
 	return (
 		<div className="mt-2">
@@ -54,12 +57,17 @@ export default function OrganiserDialog(props: {title: any}) {
 					<Button onClick={handleClose} variant="outlined" color="error">
 						Cancel
 					</Button>
-					<Button
-						onClick={handleClose}
+					<LoadingButton
+						loadingIndicator="Submitting..."
+						onClick={() => {
+							setLoading(true);
+						}}
+						loading={loading}
+						className="w-32"
 						variant="contained"
-						style={{backgroundColor: '#1565c0'}}>
+						style={!loading ? {backgroundColor: '#1565c0'} : {}}>
 						Submit
-					</Button>
+					</LoadingButton>
 				</DialogActions>
 			</Dialog>
 		</div>
@@ -71,8 +79,8 @@ function AcceptDeny() {
 
 	const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		setValue((event.target as HTMLInputElement).value);
-        console.log((event.target as HTMLInputElement).value);
-        //TODO use this bro accept or deny
+		console.log((event.target as HTMLInputElement).value);
+		//TODO use this bro accept or deny
 	};
 
 	return (
