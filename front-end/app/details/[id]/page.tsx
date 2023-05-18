@@ -5,6 +5,7 @@ import {useState} from 'react';
 import useEffect from '../../useEffect';
 import API from '../../API';
 import Popup from '../../popup';
+import {Button} from '@mui/material';
 import EventTime from '../venue';
 import Fab from '@mui/material/Fab';
 import Link from 'next/link';
@@ -17,6 +18,8 @@ import Description from '../description';
 import Coordinators from '../coordinators';
 import Alert from '@mui/material/Alert';
 import BatchesComponent from '../batches';
+import ConfirmDialog from '../dialog';
+import Acceptance from '../organiserAccept';
 
 const axios = new API.Axios();
 
@@ -93,6 +96,7 @@ export default function details(props: {params: {id: string}}) {
 				setIsAccepted(true);
 			}
 			setIsApplied(true);
+			setDialog(false);
 		} catch (err: any) {
 			console.log(err);
 			if (err.response) {
@@ -110,8 +114,29 @@ export default function details(props: {params: {id: string}}) {
 		setApplying(false);
 	}
 
+	const [showDialog, setDialog] = useState(false);
+	function closeDialog() {
+		setDialog(false);
+	}
+
 	return (
 		<>
+			{showDialog && (
+				<ConfirmDialog
+					handleClose={closeDialog}
+					open={showDialog}
+					title={data?.title}>
+					<LoadingButton
+						loadingIndicator="Applying…"
+						variant="contained"
+						className="w-28"
+						onClick={applyToEvent}
+						loading={applying}
+						style={!applying ? {backgroundColor: '#1565c0'} : {}}>
+						<span>Apply</span>
+					</LoadingButton>
+				</ConfirmDialog>
+			)}
 			<div className="flex flex-col w-full h-auto items-center justify-center min-h-[85vh]">
 				<div className="flex flex-col w-full items-end">
 					{Spopup ? (
@@ -175,22 +200,23 @@ export default function details(props: {params: {id: string}}) {
 									) : (
 										<div className="flex flex-col lg:flex-row bg-slate-50 border border-slate-300 py-2 justify-between items-center lg:items-start rounded-md w-full">
 											<BatchesComponent></BatchesComponent>
-											<LoadingButton
-												loadingIndicator="Applying…"
+											<Button
 												variant="contained"
 												className="w-10/12 lg:w-5/12 h-10 m-2"
-												onClick={applyToEvent}
-												loading={applying}
 												size="large"
-												style={!applying ? {backgroundColor: '#1565c0'} : {}}>
-												<span>Apply for Event</span>
-											</LoadingButton>
+												style={{backgroundColor: '#1565c0'}}
+												onClick={() => {
+													setDialog(true);
+												}}>
+												Apply for Event
+											</Button>
 										</div>
 									)}
 								</>
 							) : (
 								<></>
 							)}
+							<Acceptance title={data?.title}></Acceptance>
 							<EventTime
 								dates={data?.date}
 								venue={data?.venue}
