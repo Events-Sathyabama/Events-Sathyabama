@@ -7,6 +7,13 @@ from .Branch import Branch
 from django.utils.translation import gettext_lazy as _
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.core.exceptions import ValidationError
+from django.contrib.auth.hashers import make_password, check_password
+import random
+from mail import Mail
+from event_management.utils import JWT
+
+
+otp_jwt = JWT(exp_time=5*60)
 
 def current_year():
     return timezone.now().year
@@ -81,7 +88,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     last_name = models.CharField("Last Name", max_length=150, blank=True)
     email = models.EmailField("Email Address", blank=True)
     date_joined = models.DateTimeField(_("date joined"), default=timezone.now)
-
+    forgot_otp = models.CharField(max_length=4096, null=True, blank=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 
@@ -115,6 +122,37 @@ class User(AbstractBaseUser, PermissionsMixin):
     
     def has_email(self):
         return True
+    
+    def new_password(self, password):
+        self.set_password(password)
+        self.save()
+        mail = Mail('password_changed')
+        mail.send_email({
+            'recipients': self.email,
+            'context': {'name': self.full_name}
+            })
+        return True
+
+    def send_otp(self):
+        otp = str(random.randint(1000, 9999))
         
+        token = otp_jwt.generate_jwt_token(make_password(otp))
+        self.forgot_otp = token
+        self.save()
+        mail = Mail('forgot_password')
+        mail.send_email({
+            'message': {'otp': otp},
+            'recipients': self.email,
+            'context': {'otp': otp}
+        })
+        self.otp = otp
+
+    def verify_otp(self, otp):
+        stored_otp = otp_jwt.decode_jwt_token(self.forgot_otp)
+        if stored_otp is not False:
+            if check_password(otp, stored_otp):
+                return True
+        return False
+
     def has_phone(self):
         return True

@@ -1,5 +1,8 @@
 import React from 'react';
 import {MuiOtpInput} from 'mui-one-time-password-input';
+import API from './API';
+
+const axios = new API.Axios();
 
 export default function OtpField(props: any): JSX.Element {
 	const [value, setValue] = React.useState<string>('');
@@ -8,17 +11,13 @@ export default function OtpField(props: any): JSX.Element {
 		setValue(newValue);
 	};
 
-	const handleComplete = (finalValue: string) => {
+	const handleComplete = async (finalValue: string) => {
 		// TODO do your api call here
+		const response = await axios.verify_otp(finalValue);
 		props.setBackdrop(true);
 		console.log(finalValue);
-		setTimeout(() => {
-			props.setBackdrop(false);
-			// if correct move to password filling page
-			props.changetoPassword();
-			//else show error
-			// props.showPopUp(true, 'Invalid OTP, Please try again!');
-		}, 3000);
+		props.setBackdrop(false);
+		props.changetoPassword();
 	};
 
 	const validateChar = (value: any, index: any) => {
@@ -31,13 +30,13 @@ export default function OtpField(props: any): JSX.Element {
 	};
 
 	return (
-			<MuiOtpInput
-				value={value}
-				onChange={handleChange}
-				onComplete={handleComplete}
-				length={4}
-				validateChar={validateChar}
-				autoFocus={true}
-			/>
+		<MuiOtpInput
+			value={value}
+			onChange={handleChange}
+			onComplete={handleComplete}
+			length={4}
+			validateChar={validateChar}
+			autoFocus={true}
+		/>
 	);
 }

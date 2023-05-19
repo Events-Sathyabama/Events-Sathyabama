@@ -50,26 +50,20 @@ export default function LoginForm(props: {
 			try {
 				props.setBackdrop(true);
 				if (props.variant === 'forgot') {
-					//TODO do call for OTP Here
-					console.log('call for otp');
-					setTimeout(() => {
-						props.setBackdrop(false);
-						// if the register number exists share their mail to me and change to otp page (Success)
-						props.userMail('bsuryakumar03@gmail.com');
-						props.changetoOtp();
-						// else trigger popup (Failure)
-						// props.showPopUp(
-						// 	true,
-						// 	'Please provide a valid ID.'
-						// );
-					}, 3000);
+					const response = await axios.send_otp(values.id);
+					console.log(response);
+					props.setBackdrop(false);
+					// if the register number exists share their mail to me and change to otp page (Success)
+					props.userMail(response.data.email);
+					// props.changetoOtp();
 				} else {
-					const request = await axios.login(values.id, values.password);
+					const response = await axios.login(values.id, values.password);
 					if (typeof window !== 'undefined') {
 						router.push('/home/upcoming');
 					}
 				}
 			} catch (err: any) {
+				console.error(err);
 				props.setBackdrop(false);
 				props.showPopUp(true, err.response.data.detail);
 				helpers.setStatus({success: false});
@@ -82,7 +76,7 @@ export default function LoginForm(props: {
 		<>
 			<form
 				noValidate
-				onSubmit={(e) => {
+				onSubmit={async (e) => {
 					formik.handleSubmit(e);
 					props.showPopUp(false);
 				}}

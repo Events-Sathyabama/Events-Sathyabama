@@ -21,6 +21,9 @@ export default function LoginPage(): JSX.Element {
 	const [userMail, setUserMail] = useState('');
 	const [otp, setOtpPage] = useState(false);
 	const [passwordPage, setPasswordPage] = useState(false);
+
+	const [collegeId, setCollegeId] = useState();
+
 	const router = useRouter();
 	useEffect(() => {
 		if (API.is_logged_in()) {
@@ -56,7 +59,7 @@ export default function LoginPage(): JSX.Element {
 			<LandingNav></LandingNav>
 			<div className="flex flex-col flex-grow w-full h-full justify-center items-center relative">
 				{fPopUp ? (
-					<div className="right-5 absolute z-10 top-0">
+					<div className="right-5 absolute z-50 top-0">
 						<PopUp.Error message={popUpMessage} showpopup={handleChange} />
 					</div>
 				) : (
@@ -135,7 +138,7 @@ export default function LoginPage(): JSX.Element {
 										: 'Sign-in'}
 								</h1>
 							</div>
-							{passwordPage && (
+							{passwordPage === true && (
 								<PasswordPage
 									setBackdrop={(state: boolean) => setValidBackdrop(state)}
 									showPopUp={handleChange}></PasswordPage>

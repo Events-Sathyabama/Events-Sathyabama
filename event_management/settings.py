@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 
 from pathlib import Path
 from datetime import timedelta
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -24,7 +25,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-7!7*qbl(#kv!#e6!7n=&(56a-5wa2k!v-nz=f)5ush0+f4)b=='
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config('DEBUG', cast=bool, default=True)
+SESSION_EXP_TIME = config('SESSION_EXP_TIME', cast=eval, default="1 * 24 * 60 * 60")
 
 ALLOWED_HOSTS = ["*"]
 INTERNAL_IPS = ['127.0.0.1']
@@ -52,6 +54,8 @@ INSTALLED_APPS = [
     'debug_toolbar',
     'django_extensions',
     'event',
+    'mail'
+    
 ]
 
 SHELL_PLUS_PRE_IMPORTS = [('event_management.query_count', '*')]
@@ -95,12 +99,26 @@ WSGI_APPLICATION = 'event_management.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+if config('MYSQL_DATABASE', cast=bool, default=False):
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'OPTIONS': {
+                'host': config('MYSQL_DATABASE_HOST'),
+                'port': config('MYSQL_DATABASE_PORT', cast=int),
+                'database': config('MYSQL_DATABASE_DATABASE'),
+                'user': config('MYSQL_DATABASE_USER'),
+                'password': config('MYSQL_DATABASE_PASSWORD'),
+            },
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 
 # Password validation
@@ -161,16 +179,32 @@ REST_FRAMEWORK = {
     ),
     "DEFAULT_PAGINATION_CLASS": "event_management.pagination.CustomPagination",
     "PAGE_SIZE": 2,
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
+    ]
 }
+
 
 
 SIMPLE_JWT = {
     "TOKEN_OBTAIN_SERIALIZER": "event_management.serializers.TokenObtain",
-    "ACCESS_TOKEN_LIFETIME": timedelta(seconds=5),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    "ACCESS_TOKEN_LIFETIME": timedelta(seconds=config('ACCESS_TOKEN_EXP_TIME', cast=int)),
+    "REFRESH_TOKEN_LIFETIME": timedelta(seconds=config('REFRESH_TOKEN_EXP_TIME', cast=int)),
     "UPDATE_LAST_LOGIN": True,
     "ALGORITHM": "HS256",
-    "SIGNING_KEY": SECRET_KEY,
+    "SIGNING_KEY": config('JWT_SECRET_KEY', default=SECRET_KEY),
     "VERIFYING_KEY": "",
     "LEEWAY": timedelta(seconds=10)
 }
+
+
+# Email settings
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = config('EMAIL_HOST')
+EMAIL_USE_TLS = config('EMAIL_USE_TLS')
+EMAIL_PORT = config('EMAIL_PORT')
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+
+

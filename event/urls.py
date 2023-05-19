@@ -18,5 +18,6 @@ urlpatterns = [
     path('registered/', views.RegisteredEvent.as_view()),
     path('completed/', views.CompletedEvent.as_view()),
     path('organizing/', views.OrganizingEvent.as_view()),
+    path('pending/', views.PendingEvent.as_view()),
 
 ]

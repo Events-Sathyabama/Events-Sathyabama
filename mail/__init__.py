@@ -1,0 +1,1 @@
+from .mail_format import Mail

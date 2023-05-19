@@ -136,6 +136,26 @@ class AxiosInstance {
 		return request;
 	}
 
+	async send_otp(college_id: string) {
+		const response = await instance.post(get_url('mail:send_otp'), {
+			college_id: college_id,
+		});
+		console.log(response);
+	}
+
+	async verify_otp(otp: string) {
+		const response = await instance.post(get_url('user:verify_otp'), {otp: otp});
+		console.log(response);
+		return response;
+	}
+
+	async reset_password(password1: string, passwrod2: string) {
+		const response = await instance.post(get_url('user:reset_password'), {
+			password1: password1,
+			passwrod2: passwrod2,
+		});
+	}
+
 	async update_token() {
 		let status = true;
 		if (this.__tokenIsExpired()) {
@@ -208,11 +228,15 @@ function parseJwt(token: string) {
 }
 
 function get_url(key: string, params?: Array<string>) {
-	if (params) {
-		if (typeof params === 'object') return url[key](...params);
-		return url[key](params);
+	try {
+		if (params) {
+			if (typeof params === 'object') return url[key](...params);
+			return url[key](params);
+		}
+		return url[key]();
+	} catch (e) {
+		console.log(`Can't find any url with '${key}'`);
 	}
-	return url[key]();
 }
 
 const is_logged_in = () => {
@@ -324,8 +348,20 @@ const url: {[key: string]: Function} = {
 	'event:organizing': () => {
 		return 'event/organizing/';
 	},
+	'event:pending': () => {
+		return 'event/pending/';
+	},
 	'user:organizer': () => {
 		return 'user/organizer/';
+	},
+	'mail:send_otp': () => {
+		return 'email/forgot_password/';
+	},
+	'user:verify_otp': () => {
+		return 'user/verify_otp/';
+	},
+	'user:reset_password': () => {
+		return 'user/reset_password/';
 	},
 };
 
