@@ -1,5 +1,3 @@
-import ProgressBar from './progressBar';
-
 export default function EventTime(props: {
 	dates: string | undefined;
 	time: string | undefined;

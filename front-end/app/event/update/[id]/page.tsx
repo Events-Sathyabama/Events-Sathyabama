@@ -225,7 +225,7 @@ export default function Page(props: {params: {id: string}}) {
 					'Content-Type': 'multipart/form-data',
 				}
 			);
-			setMessage('Updated Successfully');
+			setMessage('Event Updation Successful!');
 			setErrorPopUp(false);
 			setSuccessPopUp(true);
 			// router.push(`details/${request.data.pk}`);
