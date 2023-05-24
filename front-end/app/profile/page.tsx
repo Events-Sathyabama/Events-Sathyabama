@@ -69,6 +69,12 @@ export default function ProfilePage(): JSX.Element {
 							<TabsProfile.TeacherHODVC></TabsProfile.TeacherHODVC>
 						</div>
 					)}
+					{role === 'Dean' && (
+						<div className="flex w-full flex-col md:flex-row gap-3 justify-center items-center md:items-start">
+							<Profile id={id} branch={branch} name={fullName} role="HOD"></Profile>
+							<TabsProfile.TeacherHODVC></TabsProfile.TeacherHODVC>
+						</div>
+					)}
 					{role === 'Vice-Chancellor' && (
 						<div className="flex w-full flex-col md:flex-row gap-3 justify-center items-center md:items-start">
 							<Profile

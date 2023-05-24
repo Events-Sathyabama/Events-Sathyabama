@@ -39,6 +39,9 @@ class BaseEventDetailSerializer(serializers.ModelSerializer):
 
     applied_count = serializers.SerializerMethodField()
     accepted_count = serializers.SerializerMethodField()
+    
+    certificate = serializers.SerializerMethodField()
+
 
     branch = user_serializer.BranchSerializer(many=True)
     total_strength = serializers.SerializerMethodField()
@@ -90,10 +93,19 @@ class BaseEventDetailSerializer(serializers.ModelSerializer):
             "end_date",
             "time",
             "fcfs",
-            'status'
+            'status',
+            'certificate',
         ]
         additional_fields = []
         fields += additional_fields
+
+    def get_certificate(self, obj):
+        user = self.context.get('request').user
+        if obj.involved_user.filter(pk=user.pk).exists():
+            event_participant = obj.involved_user.get(user.pk)
+            if event_participant.certificate:
+                return event_participant.certificate
+        return None
 
     def get_total_strength(self, obj):
         return obj.total_strength or 0
@@ -158,7 +170,19 @@ class EventDetailSerializerStudent(BaseEventDetailSerializer):
             'is_accepted',
             'is_declined',
         ]
-
+        
+class EventDetailSerializerHodDeanVC(EventDetailSerializerStudent):
+    class Meta:
+        fields = [
+            'is_applied',
+            'is_accepted',
+            'is_declined',
+            'hod_verified',
+            'dean_verified',
+            'vc_verified',
+            'rejected',
+            'report_verified'
+        ]
 
 class EventDetailSerializerOrganizer(EventDetailSerializerStudent):
     approval_message = serializers.SerializerMethodField()
@@ -206,6 +230,11 @@ class EventDetailSerializerOrganizer(EventDetailSerializerStudent):
             'participant',
             'accepted_role',
             'declined_count',
+            'rejected',
+            'hod_verified',
+            'dean_verified',
+            'vc_verified',
+            'report_verified',
         ]
 
 

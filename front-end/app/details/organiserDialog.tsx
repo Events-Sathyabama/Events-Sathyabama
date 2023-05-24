@@ -10,20 +10,52 @@ import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
+import API from '../API';
+import Popup from '../popup';
 
-export default function OrganiserDialog(props: {title: any}) {
+const axios = new API.Axios();
+
+export default function OrganiserDialog(props: {
+	title: any;
+	id: number;
+	sPopUp: {show: Function; message: Function};
+	fPopUp: {show: Function; message: Function};
+	setApproved: Function;
+}) {
 	const [open, setOpen] = React.useState(false);
-
 	const handleClickOpen = () => {
 		setOpen(true);
 	};
-
-	const handleClose = () => {
+	const [accept, setAccept] = React.useState('1');
+	const closeDialog = () => {
 		setOpen(false);
 	};
 
-	const [loading, setLoading] = React.useState(false);
+	const approveEvent = async (e: any) => {
+		let url = 'event:';
+		if (accept === '1') {
+			url += 'accept';
+		} else if (accept === '0') {
+			url += 'reject';
+		}
+		const response = await axios.post(API.get_url(url, props.id), {
+			message: messageRef.current?.value,
+		});
+		if (response.status === 200) {
+			setOpen(false);
+			props.sPopUp.show(true);
+			props.sPopUp.message(response.data);
+			props.setApproved(true);
+		} else {
+			setOpen(false);
+			props.fPopUp.show(true);
+			props.fPopUp.message(response.data);
+		}
+		console.log(response);
+	};
 
+	const [loading, setLoading] = React.useState(false);
+	const messageRef = React.useRef<HTMLInputElement>(null);
 	// TODO for comments you can use react query to get the value of textfield else use useRef for textfield
 
 	return (
@@ -34,13 +66,13 @@ export default function OrganiserDialog(props: {title: any}) {
 				style={{backgroundColor: '#1565c0'}}>
 				Open Action Panel
 			</Button>
-			<Dialog open={open} onClose={handleClose}>
+			<Dialog open={open} onClose={closeDialog}>
 				<DialogTitle>
 					Do you want to approve or deny - 
 					<span className="text-[#007efd] ml-1">{props.title}</span>?
 				</DialogTitle>
 				<DialogContent>
-					<AcceptDeny></AcceptDeny>
+					<AcceptDeny value={accept} setValue={setAccept}></AcceptDeny>
 					<TextField
 						autoFocus
 						margin="dense"
@@ -51,16 +83,19 @@ export default function OrganiserDialog(props: {title: any}) {
 						multiline
 						maxRows={6}
 						variant="filled"
+						ref={messageRef}
 					/>
 				</DialogContent>
 				<DialogActions>
-					<Button onClick={handleClose} variant="outlined" color="error">
+					<Button onClick={closeDialog} variant="outlined" color="error">
 						Cancel
 					</Button>
 					<LoadingButton
 						loadingIndicator="Submitting..."
-						onClick={() => {
-							setLoading(true);
+						onClick={async (e) => {
+							// setLoading(true);
+							await approveEvent(e);
+							setLoading(false);
 						}}
 						loading={loading}
 						className="w-32"
@@ -74,8 +109,8 @@ export default function OrganiserDialog(props: {title: any}) {
 	);
 }
 
-function AcceptDeny() {
-	const [value, setValue] = React.useState('Accepted');
+function AcceptDeny(props: {setValue: Function; value: string}) {
+	const {value, setValue} = props;
 
 	const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		setValue((event.target as HTMLInputElement).value);
@@ -87,13 +122,13 @@ function AcceptDeny() {
 		<FormControl>
 			<RadioGroup value={value} onChange={handleChange}>
 				<FormControlLabel
-					value="Accepted"
+					value="1"
 					style={{fontSize: '100px'}}
 					control={<Radio />}
 					label={<p className="text-xl text-green-600">Approve</p>}
 				/>
 				<FormControlLabel
-					value="Denied"
+					value="0"
 					control={<Radio />}
 					label={<p className="text-xl text-red-600">Deny</p>}
 				/>

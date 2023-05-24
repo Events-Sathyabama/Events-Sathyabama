@@ -37,7 +37,28 @@ const isUserFound = (
 	return false;
 };
 
-export default function details(props: {params: {id: string}}) {
+const DisplayApprovalTab = (Data: InterfaceData | undefined) => {
+	if (Data === undefined) {
+		return false;
+	}
+	const dean = Data.dean_verified;
+	const hod = Data.hod_verified;
+	const vc = Data.vc_verified;
+	if (dean === undefined) {
+		return false;
+	}
+	const user_detail = API.get_user_detail();
+	if (user_detail.role.toLowerCase() === 'hod' && hod === false) {
+		return true;
+	} else if (user_detail.role.toLowerCase() === 'dean' && dean === false) {
+		return true;
+	} else if (user_detail.role.toLowerCase() === 'vice-chancellor' && vc === false) {
+		return true;
+	}
+	return false;
+};
+
+export default function details(props: {params: {id: number}}) {
 	const [Spopup, setSpopup] = useState(false);
 	const [Fpopup, setFpopup] = useState(false);
 	const [popupMessage, setPopupMessage] = useState('');
@@ -179,7 +200,7 @@ export default function details(props: {params: {id: string}}) {
 							)}
 						</div>
 						<div className="flex flex-col w-full justify-center items-center mt-2 gap-3">
-							{!isOrganizer ? (
+							{!isOrganizer && data?.vc_verified ? (
 								<>
 									{isApplied ? (
 										(() => {
@@ -204,7 +225,9 @@ export default function details(props: {params: {id: string}}) {
 										})()
 									) : (
 										<div className="flex flex-col lg:flex-row bg-slate-50 border border-slate-300 py-2 justify-between items-center lg:items-start rounded-md w-full">
-											<BatchesComponent></BatchesComponent>
+											<BatchesComponent
+												batches={data?.branch}
+												fcfs={data?.fcfs || false}></BatchesComponent>
 											<Button
 												variant="contained"
 												className="w-10/12 lg:w-5/12 h-10 m-2"
@@ -221,7 +244,13 @@ export default function details(props: {params: {id: string}}) {
 							) : (
 								<></>
 							)}
-							<Acceptance title={data?.title}></Acceptance>
+							{DisplayApprovalTab(data) === true && (
+								<Acceptance
+									title={data?.title}
+									id={props.params.id}
+									sPopUp={{show: setSpopup, message: setPopupMessage}}
+									fPopUp={{show: setFpopup, message: setPopupMessage}}></Acceptance>
+							)}
 							<EventTime
 								dates={data?.date}
 								venue={data?.venue}

@@ -40,6 +40,9 @@ class FakeQuerySet:
             return self.data[pk]
         raise Http404("Can't find what you were looking for")
     
+    def first(self):
+        return list(self.data)[0]
+
     def all(self):
         return self
 

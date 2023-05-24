@@ -5,6 +5,7 @@ from django.core.exceptions import ValidationError
 from django.db.models import Q
 from user.models import Branch
 from .fakequeryset import FakeQuerySet
+import os
 
 User = get_user_model()
 
@@ -13,7 +14,10 @@ def confirm_organizer(value):
     user = User.objects.get(pk=value)
     if user.role == 0:
         raise ValidationError("Access denied for event creation.")
-
+def event_certificate_upload_path(instance, filename):
+    # Construct the file path based on the event ID
+    event_id = str(instance.event_id)
+    return os.path.join('certs', event_id, filename)
 
 CLUB_LENGTH = 70
 
@@ -21,7 +25,10 @@ CLUB_LENGTH = 70
 def default_accepted_role():
     return [0]
 
-
+def FileToLarge(value):
+    limit = 10 * 1024 * 1024
+    if value.size > limit:
+        raise ValidationError('File too large. Size should not exceed 2 MiB.')
 class EventParticipant(models.Model):
     STATUS_CHOICES = (
         ('0', 'Not Applicable'),
@@ -35,6 +42,8 @@ class EventParticipant(models.Model):
     status = models.CharField(max_length=1, choices=STATUS_CHOICES, default='2')
     owner = models.BooleanField(default=False)
     organizer = models.BooleanField(default=False)
+    certificate = models.ImageField(upload_to=event_certificate_upload_path, null=True, blank=True)
+    
 
     def save(self, *args, **kwargs):
         if self.owner or self.organizer:
@@ -81,10 +90,11 @@ class Event(models.Model):
 
     start_date = models.DateField(blank=True, null=True)
     end_date = models.DateField(blank=True, null=True)
-
     date = models.TextField(blank=True, null=True)
     time = models.TextField(blank=True, null=True)
 
+    report = models.FileField(null=True, blank=True, validators=[FileToLarge])
+    
     branch = models.ManyToManyField(Branch, blank=True)
 
     history = models.JSONField(blank=True, null=True)
@@ -93,6 +103,8 @@ class Event(models.Model):
     hod_verified = models.BooleanField(default=False)
     dean_verified = models.BooleanField(default=False)
     vc_verified = models.BooleanField(default=False)
+    rejected = models.BooleanField(default=False)
+    report_verified = models.BooleanField(default=False)
     require_number = models.BooleanField(default=False)
     '''
     {
@@ -113,6 +125,7 @@ class Event(models.Model):
                 'declined': FakeQuerySet(),
                 'owner': None,
                 'organizer': FakeQuerySet(),
+                'involved_user': FakeQuerySet()
             }
             for participant in self.participants.through.objects.filter(event=self.pk):
                 if participant.status == '3':
@@ -125,10 +138,14 @@ class Event(models.Model):
                     data['owner'] = participant.user
                 elif participant.organizer:
                     data['organizer'].add(participant.user)
-
+                data['involved_user'].add(participant)
             self._participants_dict = data
 
         return self._participants_dict
+
+    @property
+    def involved_user(self):
+        return self.get_participant_data()['involved_user']
 
     @property
     def accepted_participant(self):
