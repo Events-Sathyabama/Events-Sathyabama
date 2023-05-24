@@ -294,8 +294,7 @@ export default function details(props: {params: {id: string}}) {
 								isOrganizer={isOrganizer}
 								participant={data?.participant || []}
 								fcfs={data?.fcfs || false}
-								eventId={props.params.id}
-							></AdminDialog>
+								eventId={props.params.id}></AdminDialog>
 						)}
 					</div>
 				</div>

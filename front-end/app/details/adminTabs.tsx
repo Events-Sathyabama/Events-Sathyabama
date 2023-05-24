@@ -239,7 +239,7 @@ export default function AdminTabs(props: {
 					<div className="flex flex-col w-full gap-3 items-center">
 						<div className="flex flex-col sm:flex-row sm:justify-between items-center sm:items-start gap-3 w-11/12 bg-blue-50 p-4 rounded-md border">
 							<p className="text-lg font-semibold text-[#014361]">
-								Are you looking for accepted applicants?
+								Click to view and download all accepted applicants.
 							</p>
 							<Link href="/applicants">
 								<Button
@@ -250,12 +250,14 @@ export default function AdminTabs(props: {
 								</Button>
 							</Link>
 						</div>
-						<Applications
-							applications={props.participant}
-							showSuccessPopup={props.showSuccessPopup}
-							showFailurePopup={props.showFailurePopup}
-							eventId={props.eventId}
-						/>
+						{!props.fcfs && (
+							<Applications
+								applications={props.participant}
+								showSuccessPopup={props.showSuccessPopup}
+								showFailurePopup={props.showFailurePopup}
+								eventId={props.eventId}
+							/>
+						)}
 					</div>
 				</TabPanel>
 			</div>
