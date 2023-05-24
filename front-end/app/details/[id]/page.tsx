@@ -8,7 +8,6 @@ import Popup from '../../popup';
 import {Button} from '@mui/material';
 import EventTime from '../venue';
 import Fab from '@mui/material/Fab';
-import Link from 'next/link';
 import LoadingButton from '@mui/lab/LoadingButton';
 import ProgressBar from '../progressBar';
 import {InterfaceData, InterfaceOrganizer} from '@/app/datainterface';
@@ -20,6 +19,7 @@ import Alert from '@mui/material/Alert';
 import BatchesComponent from '../batches';
 import ConfirmDialog from '../dialog';
 import Acceptance from '../organiserAccept';
+import AdminDialog from '../adminDialog';
 
 const axios = new API.Axios();
 
@@ -117,6 +117,11 @@ export default function details(props: {params: {id: string}}) {
 	const [showDialog, setDialog] = useState(false);
 	function closeDialog() {
 		setDialog(false);
+	}
+
+	const [showAdmin, setShowAdmin] = useState(false);
+	function closeAdmin() {
+		setShowAdmin(false);
 	}
 
 	return (
@@ -249,35 +254,47 @@ export default function details(props: {params: {id: string}}) {
 							/> */}
 						</div>
 						{isOrganizer ? (
-							<Link href={`/event/update/${props.params.id}`}>
-								<Fab
-									color="primary"
-									aria-label="edit"
-									sx={{
-										position: 'fixed',
-										right: '1.5rem',
-										bottom: '1.5rem',
-										height: '4rem',
-										width: '4rem',
-									}}
-									style={{backgroundColor: '#1565c0', zIndex: 10}}>
-									<svg
-										xmlns="http://www.w3.org/2000/svg"
-										fill="none"
-										viewBox="0 0 24 24"
-										strokeWidth={1.5}
-										stroke="currentColor"
-										className="w-6 h-6">
-										<path
-											strokeLinecap="round"
-											strokeLinejoin="round"
-											d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125"
-										/>
-									</svg>
-								</Fab>
-							</Link>
+							<Fab
+								color="primary"
+								aria-label="edit"
+								onClick={() => setShowAdmin(true)}
+								sx={{
+									position: 'fixed',
+									right: '1.5rem',
+									bottom: '1.5rem',
+									height: '4rem',
+									width: '4rem',
+								}}
+								style={{backgroundColor: '#1565c0', zIndex: 10}}>
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									fill="none"
+									viewBox="0 0 24 24"
+									strokeWidth={1.5}
+									stroke="currentColor"
+									className="w-6 h-6">
+									<path
+										strokeLinecap="round"
+										strokeLinejoin="round"
+										d="M6 13.5V3.75m0 9.75a1.5 1.5 0 010 3m0-3a1.5 1.5 0 000 3m0 3.75V16.5m12-3V3.75m0 9.75a1.5 1.5 0 010 3m0-3a1.5 1.5 0 000 3m0 3.75V16.5m-6-9V3.75m0 3.75a1.5 1.5 0 010 3m0-3a1.5 1.5 0 000 3m0 9.75V10.5"
+									/>
+								</svg>
+							</Fab>
 						) : (
 							<></>
+						)}
+						{showAdmin && (
+							<AdminDialog
+								href={`/event/update/${props.params.id}`}
+								adminClose={closeAdmin}
+								title={data?.title}
+								showAdmin={showAdmin}
+								showSuccessPopup={() => setSpopup(true)}
+								showFailurePopup={() => setFpopup(true)}
+								isOrganizer={isOrganizer}
+								participant={data?.participant || []}
+								fcfs={data?.fcfs || false}
+								eventId={props.params.id}></AdminDialog>
 						)}
 					</div>
 				</div>
