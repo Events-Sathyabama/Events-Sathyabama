@@ -1,22 +1,16 @@
 import Chip from '@mui/material/Chip';
 import {useState} from 'react';
+import {InterfaceBranch} from '../datainterface';
 
-const BatchesComponent = () => {
+const BatchesComponent = (props: {
+	batches: InterfaceBranch[] | undefined;
+	fcfs: boolean;
+}) => {
 	// TODO fetch batches in this way
-	const batches = [
-		'CSE 2021-2022',
-		'IT 2024-2028',
-		'IT 2020-2024',
-		'IT 2020-2024',
-		'IT 2020-2024',
-		'IT 2020-2024',
-		'IT 2020-2024',
-		'IT 2020-2024',
-		'IT 2020-2024',
-	];
+	const batches = props.batches;
 
 	// TODO fetch fcfs or manual
-	const [isFcfs, setIsFcfs] = useState(true);
+	const isFcfs = props.fcfs;
 	return (
 		<div className="flex flex-col items-center lg:items-start justify-center lg:justify-start flex-wrap gap-2 p-2 w-full lg:w-7/12">
 			<Chip
@@ -57,9 +51,15 @@ const BatchesComponent = () => {
 				}
 			/>
 			<div className="flex flex-row gap-1 justify-center lg:justify-start flex-wrap">
-				{batches.map((batch, index) => (
-					<Chip key={index} variant="filled" size="small" label={batch} />
-				))}
+				{batches !== undefined &&
+					batches.map((batch, index) => (
+						<Chip
+							key={index}
+							variant="filled"
+							size="small"
+							label={`${batch.name} ${batch.batch}`}
+						/>
+					))}
 			</div>
 		</div>
 	);

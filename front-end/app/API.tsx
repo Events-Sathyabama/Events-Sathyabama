@@ -351,6 +351,12 @@ const url: {[key: string]: Function} = {
 	'event:pending': () => {
 		return 'event/pending/';
 	},
+	'event:accept': (id: number) => {
+		return `event/accept/${id}/`;
+	},
+	'event:reject': (id: number) => {
+		return `event/deny/${id}/`;
+	},
 	'user:organizer': () => {
 		return 'user/organizer/';
 	},

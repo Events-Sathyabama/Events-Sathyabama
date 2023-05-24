@@ -9,7 +9,7 @@ class SearchQueryMixins:
         query = Event.objects.all()
         q = Q(start_date__isnull=False)
         q = q | Q(end_date__isnull=False)
-        # q = q & Q(status=2, hod_verified=1, dean_verified=1, vc_verified=1)
+        q = q & Q(status=4, hod_verified=1, dean_verified=1, vc_verified=1)
         if search is None:
             return query.filter(q)
         query = query.filter(q)

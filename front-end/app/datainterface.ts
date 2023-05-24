@@ -92,12 +92,20 @@ export interface InterfaceData {
 	is_declined?:boolean,
 	
 	// for organizers only
-	
 	approval_message?:any,
 	participant?: InterfaceParticipant[];
 	accepted_role?: string[];
 	declined_count?:number ,
 	pending_count?: number,
+
+	// for HOD VC Dean Only
+	hod_verified?: boolean,
+    dean_verified?: boolean,
+    vc_verified?: boolean,
+
+	// for organizer and admins
+	rejected?: boolean,
+	report_verified?: boolean,
 
 }
 

@@ -43,8 +43,9 @@ class EventDetail(generics.RetrieveAPIView):
     serializers = {
         'student': serializers.EventDetailSerializerStudent,
         'organizer': serializers.EventDetailSerializerOrganizer,
+        'HOD_DEAN_VC': serializers.EventDetailSerializerHodDeanVC,
     }
-
+    # TODO return null of the event is not in displayed state for role 0
     # 3 SQL queries
     def get_object(self):
         event_id = self.kwargs.get('pk')
@@ -63,6 +64,8 @@ class EventDetail(generics.RetrieveAPIView):
         event = self.get_object()
         if event.is_organizer(self.request.user) or event.is_owner(self.request.user):
             return self.serializers['organizer']
+        elif self.request.user.role in {2,3,4}:
+            return self.serializers['HOD_DEAN_VC']
         else:
             return self.serializers['student']
 
@@ -72,7 +75,7 @@ class EventDetail(generics.RetrieveAPIView):
 class EventCreate(generics.CreateAPIView):
     queryset = Event.objects.all()
     serializer_class = serializers.EventCreateSerializer
-
+    # Not allowed if the user role is 0
     def post(self, request, *args, **kwargs):
         return super().post(request, *args, **kwargs)
 
@@ -96,7 +99,7 @@ class EventUpdate(generics.UpdateAPIView):
     queryset = Event.objects.all()
     serializer_class = serializers.EventUpdateSerializer
     lookup_field = 'pk'
-
+    # TODO not allowd if the user is not Organizer
     def patch(self, request, *args, **kwargs):
         # Modify request.data before validation
         data = {}
@@ -174,7 +177,7 @@ class OrganizingEvent(generics.ListAPIView):
         return context
 class PendingEvent(generics.ListAPIView):
     serializer_class = serializers.EventRegisterdCompleted
-
+    # TODO not allowed for role 0
     def get_queryset(self):
         if self.request.user.role == 2: # HOD
             q = Q(status=1) & Q(hod_verified=False)
@@ -190,6 +193,7 @@ class PendingEvent(generics.ListAPIView):
             )
         if self.request.user.branch:
             q = q & (Q(branch__in=[self.request.user.branch]) | Q(branch__isnull=True))
+        q = q & Q(start_date__gte=timezone.now())
         event = Event.objects.filter(q)
         return event
     
@@ -198,6 +202,87 @@ class PendingEvent(generics.ListAPIView):
         context['request'] = self.request
         return context
 
+
+@api_view(['POST'])
+def approve_event(request, event_id):
+    user_role = request.user.role
+    if user_role < 2:
+        return Response(data={'detail': 'Operation Not Allowed'}, status=403)
+    event = Event.objects.filter(pk=event_id)
+    if not event.exists():
+        return Response(data={'detail': 'No Event Found'}, status=404)
+    event = event.first()
+
+    if user_role == 2: # hod
+        if event.hod_verified is False:
+            event.hod_verified = True
+            event.save()
+        return Response(data={'detail': 'Approved Successfully'})
+
+    if user_role == 3: # Dean
+        if event.dean_verified is False:
+            event.dean_verified = True
+            event.save()
+        return Response(data={'detail': 'Approved Successfully'})
+
+    if user_role == 4: # VC
+        if event.vc_verified is False:
+            event.vc_verified = True
+            event.status = 4
+            event.save()
+        return Response(data={'detail': 'Approved Successfully'})
+
+    return Response(data={'detail': 'Something went Wrong'}, status=500)
+
+@api_view(['POST'])
+def deny_event(request, event_id):
+    user_role = request.user.role
+    if user_role < 2:
+        return Response(data={'detail': 'Operation Not Allowed'}, status=403)
+    event = Event.objects.filter(pk=event_id)
+    if not event.exists():
+        return Response(data={'detail': 'No Event Found'}, status=404)
+    event = event.first()
+
+    if user_role == 2: # hod
+        if event.hod_verified is False:
+            event.hod_verified = False
+            event.rejected = True
+            event.save()
+        return Response(data={'detail': 'Approved Successfully'})
+
+    if user_role == 3: # Dean
+        if event.dean_verified is False:
+            event.dean_verified = False
+            event.rejected = True
+            event.save()
+        return Response(data={'detail': 'Approved Successfully'})
+        
+    if user_role == 4: # VC
+        if event.vc_verified is False:
+            event.vc_verified = False
+            event.rejected = True
+            event.save()
+        return Response(data={'detail': 'Approved Successfully'})
+
+    return Response(data={'detail': 'Something went Wrong'}, status=500)
+
+@api_view(['POST'])
+def upload_certs(request, event_id):
+    # Retrieve all EventParticipant objects for the specified event
+    event_participants = EventParticipant.objects.filter(event_id=event_id)
+    if handle_upload(request.FILES.get('cert')) is False:
+        return Response(data={'detail': 'Upload Failed'}, status=400)
+    participants_to_update = []
+    for participant in event_participants:
+        user_id = participant.user_id  # Get the user ID for each participant
+        certificate_filename = os.path.join('certs', str(event_id), f"{user_id}.jpg") # Generate the certificate filename based on user ID
+        
+        participant.certificate = certificate_filename  # Update the certificate field
+        participants_to_update.append(participant)
+
+    EventParticipant.objects.bulk_update(participants_to_update, ['certificate'])
+    return Response(data={'detail': 'Uploaded Successfully'}, status=200)
 
 @api_view(['GET'])
 def apply_event(request, pk):

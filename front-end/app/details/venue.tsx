@@ -31,7 +31,7 @@ export default function EventTime(props: {
 							</h3>
 						</div>
 						<p className="ml-14 -mt-6 text-lg font-normal text-gray-800 mb-3">
-							{props.dates}
+							{props.dates || 'TBD'}
 						</p>
 					</li>
 					<li className="flex flex-col ml-6 gap-1">
@@ -57,7 +57,7 @@ export default function EventTime(props: {
 							</h3>
 						</div>
 						<p className="ml-14 -mt-6 text-lg font-normal text-gray-800 mb-3">
-							{props.time}
+							{props.time || 'TBD'}
 						</p>
 					</li>
 					<li className="flex flex-col ml-6 gap-1">
@@ -88,7 +88,7 @@ export default function EventTime(props: {
 							</h3>
 						</div>
 						<p className="ml-14 -mt-6 text-lg font-normal text-gray-800 mb-3">
-							{props.venue}
+							{props.venue || 'TBD'}
 						</p>
 					</li>
 				</ol>
