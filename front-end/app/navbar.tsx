@@ -165,7 +165,7 @@ export default function Navbar() {
 																active ? 'bg-blue-50' : '',
 																'block px-4 py-2 text-lg text-gray-700'
 															)}>
-															Create event
+															Create Event
 														</Link>
 													)}
 												</Menu.Item>

@@ -36,7 +36,7 @@ export default function OrganiserDialog(props: {title: any}) {
 			</Button>
 			<Dialog open={open} onClose={handleClose}>
 				<DialogTitle>
-					Do you want to approve or deny
+					Do you want to approve or deny - 
 					<span className="text-[#007efd] ml-1">{props.title}</span>?
 				</DialogTitle>
 				<DialogContent>
