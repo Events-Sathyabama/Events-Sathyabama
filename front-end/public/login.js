@@ -1,5 +1,8 @@
 ((undefined) => {
 	const backDrop = document.getElementById('global-backdrop');
+	if (backDrop === undefined || backDrop === null) {
+		return;
+	}
 	function parseJwt(token) {
 		if (token === null || token.trim() === '') {
 			return null;
