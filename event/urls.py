@@ -20,6 +20,7 @@ urlpatterns = [
     path('organizing/', views.OrganizingEvent.as_view()),
     path('pending/', views.PendingEvent.as_view()),
     path('accept/<int:event_id>/', views.approve_event),
-    path('deny/<int:event_id>/', views.deny_event)
+    path('deny/<int:event_id>/', views.deny_event),
+    path('report/upload/<int:event_id>/', views.upload_report),
 
 ]

@@ -9,6 +9,10 @@ import Timeline from '../profile/timeline';
 import {Button} from '@mui/material';
 import Link from 'next/link';
 import LoadingButton from '@mui/lab/LoadingButton';
+import API from '../API';
+import {FileUploader} from 'react-drag-drop-files';
+
+const axios = new API.Axios();
 
 function TabPanel(props: any) {
 	const {children, value, index, ...other} = props;
@@ -34,9 +38,11 @@ export default function AdminTabs(props: {
 	isOrganizer: boolean;
 	participant: InterfaceParticipant[];
 	fcfs: boolean;
-	eventId: string;
+	eventId: number;
 	href: string;
 	title: any;
+	sPopUp: {show: Function; message: Function};
+	fPopUp: {show: Function; message: Function};
 }) {
 	const [value, setValue] = React.useState(0);
 	const handleChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -50,7 +56,26 @@ export default function AdminTabs(props: {
 		setIsDeleting(true);
 		//TODO delete event here after deleting throw him to home page
 	}
+	const reportFile = React.useRef<HTMLInputElement>(null);
 
+	const reportUpload = async (file: File) => {
+		try {
+			const response = await axios.post(
+				API.get_url('event:upload_report', props.eventId),
+				{file: file},
+				{
+					'Content-Type': 'multipart/form-data',
+				}
+			);
+			props.sPopUp.show(true);
+			props.sPopUp.message('File Uploaded Successfully');
+			console.log('File uploaded successfully:', response.data);
+		} catch (error) {
+			props.fPopUp.show(true);
+			props.fPopUp.message('Error uploading file');
+			console.error(error);
+		}
+	};
 	return (
 		<div className="flex flex-col w-full sm:items-center">
 			<TabsContainer
@@ -258,6 +283,29 @@ export default function AdminTabs(props: {
 								eventId={props.eventId}
 							/>
 						)}
+					</div>
+				</TabPanel>
+				<TabPanel value={value} index={3}>
+					<div className="w-full h-full flex justify-center items-center">
+						<FileUploader
+							className="helppe"
+							multiple={false}
+							handleChange={reportUpload}
+							name="file"
+							label="Drag Your File Here"
+							hoverTitle="Upload Report"
+							types={['PDF']}
+							onTypeError={(err: any) => {
+								props.fPopUp.show(true);
+								props.fPopUp.message('Only PDFs are allowed');
+								console.error(err);
+							}}
+							maxSize={10}
+							onSizeError={(err: any) => {
+								props.fPopUp.show(true);
+								props.fPopUp.message('File cannot be more than 10 MB');
+							}}
+						/>
 					</div>
 				</TabPanel>
 			</div>

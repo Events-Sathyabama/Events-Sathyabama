@@ -357,6 +357,9 @@ const url: {[key: string]: Function} = {
 	'event:reject': (id: number) => {
 		return `event/deny/${id}/`;
 	},
+	'event:upload_report': (id: number) => {
+		return `event/report/upload/${id}/`;
+	},
 	'user:organizer': () => {
 		return 'user/organizer/';
 	},

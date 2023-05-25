@@ -23,20 +23,6 @@ import AdminDialog from '../adminDialog';
 
 const axios = new API.Axios();
 
-const isUserFound = (
-	user: InterfaceOrganizer,
-	participant: InterfaceOrganizer[]
-) => {
-	console.log('isUserFound', user, participant);
-	for (let i = 0; i < participant.length; i++) {
-		if (participant[i].pk === user.pk) {
-			console.log('True');
-			return true;
-		}
-	}
-	return false;
-};
-
 const DisplayApprovalTab = (Data: InterfaceData | undefined) => {
 	if (Data === undefined) {
 		return false;
@@ -168,16 +154,10 @@ export default function details(props: {params: {id: number}}) {
 					{Spopup ? (
 						<Popup.Success
 							showpopup={setSpopup}
-							message={
-								calledByApply ? popupMessage : 'Applications updated!'
-							}></Popup.Success>
+							message={popupMessage}></Popup.Success>
 					) : null}
 					{Fpopup ? (
-						<Popup.Error
-							showpopup={setFpopup}
-							message={
-								calledByApply ? popupMessage : 'Applications not updated!'
-							}></Popup.Error>
+						<Popup.Error showpopup={setFpopup} message={popupMessage}></Popup.Error>
 					) : null}
 				</div>
 				<div className="flex flex-col w-11/12 h-auto">
@@ -323,7 +303,9 @@ export default function details(props: {params: {id: number}}) {
 								isOrganizer={isOrganizer}
 								participant={data?.participant || []}
 								fcfs={data?.fcfs || false}
-								eventId={props.params.id}></AdminDialog>
+								eventId={props.params.id}
+								sPopUp={{show: setSpopup, message: setPopupMessage}}
+								fPopUp={{show: setFpopup, message: setPopupMessage}}></AdminDialog>
 						)}
 					</div>
 				</div>

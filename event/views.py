@@ -267,6 +267,19 @@ def deny_event(request, event_id):
 
     return Response(data={'detail': 'Something went Wrong'}, status=500)
 
+
+@api_view(['POST'])
+def upload_report(request, event_id):
+    event = Event.objects.get(id=event_id)
+    report_file = request.FILES.get('file')
+    if report_file:
+        event.report = report_file
+        event.status = 6
+        event.save()
+        return Response(data={'detail': 'Report Uploaded!!'})
+    else:
+        return Response(data={'detail': 'Please send a valid File!!'})
+
 @api_view(['POST'])
 def upload_certs(request, event_id):
     # Retrieve all EventParticipant objects for the specified event

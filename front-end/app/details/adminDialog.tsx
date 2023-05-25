@@ -29,7 +29,9 @@ export default function AdminDialog(props: {
 	isOrganizer: boolean;
 	participant: InterfaceParticipant[];
 	fcfs: boolean;
-	eventId: string;
+	eventId: number;
+	sPopUp: {show: Function; message: Function};
+	fPopUp: {show: Function; message: Function};
 }) {
 	const handleClose = () => {
 		props.adminClose();
@@ -80,7 +82,9 @@ export default function AdminDialog(props: {
 					fcfs={props.fcfs}
 					eventId={props.eventId}
 					href={props.href}
-					title={props.title}></AdminTabs>
+					title={props.title}
+					sPopUp={props.sPopUp}
+					fPopUp={props.fPopUp}></AdminTabs>
 			</List>
 		</Dialog>
 	);

@@ -63,7 +63,6 @@ export default function Page() {
 		};
 
 		const sendData = () => {
-			const formData = new FormData();
 			const organizer = () => {
 				const rv = [];
 				for (let i = 0; i < coordinator.length; i++) {
@@ -81,7 +80,7 @@ export default function Page() {
 				return rv;
 			};
 
-			const value: InterfaceCreateUpdateSendData = {
+			return {
 				organizer: organizer(),
 				image: image,
 				title: title,
@@ -97,21 +96,6 @@ export default function Page() {
 				fcfs: fcfs,
 				total_strength: totalStrength,
 			};
-			// @ts-expect-error
-			if (coordinator.length > 1) formData.append('organizer', organizer());
-			if (image) formData.append('image', image);
-			if (title) formData.append('title', title);
-			if (shortDesc) formData.append('short_description', shortDesc);
-			if (longDesc) formData.append('long_description', longDesc);
-			if (clubName) formData.append('club', clubName.name);
-			if (venue) formData.append('venue', venue);
-			if (startDate) formData.append('start_date', startDate?.format('YYYY-MM-DD'));
-			if (endDate) formData.append('end_date', endDate?.format('YYYY-MM-DD'));
-			if (date) formData.append('date', date);
-			if (duration) formData.append('time', duration);
-			// @ts-expect-error
-			if (branchName.length > 0) formData.append('branch', branch());
-			return value;
 		};
 		const setData: {[x: string]: Function} = {
 			title: setTitle,
