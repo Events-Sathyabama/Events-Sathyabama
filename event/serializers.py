@@ -95,6 +95,8 @@ class BaseEventDetailSerializer(serializers.ModelSerializer):
             "fcfs",
             'status',
             'certificate',
+            'vc_verified'
+
         ]
         additional_fields = []
         fields += additional_fields
@@ -179,7 +181,6 @@ class EventDetailSerializerHodDeanVC(EventDetailSerializerStudent):
             'is_declined',
             'hod_verified',
             'dean_verified',
-            'vc_verified',
             'rejected',
             'report_verified'
         ]
@@ -233,7 +234,6 @@ class EventDetailSerializerOrganizer(EventDetailSerializerStudent):
             'rejected',
             'hod_verified',
             'dean_verified',
-            'vc_verified',
             'report_verified',
         ]
 
