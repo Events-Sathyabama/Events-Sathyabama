@@ -1,6 +1,6 @@
 'use client';
 import * as React from 'react';
-import {Button} from '@mui/material';
+import {Button, IconButton} from '@mui/material';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -153,10 +153,27 @@ export default function Applicants() {
 	return (
 		<div className="flex flex-col w-full items-center">
 			<div className="flex flex-col gap-2 sm:flex-row sm:justify-between py-3 items-center w-full bg-[#1976d2]">
-				<p className="text-2xl ml-6 text-white">Accepted Applicants</p>
+				<div className="flex flex-row justify-center items-center ml-6">
+					<IconButton>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							fill="none"
+							viewBox="0 0 24 24"
+							strokeWidth={1.5}
+							stroke="currentColor"
+							className="w-8 h-8 p-1 text-white border rounded-md">
+							<path
+								strokeLinecap="round"
+								strokeLinejoin="round"
+								d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
+							/>
+						</svg>
+					</IconButton>
+					<p className="text-2xl ml-1 text-white pr-10 sm:pr-0">Accepted Applicants</p>
+				</div>
 				<Button
 					variant="outlined"
-					className='bg-white hover:bg-white sm:mr-3'
+					className="bg-white hover:bg-white sm:mr-3"
 					startIcon={
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
