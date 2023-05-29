@@ -293,15 +293,6 @@ const extractError = (err: any) => {
 	return rv;
 };
 
-const API: {[key: string]: any} = {
-	Axios: AxiosInstance,
-	jwt: parseJwt,
-	get_url: get_url,
-	is_logged_in: is_logged_in,
-	get_user_detail: user_detail,
-	extract_error: extractError,
-};
-
 const url: {[key: string]: Function} = {
 	'login': () => {
 		return 'user/token/';
@@ -373,5 +364,12 @@ const url: {[key: string]: Function} = {
 		return 'user/reset_password/';
 	},
 };
-
+const API: {[key: string]: any} = {
+	Axios: AxiosInstance,
+	jwt: parseJwt,
+	get_url: get_url,
+	is_logged_in: is_logged_in,
+	get_user_detail: user_detail,
+	extract_error: extractError,
+};
 export default API;

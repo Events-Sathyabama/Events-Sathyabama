@@ -313,7 +313,7 @@ class EventProgressSerializer(serializers.ModelSerializer):
 
 class EventRegisterdCompleted(serializers.ModelSerializer):
     applicationStatus = serializers.SerializerMethodField()
-    eventStatus = serializers.CharField(source='get_status_display')
+    eventStatus = serializers.SerializerMethodField()
     # def to_representation(self, instance):
 
     class Meta:
@@ -325,6 +325,14 @@ class EventRegisterdCompleted(serializers.ModelSerializer):
             'club',
             'eventStatus'
         ]
+
+    def get_eventStatus(self, obj):
+        user = self.context.get('request').user
+        status = obj.status
+        if user.role == 0:
+            if status > 5:
+                return 'Completed'
+        return obj.get_status_display()
 
     def get_applicationStatus(self, obj):
         request = self.context.get('request')
