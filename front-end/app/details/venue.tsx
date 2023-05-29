@@ -5,10 +5,10 @@ export default function EventTime(props: {
 }) {
 	return (
 		<div className="relative w-full p-3 border border-blue-300 rounded-md">
-			<div className="absolute -z-10 top-0 left-0 w-full h-full bg-gradient-to-l from-blue-50 to-white filter blur-md"></div>
+			<div className="absolute -z-10 top-0 left-0 w-full h-full filter blur-md"></div>
 			<div className="flex flex-col ml-10 pt-4 border border-y-0 border-r-0 border-gray-700">
 				<ol className="flex flex-col -ml-11 gap-3 w-full">
-					<li className="flex flex-col ml-6 gap-1">
+					<li className="flex flex-col w-full ml-6 gap-1">
 						<div className="flex flex-row h-full items-center gap-4">
 							<div className="flex items-center justify-center border w-10 h-10 border-gray-400 bg-blue-100 rounded-full ring-8 ring-gray-100 shrink-0">
 								<svg
@@ -25,16 +25,12 @@ export default function EventTime(props: {
 									/>
 								</svg>
 							</div>
-							<h3 className="flex items-center -mt-5 mb-1 text-xl font-normal text-blue-500">
-								{' '}
-								When?
-							</h3>
 						</div>
-						<p className="ml-14 -mt-6 text-lg font-normal text-gray-800 mb-3">
-							{props.dates || 'TBD'}
+						<p className="ml-14 -mt-11 p-2 border border-gray-300 rounded-md text-lg bg-gray-50 font-normal text-gray-800 mb-3">
+							{props.dates || 'Date TBD'}
 						</p>
 					</li>
-					<li className="flex flex-col ml-6 gap-1">
+					<li className="flex flex-col w-full ml-6 gap-1">
 						<div className="flex flex-row h-full items-center gap-4">
 							<div className="flex items-center justify-center w-10 h-10 border border-gray-400 bg-blue-100 rounded-full ring-8 ring-gray-100 shrink-0">
 								<svg
@@ -51,16 +47,12 @@ export default function EventTime(props: {
 									/>
 								</svg>
 							</div>
-							<h3 className="flex items-center -mt-5 mb-1 text-xl font-normal text-blue-500">
-								{' '}
-								How long?
-							</h3>
 						</div>
-						<p className="ml-14 -mt-6 text-lg font-normal text-gray-800 mb-3">
-							{props.time || 'TBD'}
+						<p className="ml-14 -mt-11 p-2 border border-gray-300 rounded-md text-lg font-normal text-gray-800 mb-3">
+							{props.time || 'Duration TBD'}
 						</p>
 					</li>
-					<li className="flex flex-col ml-6 gap-1">
+					<li className="flex flex-col w-full ml-6 gap-1">
 						<div className="flex flex-row h-full items-center gap-4">
 							<div className="flex items-center justify-center w-10 h-10 border border-gray-400 bg-blue-100 rounded-full ring-8 ring-gray-100 shrink-0">
 								<svg
@@ -82,13 +74,9 @@ export default function EventTime(props: {
 									/>
 								</svg>
 							</div>
-							<h3 className="flex items-center -mt-5 mb-1 text-xl font-normal text-blue-500">
-								{' '}
-								Where?
-							</h3>
 						</div>
-						<p className="ml-14 -mt-6 text-lg font-normal text-gray-800 mb-3">
-							{props.venue || 'TBD'}
+						<p className="ml-14 -mt-11 p-2 border border-gray-300 bg-gray-50 rounded-md text-lg font-normal text-gray-800 mb-3">
+							{props.venue || 'Venue TBD'} 
 						</p>
 					</li>
 				</ol>
