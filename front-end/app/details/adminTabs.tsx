@@ -56,7 +56,6 @@ export default function AdminTabs(props: {
 		setIsDeleting(true);
 		//TODO delete event here after deleting throw him to home page
 	}
-	const reportFile = React.useRef<HTMLInputElement>(null);
 
 	const reportUpload = async (file: File) => {
 		try {
