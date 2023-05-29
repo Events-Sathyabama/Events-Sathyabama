@@ -11,9 +11,10 @@ export default function ProgressBar({registeredStudents, totalCapacity}: Props) 
 
 	return (
 		<div className="flex flex-row justify-center items-center w-full lg:w-80 gap-3 -mt-2 border bg-gray-100 rounded-md p-2">
-			<div className='flex flex-col justify-center items-center gap-1'>
-				<p className='flex justify-center items-end text-2xl truncate h-8 w-48'>
-					{registeredStudents}/{totalCapacity} <span className='text-sm text-gray-600 ml-1 mb-1'>applicants</span>
+			<div className="flex flex-col justify-center items-center gap-1">
+				<p className="flex justify-center items-end text-2xl truncate h-8 w-48">
+					{registeredStudents}/{totalCapacity}{' '}
+					<span className="text-sm text-gray-600 ml-1 mb-1">applicants</span>
 				</p>
 				<LinearProgress
 					className="w-48"

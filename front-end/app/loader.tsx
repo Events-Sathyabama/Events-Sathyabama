@@ -17,9 +17,7 @@ function ImageLoader(props: any) {
 			)}
 			<img
 				src={props.src}
-				className={
-					imgStatus ? 'w-full h-full' : 'w-full h-full hidden'
-				}
+				className={imgStatus ? 'w-full h-full' : 'w-full h-full hidden'}
 				alt={props.alt}
 				onLoad={() => setImgStatus(true)}
 			/>

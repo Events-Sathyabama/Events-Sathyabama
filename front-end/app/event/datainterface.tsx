@@ -1,12 +1,12 @@
 import {Dayjs} from 'dayjs';
-export interface InterfaceBranch{
-    name: string;
+export interface InterfaceBranch {
+	name: string;
 	batch: string;
 	pk: number;
 }
 
-export interface InterfaceOrganizer{
-    name: string;
+export interface InterfaceOrganizer {
+	name: string;
 	college_id: string;
 	role: string;
 	pk: number;
@@ -18,12 +18,12 @@ export interface InterfaceClub {
 	inputValue?: string;
 }
 
-export interface InterfaceParticipant{
+export interface InterfaceParticipant {
 	name: string;
 	college_id: string;
 	role: string;
 	pk: number;
-	status: number
+	status: number;
 }
 
 export interface InterfaceData {
@@ -48,18 +48,17 @@ export interface InterfaceData {
 	status: string;
 
 	// For students only
-	is_applied?:boolean,
-	is_accepted?:boolean,
-	is_declined?:boolean,
-	
+	is_applied?: boolean;
+	is_accepted?: boolean;
+	is_declined?: boolean;
+
 	// for organizers only
-	
-	approval_message?:any,
+
+	approval_message?: any;
 	participant?: InterfaceParticipant[];
 	accepted_role?: string[];
-	declined_count?:number ,
-	pending_count?: number,
-
+	declined_count?: number;
+	pending_count?: number;
 }
 
 export interface InterfaceError {
@@ -75,8 +74,8 @@ export interface InterfaceError {
 	time: string | null;
 	venue: string | null;
 	organizer: string | null;
-	fcfs:string | null;
-	total_strength: string | null
+	fcfs: string | null;
+	total_strength: string | null;
 }
 
 export default {};

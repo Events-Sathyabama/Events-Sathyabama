@@ -169,7 +169,9 @@ export default function Applicants() {
 							/>
 						</svg>
 					</IconButton>
-					<p className="text-2xl ml-1 text-white pr-10 sm:pr-0">Accepted Applicants</p>
+					<p className="text-2xl ml-1 text-white pr-10 sm:pr-0">
+						Accepted Applicants
+					</p>
 				</div>
 				<Button
 					variant="outlined"

@@ -3,7 +3,12 @@ import Avatar from '@mui/material/Avatar';
 import Badge, {BadgeProps} from '@mui/material/Badge';
 import {styled} from '@mui/material/styles';
 
-function stringAvatar(width: string, height: string, fontSize: string, nameinput ?: string) {
+function stringAvatar(
+	width: string,
+	height: string,
+	fontSize: string,
+	nameinput?: string
+) {
 	const [initials, setInitials] = React.useState('');
 
 	React.useEffect(() => {
@@ -35,7 +40,7 @@ interface LetterAvatarProps {
 	width: string;
 	height: string;
 	fontSize: string;
-	name ?: string;
+	name?: string;
 }
 
 export default function LetterAvatar(props: LetterAvatarProps) {

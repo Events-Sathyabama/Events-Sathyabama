@@ -76,7 +76,7 @@ export default function EventTime(props: {
 							</div>
 						</div>
 						<p className="ml-14 -mt-11 p-2 border border-gray-300 bg-gray-50 rounded-md text-lg font-normal text-gray-800 mb-3">
-							{props.venue || 'Venue TBD'} 
+							{props.venue || 'Venue TBD'}
 						</p>
 					</li>
 				</ol>

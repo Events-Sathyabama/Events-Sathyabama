@@ -36,7 +36,7 @@ const notifications: Notification[] = [
 		href: '/details/9',
 		flag: 'success',
 	},
-    {
+	{
 		name: 'Event Name 3',
 		description: 'Your event proposal has been denied.',
 		href: '/details/9',
@@ -47,7 +47,8 @@ const notifications: Notification[] = [
 		description: 'Your event proposal has been approved.',
 		href: '/details/9',
 		flag: 'success',
-	},{
+	},
+	{
 		name: 'Event Name 3',
 		description: 'Your event proposal has been denied.',
 		href: '/details/9',
@@ -58,7 +59,7 @@ const notifications: Notification[] = [
 		description: 'Your event proposal has been approved.',
 		href: '/details/9',
 		flag: 'success',
-	}, 
+	},
 ];
 
 function Loading() {

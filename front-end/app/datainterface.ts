@@ -1,12 +1,12 @@
 import {Dayjs} from 'dayjs';
-export interface InterfaceBranch{
-    name: string;
+export interface InterfaceBranch {
+	name: string;
 	batch: string;
 	pk: number;
 }
 
-export interface InterfaceOrganizer{
-    name: string;
+export interface InterfaceOrganizer {
+	name: string;
 	college_id: string;
 	role: string;
 	pk: number;
@@ -18,51 +18,49 @@ export interface InterfaceClub {
 	inputValue?: string;
 }
 
-export interface InterfaceParticipant{
+export interface InterfaceParticipant {
 	name: string;
 	college_id: string;
 	role: string;
 	pk: number;
-	status: number
+	status: number;
 }
 
-export interface InterfaceCreateUpdateSendData{
-	pk?: number | undefined,
-	organizer: number[],
-	image: File | string | undefined,
-	title: string,
-	short_description: string,
-	long_description: string,
-	club: string,
-	venue: string,
-	start_date: string | undefined,
-	end_date: string | undefined,
-	date: string,
-	time: string,
-	branch: number[],
+export interface InterfaceCreateUpdateSendData {
+	pk?: number | undefined;
+	organizer: number[];
+	image: File | string | undefined;
+	title: string;
+	short_description: string;
+	long_description: string;
+	club: string;
+	venue: string;
+	start_date: string | undefined;
+	end_date: string | undefined;
+	date: string;
+	time: string;
+	branch: number[];
 	fcfs: boolean;
 	total_strength: number;
 }
 
-export interface InterfaceCreateEvent{
-	pk?: number | undefined,
-	organizer: InterfaceOrganizer[],
-	image: File | string | undefined,
-	title: string | undefined,
-	short_description: string | undefined,
-	long_description: string | undefined,
-	club: InterfaceClub | undefined,
-	venue: string | undefined,
-	start_date: Dayjs | undefined,
-	end_date: Dayjs | undefined,
-	date: string | undefined,
-	time: string | undefined,
-	branch: InterfaceBranch[],
+export interface InterfaceCreateEvent {
+	pk?: number | undefined;
+	organizer: InterfaceOrganizer[];
+	image: File | string | undefined;
+	title: string | undefined;
+	short_description: string | undefined;
+	long_description: string | undefined;
+	club: InterfaceClub | undefined;
+	venue: string | undefined;
+	start_date: Dayjs | undefined;
+	end_date: Dayjs | undefined;
+	date: string | undefined;
+	time: string | undefined;
+	branch: InterfaceBranch[];
 	owner: InterfaceOrganizer;
 	fcfs: boolean;
 	total_strength: number | undefined;
-
-
 }
 
 export interface InterfaceData {
@@ -87,26 +85,25 @@ export interface InterfaceData {
 	status: string;
 
 	// For students only
-	is_applied?:boolean,
-	is_accepted?:boolean,
-	is_declined?:boolean,
-	
+	is_applied?: boolean;
+	is_accepted?: boolean;
+	is_declined?: boolean;
+
 	// for organizers only
-	approval_message?:any,
+	approval_message?: any;
 	participant?: InterfaceParticipant[];
 	accepted_role?: string[];
-	declined_count?:number ,
-	pending_count?: number,
+	declined_count?: number;
+	pending_count?: number;
 
 	// for HOD VC Dean Only
-	hod_verified?: boolean,
-    dean_verified?: boolean,
-    vc_verified?: boolean,
+	hod_verified?: boolean;
+	dean_verified?: boolean;
+	vc_verified?: boolean;
 
 	// for organizer and admins
-	rejected?: boolean,
-	report_verified?: boolean,
-
+	rejected?: boolean;
+	report_verified?: boolean;
 }
 
 export interface InterfaceError {
@@ -122,51 +119,50 @@ export interface InterfaceError {
 	time: string | null;
 	venue: string | null;
 	organizer: string | null;
-	fcfs:string | null;
-	total_strength: string | null
+	fcfs: string | null;
+	total_strength: string | null;
 }
 
-export interface InterfaceCompletedRegisteredEvent{
+export interface InterfaceCompletedRegisteredEvent {
 	data: {
-			pk: number,
-			title: string,
-			applicationStatus: string,
-			club: string,
-			eventStatus: string,
-		}[],
-	next: string | null,
-	previous: string | null,
-	pageNo: number,
-	totalPageNo: number,
-	setPageNo: Function,
-	count: number,
-
+		pk: number;
+		title: string;
+		applicationStatus: string;
+		club: string;
+		eventStatus: string;
+	}[];
+	next: string | null;
+	previous: string | null;
+	pageNo: number;
+	totalPageNo: number;
+	setPageNo: Function;
+	count: number;
 }
 
-export interface InterfaceEventProgress{
+export interface InterfaceEventProgress {
 	data: {
-			status: number,
-			title: string,
-			club: string,
-			pk: number,
-			eventStatus: number,
-			description: string,
-			failed: number,
-			failedLabel: string | Array<string>,
-		}[],
-	pageNo: number,
-	totalPageNo: number,
-	setPageNo: Function,
-	next: string | null,
-	previous: string | null,
-	count: number,
+		status: number;
+		title: string;
+		club: string;
+		pk: number;
+		eventStatus: number;
+		description: string;
+		failed: number;
+		failedLabel: string | Array<string>;
+	}[];
+	pageNo: number;
+	totalPageNo: number;
+	setPageNo: Function;
+	next: string | null;
+	previous: string | null;
+	count: number;
 }
 
-export interface InterfacePaginatedData{
-	count: number,
-	next:string | null,
-	total_pages: number,
-	previous: string | null,
-	results: any[],
+export interface InterfacePaginatedData {
+	count: number;
+	next: string | null;
+	total_pages: number;
+	previous: string | null;
+	results: any[];
 }
 export default {};
