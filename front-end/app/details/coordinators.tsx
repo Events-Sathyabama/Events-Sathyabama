@@ -17,9 +17,9 @@ interface CoordinatorProps {
 export default function Coordinators(props: CoordinatorProps) {
 	const {coordinators} = props;
 	return (
-		<List className="w-full border border-gray-400 rounded-md">
+		<List className="flex flex-col py-4 gap-3 w-full border border-gray-300 rounded-md">
 			{coordinators.map((coordinator, index) => (
-				<div className="flex flex-row pl-4 mb-2">
+				<div className="flex flex-row pl-4">
 					<ListItemAvatar>
 						<LetterAvatar
 							width="2.5rem"

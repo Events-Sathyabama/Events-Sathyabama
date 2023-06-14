@@ -14,10 +14,10 @@ import {
 	InterfaceCreateUpdateSendData,
 } from '../../../datainterface';
 import useEffect from '@/app/useEffect';
-import ApiLoader from '@/app/apiLoader';
 import Popup from '@/app/popup';
 
 export default function Page(props: {params: {id: string}}) {
+	const router = useRouter();
 	const [owner, setOwner] = useState<InterfaceOrganizer>({
 		name: '-',
 		college_id: '-',
@@ -228,7 +228,7 @@ export default function Page(props: {params: {id: string}}) {
 			setMessage('Event Updation Successful!');
 			setErrorPopUp(false);
 			setSuccessPopUp(true);
-			// router.push(`details/${request.data.pk}`);
+			router.push(`details/${request.data.pk}`);
 		} catch (error: any) {
 			console.error(error);
 			if (error.message === 'Network Error') {
@@ -255,7 +255,6 @@ export default function Page(props: {params: {id: string}}) {
 	const [message, setMessage] = useState<string>();
 	return (
 		<>
-			{/* {<ApiLoader state={Loader} message="Setting Things up for you..." />} */}
 			{successPopUp ? (
 				<Popup.Success message={message || 'Success'} showpopup={setSuccessPopUp} />
 			) : (

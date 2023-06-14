@@ -9,7 +9,6 @@ import {useRouter} from 'next/navigation';
 import WebBackdrop from './backdrop';
 import useEffect from './useEffect';
 import {IconButton} from '@mui/material';
-import ApiLoader from './apiLoader';
 import OtpField from './otp';
 import PasswordPage from './passwordUpdate';
 

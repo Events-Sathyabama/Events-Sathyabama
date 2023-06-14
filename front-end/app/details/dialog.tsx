@@ -22,13 +22,18 @@ export default function ConfirmDialog(props: any) {
 			TransitionComponent={Transition}
 			keepMounted
 			onClose={props.handleClose}
-			aria-describedby="alert-dialog-slide-description">
+			aria-describedby="alert-dialog-slide-description"
+			onClick={() => {}}>
 			<DialogTitle>
 				Are you sure you want to apply for{' '}
 				<span className="text-[#007efd]">{props.title}</span>?
 			</DialogTitle>
 			<DialogActions>
-				<Button variant="outlined" color="error" onClick={props.handleClose}>
+				<Button
+					variant="outlined"
+					color="error"
+					onClick={props.handleClose}
+					disabled={props.loading}>
 					Cancel
 				</Button>
 				{props.children}

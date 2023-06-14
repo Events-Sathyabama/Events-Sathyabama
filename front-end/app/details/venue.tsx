@@ -4,7 +4,7 @@ export default function EventTime(props: {
 	venue: string | undefined;
 }) {
 	return (
-		<div className="relative w-full p-3 border border-blue-300 rounded-md">
+		<div className="relative w-full p-3 border border-gray-300 rounded-md">
 			<div className="absolute -z-10 top-0 left-0 w-full h-full filter blur-md"></div>
 			<div className="flex flex-col ml-10 pt-4 border border-y-0 border-r-0 border-gray-700">
 				<ol className="flex flex-col -ml-11 gap-3 w-full">

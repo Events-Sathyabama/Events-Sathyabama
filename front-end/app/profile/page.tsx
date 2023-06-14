@@ -14,6 +14,8 @@ export default function ProfilePage(): JSX.Element {
 	const [id, setId] = useState('-');
 	const [branch, setBranch] = useState('-');
 	const [fullName, setFullName] = useState('-');
+	// TODO fetch batch bro
+	const [batch, setBatch] = useState('-');
 
 	const [loader, setLoader] = useState(0);
 	const runOnce = true;
@@ -40,7 +42,7 @@ export default function ProfilePage(): JSX.Element {
 	return (
 		<div>
 			<Navbar />
-			<div className="container mx-auto p-5">
+			<div className="container mx-auto p-5 min-h-[85vh]">
 				<div className="md:flex no-wrap md:-mx-2 ">
 					{role === '-' ? (
 						<div className="flex flex-col justify-center items-center w-full min-h-[65vh] sm:min-h-[75vh]">
@@ -49,7 +51,13 @@ export default function ProfilePage(): JSX.Element {
 					) : null}
 					{role === 'Student' && (
 						<div className="flex w-full flex-col md:flex-row gap-3 justify-center items-center md:items-start">
-							<Profile id={id} branch={branch} name={fullName} role="Student" />
+							<Profile
+								id={id}
+								branch={branch}
+								name={fullName}
+								batch={batch}
+								role="Student"
+							/>
 							<TabsProfile.Student></TabsProfile.Student>
 						</div>
 					)}

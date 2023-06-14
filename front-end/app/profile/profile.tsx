@@ -3,12 +3,13 @@ import LetterAvatar from '../avatar';
 interface ProfileProps {
 	id: string;
 	branch?: string;
+	batch?: string,
 	name: string;
 	role: string;
 }
 
 export default function Profile(props: ProfileProps): JSX.Element {
-	const {id, branch, name, role} = props;
+	const {id, branch, name, role, batch} = props;
 
 	return (
 		<div className="flex flex-col w-72 md:w-96">
@@ -31,15 +32,21 @@ export default function Profile(props: ProfileProps): JSX.Element {
 					</li>
 					<li className="flex items-center py-2 px-3">
 						<span className="text-lg font-semibold">
-							{role === 'Student' ? 'Register Number' : 'Employee ID'}
+							{role === 'Student' ? 'Reg No.' : 'EID'}
 						</span>
 						<span className="text-lg ml-auto">{id}</span>
 					</li>
 					{role === 'Student' && (
-						<li className="flex items-center py-2 px-3">
-							<span className="text-lg font-semibold">Branch</span>
-							<span className="text-lg ml-auto">{branch}</span>
-						</li>
+						<>
+							<li className="flex items-center py-2 px-3">
+								<span className="text-lg font-semibold">Branch</span>
+								<span className="text-lg ml-auto">{branch}</span>
+							</li>
+							<li className="flex items-center py-2 px-3">
+								<span className="text-lg font-semibold">Batch</span>
+								<span className="text-lg ml-auto">{batch}</span>
+							</li>
+						</>
 					)}
 				</ul>
 			</div>
