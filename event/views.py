@@ -157,7 +157,7 @@ class CompletedEvent(generics.ListAPIView):
         return context
 
 class OrganizingEvent(generics.ListAPIView):
-    serializer_class = serializers.EventRegisterdCompleted
+    serializer_class = serializers.EventCreateSerializer
 
     def get_queryset(self):
         q = (Q(participants__id=self.request.user.pk) 
@@ -175,6 +175,8 @@ class OrganizingEvent(generics.ListAPIView):
         context = super().get_serializer_context()
         context['request'] = self.request
         return context
+
+# pending for approval
 class PendingEvent(generics.ListAPIView):
     serializer_class = serializers.EventRegisterdCompleted
     # TODO not allowed for role 0
