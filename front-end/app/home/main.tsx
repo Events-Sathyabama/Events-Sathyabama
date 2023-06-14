@@ -8,7 +8,6 @@ const axios = new API.Axios();
 import InputAdornment from '@mui/material/InputAdornment';
 import Image from 'next/image';
 import useEffect from '../useEffect';
-import ApiLoader from '../apiLoader';
 import handleError from '../handleError';
 
 function LoadingCard() {

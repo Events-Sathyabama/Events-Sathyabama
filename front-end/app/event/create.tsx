@@ -213,7 +213,7 @@ export default function Create(props: {
 							component="label"
 							className={
 								(getError.image !== null ? 'border-red-700 text-red-700' : '') +
-								' w-auto max-w-xl'
+								' w-auto max-w-xl truncate h-10'
 							}>
 							{imageName ? imageName : 'Upload your Event Poster Here*'}
 							<input
@@ -468,7 +468,7 @@ export default function Create(props: {
 						</Button>
 					</form>
 					<div className="block max-w-sm md:max-w-fit">
-						<div className="flex flex-col gap-2 items-center justify-center bg-blue-50 p-3 rounded-md">
+						<div className="flex flex-col gap-2 items-center justify-center border bg-blue-50 border-blue-400 p-3 rounded-md">
 							<p className="text-2xl">Preview</p>
 							<Card
 								title={getData.title || "Event's Name Here"}

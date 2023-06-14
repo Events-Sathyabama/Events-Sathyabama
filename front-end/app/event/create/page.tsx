@@ -14,7 +14,6 @@ import {
 	InterfaceCreateUpdateSendData,
 } from '../../datainterface';
 import useEffect from '@/app/useEffect';
-import ApiLoader from '@/app/apiLoader';
 
 const axios = new API.Axios();
 
@@ -217,7 +216,6 @@ export default function Page() {
 
 	return (
 		<>
-			{/* {<ApiLoader state={Loader} message="Setting Things up for you..." />} */}
 			<Create
 				getData={getData}
 				setData={setData}
