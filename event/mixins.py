@@ -23,4 +23,5 @@ class SearchQueryMixins:
                 Q(club__icontains=s) | 
                 Q(branch__name__icontains=s)
                 )
-        return Event.objects.filter(q & search_q)
+        inputs = Event.objects.filter(q & search_q).distinct()
+        return inputs
