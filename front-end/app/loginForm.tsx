@@ -108,7 +108,7 @@ export default function LoginForm(props: {
 						error={!!(formik.touched.password && formik.errors.password)}
 						fullWidth
 						helperText={formik.touched.password && formik.errors.password}
-						label="Your Password"
+						label="Password"
 						name="password"
 						onBlur={formik.handleBlur}
 						onChange={formik.handleChange}
