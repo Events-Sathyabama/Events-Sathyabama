@@ -50,88 +50,32 @@ function createData(
 	return {name, branch, registerNum, batch};
 }
 
-const rows = [
-	createData('Abhishek Manikandan', 'BE CSE', 40110017, '2020-2024'),
-	createData('Rohit Challa', 'BE CSE', 40110017, '2020-2023'),
-	createData('Bandepalli Surya Anjani Kumar', 'BE CSE', 40110156, '2020-2024'),
-	createData('Adithya', 'BE CSE', 40110127, '1992-1994'),
-	createData('Abhishek Manikandan', 'BE CSE', 40110017, '2020-2024'),
-	createData('Rohit Challa', 'BE CSE', 40110017, '2020-2023'),
-	createData('Bandepalli Surya Anjani Kumar', 'BE CSE', 40110156, '2020-2024'),
-	createData('Adithya', 'BE CSE', 40110127, '1992-1994'),
-	createData('Abhishek Manikandan', 'BE CSE', 40110017, '2020-2024'),
-	createData('Rohit Challa', 'BE CSE', 40110017, '2020-2023'),
-	createData('Bandepalli Surya Anjani Kumar', 'BE CSE', 40110156, '2020-2024'),
-	createData('Adithya', 'BE CSE', 40110127, '1992-1994'),
-	createData('Abhishek Manikandan', 'BE CSE', 40110017, '2020-2024'),
-	createData('Rohit Challa', 'BE CSE', 40110017, '2020-2023'),
-	createData('Bandepalli Surya Anjani Kumar', 'BE CSE', 40110156, '2020-2024'),
-	createData('Adithya', 'BE CSE', 40110127, '1992-1994'),
-	createData('Abhishek Manikandan', 'BE CSE', 40110017, '2020-2024'),
-	createData('Rohit Challa', 'BE CSE', 40110017, '2020-2023'),
-	createData('Bandepalli Surya Anjani Kumar', 'BE CSE', 40110156, '2020-2024'),
-	createData('Adithya', 'BE CSE', 40110127, '1992-1994'),
-	createData('Abhishek Manikandan', 'BE CSE', 40110017, '2020-2024'),
-	createData('Rohit Challa', 'BE CSE', 40110017, '2020-2023'),
-	createData('Bandepalli Surya Anjani Kumar', 'BE CSE', 40110156, '2020-2024'),
-	createData('Adithya', 'BE CSE', 40110127, '1992-1994'),
-	createData('Abhishek Manikandan', 'BE CSE', 40110017, '2020-2024'),
-	createData('Rohit Challa', 'BE CSE', 40110017, '2020-2023'),
-	createData('Bandepalli Surya Anjani Kumar', 'BE CSE', 40110156, '2020-2024'),
-	createData('Adithya', 'BE CSE', 40110127, '1992-1994'),
-	createData('Abhishek Manikandan', 'BE CSE', 40110017, '2020-2024'),
-	createData('Rohit Challa', 'BE CSE', 40110017, '2020-2023'),
-	createData('Bandepalli Surya Anjani Kumar', 'BE CSE', 40110156, '2020-2024'),
-	createData('Adithya', 'BE CSE', 40110127, '1992-1994'),
-	createData('Abhishek Manikandan', 'BE CSE', 40110017, '2020-2024'),
-	createData('Rohit Challa', 'BE CSE', 40110017, '2020-2023'),
-	createData('Bandepalli Surya Anjani Kumar', 'BE CSE', 40110156, '2020-2024'),
-	createData('Adithya', 'BE CSE', 40110127, '1992-1994'),
-	createData('Abhishek Manikandan', 'BE CSE', 40110017, '2020-2024'),
-	createData('Rohit Challa', 'BE CSE', 40110017, '2020-2023'),
-	createData('Bandepalli Surya Anjani Kumar', 'BE CSE', 40110156, '2020-2024'),
-	createData('Adithya', 'BE CSE', 40110127, '1992-1994'),
-	createData('Abhishek Manikandan', 'BE CSE', 40110017, '2020-2024'),
-	createData('Rohit Challa', 'BE CSE', 40110017, '2020-2023'),
-	createData('Bandepalli Surya Anjani Kumar', 'BE CSE', 40110156, '2020-2024'),
-	createData('Adithya', 'BE CSE', 40110127, '1992-1994'),
-	createData('Abhishek Manikandan', 'BE CSE', 40110017, '2020-2024'),
-	createData('Rohit Challa', 'BE CSE', 40110017, '2020-2023'),
-	createData('Bandepalli Surya Anjani Kumar', 'BE CSE', 40110156, '2020-2024'),
-	createData('Adithya', 'BE CSE', 40110127, '1992-1994'),
-	createData('Abhishek Manikandan', 'BE CSE', 40110017, '2020-2024'),
-	createData('Rohit Challa', 'BE CSE', 40110017, '2020-2023'),
-	createData('Bandepalli Surya Anjani Kumar', 'BE CSE', 40110156, '2020-2024'),
-	createData('Adithya', 'BE CSE', 40110127, '1992-1994'),
-	createData('Abhishek Manikandan', 'BE CSE', 40110017, '2020-2024'),
-	createData('Rohit Challa', 'BE CSE', 40110017, '2020-2023'),
-	createData('Bandepalli Surya Anjani Kumar', 'BE CSE', 40110156, '2020-2024'),
-	createData('Adithya', 'BE CSE', 40110127, '1992-1994'),
-	createData('Abhishek Manikandan', 'BE CSE', 40110017, '2020-2024'),
-	createData('Rohit Challa', 'BE CSE', 40110017, '2020-2023'),
-	createData('Bandepalli Surya Anjani Kumar', 'BE CSE', 40110156, '2020-2024'),
-	createData('Adithya', 'BE CSE', 40110127, '1992-1994'),
-	createData('Abhishek Manikandan', 'BE CSE', 40110017, '2020-2024'),
-	createData('Rohit Challa', 'BE CSE', 40110017, '2020-2023'),
-	createData('Bandepalli Surya Anjani Kumar', 'BE CSE', 40110156, '2020-2024'),
-	createData('Adithya', 'BE CSE', 40110127, '1992-1994'),
-	createData('Abhishek Manikandan', 'BE CSE', 40110017, '2020-2024'),
-	createData('Rohit Challa', 'BE CSE', 40110017, '2020-2023'),
-	createData('Bandepalli Surya Anjani Kumar', 'BE CSE', 40110156, '2020-2024'),
-	createData('Adithya', 'BE CSE', 40110127, '1992-1994'),
-	createData('Abhishek Manikandan', 'BE CSE', 40110017, '2020-2024'),
-	createData('Rohit Challa', 'BE CSE', 40110017, '2020-2023'),
-	createData('Bandepalli Surya Anjani Kumar', 'BE CSE', 40110156, '2020-2024'),
-	createData('Adithya', 'BE CSE', 40110127, '1992-1994'),
-	createData('Abhishek Manikandan', 'BE CSE', 40110017, '2020-2024'),
-	createData('Rohit Challa', 'BE CSE', 40110017, '2020-2023'),
-	createData('Bandepalli Surya Anjani Kumar', 'BE CSE', 40110156, '2020-2024'),
-	createData('Adithya', 'BE CSE', 40110127, '1992-1994'),
-	createData('Abhishek Manikandan', 'BE CSE', 40110017, '2020-2024'),
-	createData('Rohit Challa', 'BE CSE', 40110017, '2020-2023'),
-	createData('Bandepalli Surya Anjani Kumar', 'BE CSE', 40110156, '2020-2024'),
-	createData('Adithya', 'BE CSE', 40110127, '1992-1994'),
+const jsonData = [
+	{
+		name: 'Abhishek Manikandan',
+		branch: 'BE CSE',
+		registerNum: 40110017,
+		batch: '2020-2024',
+	},
+	{
+		name: 'Rohit Challa',
+		branch: 'BE CSE',
+		registerNum: 40110017,
+		batch: '2020-2023',
+	},
+	{
+		name: 'Bandepalli Surya Anjani Kumar',
+		branch: 'BE CSE',
+		registerNum: 40110156,
+		batch: '2020-2024',
+	},
+	{name: 'Adithya', branch: 'BE CSE', registerNum: 40110127, batch: '1992-1994'},
+	// TODO Fetch data in this format
 ];
+
+const rows = jsonData.map((data) =>
+	createData(data.name, data.branch, data.registerNum, data.batch)
+);
 
 export default function Applicants() {
 	const [page, setPage] = React.useState(0);
@@ -154,14 +98,14 @@ export default function Applicants() {
 		<div className="flex flex-col w-full items-center">
 			<div className="flex flex-col gap-2 sm:flex-row sm:justify-between py-3 items-center w-full bg-[#1976d2]">
 				<div className="flex flex-row justify-center items-center ml-6">
-					<IconButton>
+					<IconButton href='/details/11'>
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							fill="none"
 							viewBox="0 0 24 24"
 							strokeWidth={1.5}
 							stroke="currentColor"
-							className="w-8 h-8 p-1 text-white border rounded-md">
+							className="w-8 h-8 p-1 text-white">
 							<path
 								strokeLinecap="round"
 								strokeLinejoin="round"

@@ -178,7 +178,7 @@ export default function AdminTabs(props: {
 					<Timeline current={6} failed={6} failedLabel={'Hello'}></Timeline>
 				</TabPanel>
 				<TabPanel value={value} index={2} className="px-5 pt-2 w-full pb-5">
-					<div className="flex flex-col p-4 w-full rounded-md border bg-blue-50 border-gray-300">
+					<div className="flex flex-col p-4 w-full rounded-md border bg-blue-50 border-blue-300">
 						<div className="flex w-full h-auto p-2 bg-white rounded-md my-4 border">
 							<ol className="space-y-1 text-gray-500 list-decimal list-inside">
 								<li>
@@ -212,7 +212,7 @@ export default function AdminTabs(props: {
 							</Button>
 						</Link>
 					</div>
-					<div className="flex flex-col p-4 w-full rounded-md mt-3 border bg-red-50 border-gray-300">
+					<div className="flex flex-col p-4 w-full rounded-md mt-3 border bg-red-50 border-red-300">
 						<div className="flex w-full h-auto p-2 bg-white rounded-md my-4 border">
 							<ol className="space-y-1 text-gray-500 list-decimal list-inside">
 								<li>
@@ -240,9 +240,16 @@ export default function AdminTabs(props: {
 							label="Your Event's Name Here"
 							value={deleteVal}
 							autoComplete="off"
+							sx={{
+								'color': '#c62828',
+								'& .MuiOutlinedInput-notchedOutline': {
+									borderColor: '#c62828',
+								},
+							}}
+							color='error'
 							onChange={(e) => setDeleteVal(e.target.value)}
 							helperText="This field is Case-Sensitive."
-							style={{marginBottom:"1rem"}}
+							style={{marginBottom: '1rem'}}
 						/>
 						<LoadingButton
 							loadingIndicator="Deleting…"
@@ -263,7 +270,7 @@ export default function AdminTabs(props: {
 				<TabPanel value={value} index={1}>
 					<div className="flex flex-col w-full gap-3 items-center">
 						<div className="flex flex-col sm:flex-row sm:justify-between items-center sm:items-start gap-3 w-11/12 bg-blue-50 p-4 rounded-md border">
-							<p className="text-lg font-semibold text-[#014361]">
+							<p className="text-lg text-[#014361]">
 								Click to view and download all accepted applicants.
 							</p>
 							<Link href="/applicants">

@@ -20,6 +20,7 @@ import ConfirmDialog from '../dialog';
 import Acceptance from '../organiserAccept';
 import AdminDialog from '../adminDialog';
 import CircularLoader from '@/app/circularLoader';
+import {useRouter} from 'next/router';
 
 const axios = new API.Axios();
 
@@ -264,7 +265,7 @@ export default function details(props: {params: {id: number}}) {
 										height: '4rem',
 										width: '4rem',
 									}}
-									className='right-3 sm:right-6'
+									className="right-3 sm:right-6"
 									style={{backgroundColor: '#1565c0', zIndex: 10}}>
 									<svg
 										xmlns="http://www.w3.org/2000/svg"
