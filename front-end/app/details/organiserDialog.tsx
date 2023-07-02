@@ -18,8 +18,6 @@ const axios = new API.Axios();
 export default function OrganiserDialog(props: {
 	title: any;
 	id: number;
-	sPopUp: {show: Function; message: Function};
-	fPopUp: {show: Function; message: Function};
 	setApproved: Function;
 }) {
 	const [open, setOpen] = React.useState(false);
@@ -38,25 +36,23 @@ export default function OrganiserDialog(props: {
 		} else if (accept === '0') {
 			url += 'reject';
 		}
+		debugger;
 		const response = await axios.post(API.get_url(url, props.id), {
 			message: messageRef.current?.value,
 		});
 		if (response.status === 200) {
 			setOpen(false);
-			props.sPopUp.show(true);
-			props.sPopUp.message(response.data);
+			// TODO make a success popup with respose.data;
 			props.setApproved(true);
 		} else {
 			setOpen(false);
-			props.fPopUp.show(true);
-			props.fPopUp.message(response.data);
+			// TODO make a failed popup with response.data
 		}
 		console.log(response);
 	};
 
 	const [loading, setLoading] = React.useState(false);
 	const messageRef = React.useRef<HTMLInputElement>(null);
-	// TODO for comments you can use react query to get the value of textfield else use useRef for textfield
 
 	return (
 		<div className="mt-2">

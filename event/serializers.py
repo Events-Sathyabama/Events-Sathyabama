@@ -310,6 +310,27 @@ class EventProgressSerializer(serializers.ModelSerializer):
         if obj.status == 8:  # Certified
             progress = 8
 
+class EventOrganizer(serializers.ModelSerializer):
+    eventStatus = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Event
+        fields = [
+            'pk',
+            'title',
+            'applicationStatus',
+            'club',
+            'eventStatus'
+        ]
+        
+    def get_eventStatus(self, obj):
+        user = self.context.get('request').user
+        status = obj.status
+        if user.role == 0:
+            if status > 5:
+                return 'Completed'
+        return obj.get_status_display()
+
 
 class EventRegisterdCompleted(serializers.ModelSerializer):
     applicationStatus = serializers.SerializerMethodField()

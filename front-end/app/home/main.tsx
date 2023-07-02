@@ -76,6 +76,7 @@ export default function Main(props: {url: string; heading: string}) {
 							setPageNo(1);
 							return;
 						}
+						console.log(response.data.results);
 						setTotalPage(response.data.total_pages);
 						setData(response.data.results);
 						setShowSearch(true);

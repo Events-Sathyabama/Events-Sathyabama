@@ -13,7 +13,6 @@ import {
 } from '../datainterface';
 import CustomTabs from './customTabs';
 const axios = new API.Axios();
-// TODO fetch the application status of students in this way
 const rows = [
 	{
 		title: 'Madhugai - The Strength',
@@ -59,7 +58,7 @@ const rows = [
 	},
 ];
 
-// TODO Fetch Event Status in this way
+// TODO Remove this object at end leave it for example for now
 // used 0 based indexing
 const organiser = [
 	{
