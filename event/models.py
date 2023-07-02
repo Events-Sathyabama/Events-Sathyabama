@@ -5,6 +5,8 @@ from django.core.exceptions import ValidationError
 from django.db.models import Q
 from user.models import Branch
 from .fakequeryset import FakeQuerySet
+from user.serializers import UserDetail
+from django.utils import timezone
 import os
 
 User = get_user_model()
@@ -14,6 +16,7 @@ def confirm_organizer(value):
     user = User.objects.get(pk=value)
     if user.role == 0:
         raise ValidationError("Access denied for event creation.")
+
 def event_certificate_upload_path(instance, filename):
     # Construct the file path based on the event ID
     event_id = str(instance.event_id)
@@ -26,9 +29,11 @@ def default_accepted_role():
     return [0]
 
 def FileToLarge(value):
-    limit = 10 * 1024 * 1024
+    size_in_mb = 10
+    limit = size_in_mb * 1024 * 1024
     if value.size > limit:
-        raise ValidationError('File too large. Size should not exceed 2 MiB.')
+        raise ValidationError(f'File too large. Size should not exceed {size_in_mb} MiB.')
+
 class EventParticipant(models.Model):
     STATUS_CHOICES = (
         ('0', 'Not Applicable'),
@@ -55,6 +60,79 @@ class EventParticipant(models.Model):
     class Meta:
         unique_together = ('event', 'user')
 
+def default_history(user):
+    return [
+            {
+                'user': UserDetail(user).data,
+                'title': 'Event Created',
+                'message': '',
+                'date': timezone.now().isoformat(),
+                'status':1
+            },
+            {
+                'user': None,
+                'title': 'Approved by the Head of Department',
+                'message': '',
+                'date': None,
+                'status': -1,
+            },
+            {
+                'user': None,
+                'title': 'Approved by the Dean',
+                'message': '',
+                'date': None,
+                'status': -1,
+            },
+            {
+                'user': None,
+                'title': 'Approved by the Vice-Chancellor',
+                'message': '',
+                'date': None,
+                'status': -1,
+            },
+            {
+                'user': None,
+                'title': 'Displayed to Students',
+                'message': '',
+                'date': None,
+                'status': -1,
+            },
+            {
+                'user': None,
+                'title': 'Event Ongoing',
+                'message': '',
+                'date': None,
+                'status': -1,
+            },
+            {
+                'user': None,
+                'title': 'Event Completed',
+                'message': '',
+                'date': None,
+                'status': -1,
+            },
+            {
+                'user': None,
+                'title': 'Report Submitted',
+                'message': '',
+                'date': None,
+                'status': -1,
+            },
+            {
+                'user': None,
+                'title': 'Report Approved',
+                'message': '',
+                'date': None,
+                'status': -1,
+            },
+            {
+                'user': None,
+                'title': 'Issued Certifications',
+                'message': '',
+                'date': None,
+                'status': -1,
+            },
+        ] 
 
 class Event(models.Model):
     STATUS_CHOICES = (
@@ -116,6 +194,13 @@ class Event(models.Model):
         5: {datetime:'', status: 0, error_message: ''},
     }
     '''
+
+    def create_timeline(self, level, user, msg):
+        if level < 0 or level > 9:
+            return False
+        self.history[level]['user'] = UserDetail(user).data
+        self.history[level]['message'] = msg
+        return True
 
     def get_participant_data(self):
         if not hasattr(self, '_participants_dict'):
@@ -180,6 +265,11 @@ class Event(models.Model):
     #     for participant in self.accepted_participant.all():
     #         if not self.applied_participant.filter(pk=participant.pk).exists():
     #             raise ValidationError(f"{participant.full_name} ({participant.college_id}) is not in the applied participant List")
+
+    def save(self, *args, **kwargs):
+        if self.pk is None or self.history is None:
+            self.history = default_history(self.owner)
+        super().save(*args, **kwargs)
 
     def register_participant(self, user):
         message = self.is_eligible_to_apply(user)

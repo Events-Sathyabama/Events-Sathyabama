@@ -14,6 +14,14 @@ class UserProfile(serializers.ModelSerializer):
         model = User
         fields = ['college_id', 'role', 'full_name', 'branch']
 
+class UserDetail(serializers.ModelSerializer):
+    branch = serializers.SerializerMethodField()
+    class Meta:
+        model = User
+        fields = ['pk', 'full_name', 'branch']
+    
+    def get_branch(self, obj):
+        return obj.branch.name if obj.branch is not None else ''
 
 class BranchSerializer(serializers.ModelSerializer):
     class Meta:

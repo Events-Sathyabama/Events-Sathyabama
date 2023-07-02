@@ -311,7 +311,8 @@ class EventProgressSerializer(serializers.ModelSerializer):
             progress = 8
 
 
-class EventRegisterdCompleted(serializers.ModelSerializer):
+
+class EventRegisterdCompletedPending(serializers.ModelSerializer):
     applicationStatus = serializers.SerializerMethodField()
     eventStatus = serializers.SerializerMethodField()
     # def to_representation(self, instance):
@@ -346,9 +347,27 @@ class EventRegisterdCompleted(serializers.ModelSerializer):
         else:
             return ""
 
+class EventOrganizer(EventRegisterdCompletedPending):
 
+    class Meta:
+        model = Event
+        fields = [
+            'pk',
+            'title',
+            'applicationStatus',
+            'club',
+            'eventStatus',
+            'history'
+        ]
 
 class ClubSerializer(serializers.ModelSerializer):
     class Meta:
         model = Club
         fields = ['abbreviation', 'name']
+
+
+
+class EventTimeLine(serializers.ModelSerializer):
+    class Meta:
+        model = Event
+        fields = ['history']

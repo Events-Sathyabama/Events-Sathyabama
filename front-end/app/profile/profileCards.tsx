@@ -25,11 +25,23 @@ const ExpandMore = styled((props: ExpandMoreProps) => {
 	}),
 }));
 
-export default function ProfileCards(props: any) {
+export default function ProfileCards(props: {
+	title: string;
+	club: string;
+	pk: number;
+	eventStatus: string;
+	current?: number;
+	applicationStatus?: string;
+	description?: string;
+	failed?: number;
+	failedLabel?: string | string[];
+	variant?: string;
+	history?: any;
+}) {
 	const [expanded, setExpanded] = React.useState(false);
 	let applicationStatus = '';
 	if (API.get_user_detail().role.toLowerCase() === 'student') {
-		applicationStatus = props.applicationStatus;
+		applicationStatus = props.applicationStatus || '';
 	}
 	const handleExpandClick = () => {
 		setExpanded(!expanded);
@@ -111,9 +123,9 @@ export default function ProfileCards(props: any) {
 						<Collapse in={expanded} timeout="auto" unmountOnExit>
 							<CardContent>
 								<Timeline
-									current={props.current}
+									current={1}
 									failed={props.failed}
-									failedLabel={props.failedLabel}></Timeline>
+									failedLabel={'hello'}></Timeline>
 							</CardContent>
 						</Collapse>
 					</>

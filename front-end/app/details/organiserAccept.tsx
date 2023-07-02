@@ -3,12 +3,7 @@ import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
 import OrganiserDialog from './organiserDialog';
 
-export default function Acceptance(props: {
-	title: any;
-	id: number;
-	sPopUp: {show: Function; message: Function};
-	fPopUp: {show: Function; message: Function};
-}) {
+export default function Acceptance(props: {title: any; id: number}) {
 	const [approved, setApproved] = React.useState(false);
 	return (
 		<>
@@ -22,8 +17,6 @@ export default function Acceptance(props: {
 					<OrganiserDialog
 						title={props.title}
 						id={props.id}
-						sPopUp={props.sPopUp}
-						fPopUp={props.fPopUp}
 						setApproved={setApproved}></OrganiserDialog>
 				</Alert>
 			)}

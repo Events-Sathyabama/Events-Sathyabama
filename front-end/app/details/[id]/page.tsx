@@ -103,21 +103,16 @@ export default function details(props: {params: {id: number}}) {
 				setIsAccepted(true);
 			}
 			setIsApplied(true);
-			setDialog(false);
 		} catch (err: any) {
 			console.log(err);
-			if (err.response) {
-				if (err.response.data.message !== undefined) {
-					setPopupMessage(err.response.data.message);
-				} else {
-					setPopupMessage('Something went wrong!');
-				}
+			if (err.response && err.response.data.message !== undefined) {
+				setPopupMessage(err.response.data.message);
 			} else {
-				setPopupMessage(err.message);
+				setPopupMessage('Something went wrong!');
 			}
 			setFpopup(true);
-			handleError(err, setLoader);
 		}
+		closeDialog();
 		setApplying(false);
 	}
 
@@ -230,14 +225,7 @@ export default function details(props: {params: {id: number}}) {
 									<></>
 								)}
 								{DisplayApprovalTab(data) === true && (
-									<Acceptance
-										title={data?.title}
-										id={props.params.id}
-										sPopUp={{show: setSpopup, message: setPopupMessage}}
-										fPopUp={{
-											show: setFpopup,
-											message: setPopupMessage,
-										}}></Acceptance>
+									<Acceptance title={data?.title} id={props.params.id}></Acceptance>
 								)}
 								<EventTime
 									dates={data?.date}

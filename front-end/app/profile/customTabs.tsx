@@ -122,6 +122,7 @@ function PendingEventPanel(props: InterfacePanelProps) {
 					next: data.next,
 					previous: data.previous,
 					count: data.count,
+
 					setPageNo: setPageNo,
 				});
 				console.log('Pending: ', data);
@@ -142,7 +143,6 @@ function PendingEventPanel(props: InterfacePanelProps) {
 					return (
 						<ProfileCards
 							variant="organiser"
-							current={event.status}
 							title={event.title}
 							club={event.club}
 							pk={event.pk}
@@ -213,6 +213,7 @@ function CompletedEventPanel(props: InterfacePanelProps) {
 							pk={event.pk}
 							applicationStatus={event.applicationStatus}
 							eventStatus={event.eventStatus}
+							history={event.history}
 						/>
 					);
 				})

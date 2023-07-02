@@ -22,5 +22,6 @@ urlpatterns = [
     path('accept/<int:event_id>/', views.approve_event),
     path('deny/<int:event_id>/', views.deny_event),
     path('report/upload/<int:event_id>/', views.upload_report),
+    path('timeline/<int:pk>/', views.EventTimeLine.as_view()),
 
 ]

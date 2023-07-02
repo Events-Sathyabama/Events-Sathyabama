@@ -75,7 +75,7 @@ class EventDetail(generics.RetrieveAPIView):
 class EventCreate(generics.CreateAPIView):
     queryset = Event.objects.all()
     serializer_class = serializers.EventCreateSerializer
-    # Not allowed if the user role is 0
+    # TODO Not allowed if the user role is 0
     def post(self, request, *args, **kwargs):
         return super().post(request, *args, **kwargs)
 
@@ -119,7 +119,7 @@ class EventUpdate(generics.UpdateAPIView):
 
 
 class RegisteredEvent(generics.ListAPIView):
-    serializer_class = serializers.EventRegisterdCompleted
+    serializer_class = serializers.EventRegisterdCompletedPending
 
     def get_queryset(self):
         q = (Q(participants__id=self.request.user.pk) 
@@ -137,7 +137,7 @@ class RegisteredEvent(generics.ListAPIView):
         return context
 
 class CompletedEvent(generics.ListAPIView):
-    serializer_class = serializers.EventRegisterdCompleted
+    serializer_class = serializers.EventRegisterdCompletedPending
 
     def get_queryset(self):
 
@@ -157,7 +157,7 @@ class CompletedEvent(generics.ListAPIView):
         return context
 
 class OrganizingEvent(generics.ListAPIView):
-    serializer_class = serializers.EventCreateSerializer
+    serializer_class = serializers.EventOrganizer
 
     def get_queryset(self):
         q = (Q(participants__id=self.request.user.pk) 
@@ -178,7 +178,7 @@ class OrganizingEvent(generics.ListAPIView):
 
 # pending for approval
 class PendingEvent(generics.ListAPIView):
-    serializer_class = serializers.EventRegisterdCompleted
+    serializer_class = serializers.EventRegisterdCompletedPending
     # TODO not allowed for role 0
     def get_queryset(self):
         if self.request.user.role == 2: # HOD
@@ -205,36 +205,54 @@ class PendingEvent(generics.ListAPIView):
         return context
 
 
+class EventTimeLine(generics.RetrieveAPIView):
+    serializer_class = serializers.EventTimeLine
+    queryset = Event.objects.all()
+
+
 @api_view(['POST'])
 def approve_event(request, event_id):
     user_role = request.user.role
+    user = request.user
     if user_role < 2:
         return Response(data={'detail': 'Operation Not Allowed'}, status=403)
     event = Event.objects.filter(pk=event_id)
     if not event.exists():
         return Response(data={'detail': 'No Event Found'}, status=404)
     event = event.first()
+    try:
+        if user_role == 2: # hod
+            if event.hod_verified is False:
+                event.hod_verified = True
+                if not event.create_timeline(level=1, user=user, msg='Verified by HOD'):
+                    raise Exception
+                event.save()
 
-    if user_role == 2: # hod
-        if event.hod_verified is False:
-            event.hod_verified = True
-            event.save()
-        return Response(data={'detail': 'Approved Successfully'})
+        elif user_role == 3: # Dean
+            if event.dean_verified is False:
+                if event.hod_verified is True:
+                    event.dean_verified = True
+                    if not event.create_timeline(level=1, user=user, msg='Verified by Dean'):
+                        raise Exception
+                    event.save()
+                else:
+                    return Response(data={'detail': 'This event need to be verified by HOD first'})
 
-    if user_role == 3: # Dean
-        if event.dean_verified is False:
-            event.dean_verified = True
-            event.save()
-        return Response(data={'detail': 'Approved Successfully'})
+        elif user_role == 4: # VC
+            if event.vc_verified is False:
+                if event.hod_verified is False:
+                    return Response(data={'detail': 'This event need to be verified by HOD first'})
+                if event.dean_verified is False:
+                    return Response(data={'detail': 'This event need to be verified by Dean first'})
+                event.vc_verified = True
+                event.status = 4
+                if not event.create_timeline(level=1, user=user, msg='Verified by Vice-Chancellor'):
+                    raise Exception
+                event.save()
+    except:
+        return Response(data={'detail': 'Something went Wrong'}, status=500)
 
-    if user_role == 4: # VC
-        if event.vc_verified is False:
-            event.vc_verified = True
-            event.status = 4
-            event.save()
-        return Response(data={'detail': 'Approved Successfully'})
-
-    return Response(data={'detail': 'Something went Wrong'}, status=500)
+    return Response(data={'detail': 'Approved Successfully'})
 
 @api_view(['POST'])
 def deny_event(request, event_id):
