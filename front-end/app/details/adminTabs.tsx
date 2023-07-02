@@ -237,7 +237,7 @@ export default function AdminTabs(props: {
 							</ol>
 						</div>
 						<TextField
-							label="Your Event's Name Here"
+							label="Event's Name Here"
 							value={deleteVal}
 							autoComplete="off"
 							sx={{
@@ -246,7 +246,7 @@ export default function AdminTabs(props: {
 									borderColor: '#c62828',
 								},
 							}}
-							color='error'
+							color="error"
 							onChange={(e) => setDeleteVal(e.target.value)}
 							helperText="This field is Case-Sensitive."
 							style={{marginBottom: '1rem'}}
@@ -273,7 +273,7 @@ export default function AdminTabs(props: {
 							<p className="text-lg text-[#014361]">
 								Click to view and download all accepted applicants.
 							</p>
-							<Link href="/applicants">
+							<Link href="/applicants" target="_blank">
 								<Button
 									variant="contained"
 									style={{backgroundColor: '#1565c0'}}
