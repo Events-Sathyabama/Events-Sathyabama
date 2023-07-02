@@ -129,6 +129,7 @@ export interface InterfaceCompletedRegisteredEvent {
 		title: string;
 		applicationStatus: string;
 		club: string;
+		history: any;
 		eventStatus: string;
 	}[];
 	next: string | null;
@@ -145,9 +146,10 @@ export interface InterfaceEventProgress {
 		title: string;
 		club: string;
 		pk: number;
-		eventStatus: number;
+		eventStatus: string;
 		description: string;
 		failed: number;
+		history: any;
 		failedLabel: string | Array<string>;
 	}[];
 	pageNo: number;
