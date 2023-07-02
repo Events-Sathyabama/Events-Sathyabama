@@ -174,7 +174,7 @@ export default function details(props: {params: {id: number}}) {
 									</div>
 								) : (
 									<ProgressBar
-										registeredStudents={data?.accepted_count || 0}
+										registeredStudents={appliedCount}
 										totalCapacity={totalStrenth || 1}></ProgressBar>
 								)}
 							</div>

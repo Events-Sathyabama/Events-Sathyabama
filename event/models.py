@@ -276,7 +276,7 @@ class Event(models.Model):
         if message is True:
             status = '3' if self.fcfs else '2'
             self.participants.add(user, through_defaults={'status': status})
-            return [True, 'Event enrolment successful' if self.fcfs else 'Event application successfull!!']
+            return [True, 'Event enrolment successful!!' if self.fcfs else 'Event application successful!!']
         return [False, message]
 
     def is_eligible_to_apply(self, user):

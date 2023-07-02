@@ -22,6 +22,20 @@ function stringAvatar(
 		setInitials(initials);
 	}, []);
 
+	if (initials === '') {
+		return (
+			<Avatar
+				sx={{
+					width: width,
+					height: height,
+					borderRadius: '9999px',
+					bgcolor: 'gray',
+					fontSize: fontSize,
+				}}
+			/>
+		);
+	}
+
 	return (
 		<Avatar
 			sx={{
