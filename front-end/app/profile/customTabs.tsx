@@ -79,6 +79,7 @@ function RegisteredEventPanel(props: InterfacePanelProps) {
 							title={event.title}
 							club={event.club}
 							pk={event.pk}
+							history={event.history}
 							applicationStatus={event.applicationStatus}
 							eventStatus={event.eventStatus}
 						/>
@@ -115,6 +116,7 @@ function PendingEventPanel(props: InterfacePanelProps) {
 					page: pageNo,
 				});
 				const data: InterfacePaginatedData = response.data;
+				console.log('Pending: ', data);
 				setEvent({
 					pageNo: pageNo,
 					totalPageNo: data.total_pages,
@@ -149,6 +151,7 @@ function PendingEventPanel(props: InterfacePanelProps) {
 							eventStatus={event.eventStatus}
 							description={event.description}
 							failed={event.failed}
+							history={event.history}
 							failedLabel={event.failedLabel}
 						/>
 					);
@@ -247,6 +250,7 @@ function OrganisingEventPanel(props: InterfacePanelProps) {
 				const response = await axios.get(API.get_url('event:organizing'), {
 					page: pageNo,
 				});
+
 				const data: InterfacePaginatedData = response.data;
 				console.log('Organizing: ', data);
 				setEvent({
@@ -281,6 +285,7 @@ function OrganisingEventPanel(props: InterfacePanelProps) {
 							eventStatus={event.eventStatus}
 							description={event.description}
 							failed={event.failed}
+							history={event.history}
 							failedLabel={event.failedLabel}
 						/>
 					);

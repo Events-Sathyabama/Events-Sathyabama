@@ -4,6 +4,7 @@ import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
 import Typography from '@mui/material/Typography';
+import {TimeLineHistory} from '../datainterface';
 
 const steps = [
 	'Event Created',
@@ -31,51 +32,43 @@ const errorLabel = [
 	'Certifications not Issued',
 ];
 
-export default function Timeline(props: {
-	current: number;
-	failed?: number;
-	failedLabel?: string;
-}) {
-	const isStepFailed = (step: number) => {
-		return step === props.failed;
-	};
+export default function Timeline(props: {history: TimeLineHistory[] | undefined}) {
+	let currentStep = 0;
+	if (props.history) {
+		for (let i = 0; i < props.history.length; i++) {
+			if (props.history[i].status === -1) {
+				currentStep = i - 1;
+				break;
+			}
+		}
+	}
+
+	function isStepFailed(idx: number) {
+		return props.history && props.history[idx].status === 0;
+	}
 
 	return (
 		<div className="flex flex-col w-full -mt-6">
-			<Stepper activeStep={props.current} orientation="vertical">
-				{steps.map((label, index) => {
+			<Stepper activeStep={currentStep} orientation="vertical">
+				{props.history?.map((history, index) => {
 					const labelProps: {
 						optional?: React.ReactNode;
 						error?: boolean;
 					} = {};
+
 					if (isStepFailed(index)) {
-						label = errorLabel[index];
 						labelProps.optional = (
 							<Typography color="error" className="-mt-1 text-sm">
-								{Array.isArray(props.failedLabel) ? (
-									<>
-										{props.failedLabel.map((message) => {
-											return <div>{message}</div>;
-										})}
-									</>
-								) : (
-									// WARN doing some dangerous stuff
-									// TODO remove it if you find better ways
-
-									<div
-										dangerouslySetInnerHTML={{
-											__html: props.failedLabel || '',
-										}}></div>
-								)}
+								<div>{history.message}</div>
 							</Typography>
 						);
 						labelProps.error = true;
 					}
 
 					return (
-						<Step key={label}>
+						<Step key={history.title}>
 							<StepLabel {...labelProps}>
-								<p className="text-lg">{label}</p>
+								<p className="text-lg">{history.title}</p>
 							</StepLabel>
 						</Step>
 					);

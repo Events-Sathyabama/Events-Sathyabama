@@ -190,7 +190,7 @@ class PendingEvent(generics.ListAPIView):
         else:
             q = (Q(participants__id=self.request.user.pk) 
                     & (Q(eventparticipant__owner=True) | Q(eventparticipant__organizer=True))
-                    & Q(status__in=[1])
+                    & Q(status__in=[1,3])
 
             )
         if self.request.user.branch:
@@ -224,7 +224,7 @@ def approve_event(request, event_id):
         if user_role == 2: # hod
             if event.hod_verified is False:
                 event.hod_verified = True
-                if not event.create_timeline(level=1, user=user, msg='Verified by HOD'):
+                if not event.create_timeline(level=1, user=user, msg='Verified by HOD', status=1):
                     raise Exception
                 event.save()
 
@@ -232,7 +232,7 @@ def approve_event(request, event_id):
             if event.dean_verified is False:
                 if event.hod_verified is True:
                     event.dean_verified = True
-                    if not event.create_timeline(level=1, user=user, msg='Verified by Dean'):
+                    if not event.create_timeline(level=2, user=user, msg='Verified by Dean', status=1):
                         raise Exception
                     event.save()
                 else:
@@ -246,7 +246,9 @@ def approve_event(request, event_id):
                     return Response(data={'detail': 'This event need to be verified by Dean first'})
                 event.vc_verified = True
                 event.status = 4
-                if not event.create_timeline(level=1, user=user, msg='Verified by Vice-Chancellor'):
+                if not event.create_timeline(level=3, user=user, msg='Verified by Vice-Chancellor', status=1):
+                    raise Exception
+                if not event.create_timeline(level=4, user=user, msg='Displayed', status=1):
                     raise Exception
                 event.save()
     except:
@@ -257,6 +259,8 @@ def approve_event(request, event_id):
 @api_view(['POST'])
 def deny_event(request, event_id):
     user_role = request.user.role
+    user = request.user
+    msg = request.POST.get('message')
     if user_role < 2:
         return Response(data={'detail': 'Operation Not Allowed'}, status=403)
     event = Event.objects.filter(pk=event_id)
@@ -268,6 +272,9 @@ def deny_event(request, event_id):
         if event.hod_verified is False:
             event.hod_verified = False
             event.rejected = True
+            event.status = 3
+            if not event.create_timeline(level=1, user=user, msg='Declined By HOD', status=0):
+                raise Exception
             event.save()
         return Response(data={'detail': 'Approved Successfully'})
 
@@ -275,6 +282,9 @@ def deny_event(request, event_id):
         if event.dean_verified is False:
             event.dean_verified = False
             event.rejected = True
+            event.status = 3
+            if not event.create_timeline(level=2, user=user, msg='Declined by Dean', status=0):
+                raise Exception
             event.save()
         return Response(data={'detail': 'Approved Successfully'})
         
@@ -282,6 +292,9 @@ def deny_event(request, event_id):
         if event.vc_verified is False:
             event.vc_verified = False
             event.rejected = True
+            event.status = 3
+            if not event.create_timeline(level=3, user=user, msg='Declined by VC', status=0):
+                raise Exception
             event.save()
         return Response(data={'detail': 'Approved Successfully'})
 

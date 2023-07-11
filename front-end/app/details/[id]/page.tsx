@@ -67,6 +67,7 @@ export default function details(props: {params: {id: number}}) {
 				API.get_url('event:detail', [props.params.id])
 			);
 			const data = request.data;
+			console.log(data);
 			if (request.status !== 200) {
 				setLoader(request.status);
 				return;
@@ -284,6 +285,7 @@ export default function details(props: {params: {id: number}}) {
 									participant={data?.participant || []}
 									fcfs={data?.fcfs || false}
 									eventId={props.params.id}
+									history={data?.history}
 									sPopUp={{show: setSpopup, message: setPopupMessage}}
 									fPopUp={{show: setFpopup, message: setPopupMessage}}></AdminDialog>
 							)}

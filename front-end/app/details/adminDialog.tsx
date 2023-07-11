@@ -8,7 +8,7 @@ import Typography from '@mui/material/Typography';
 import Slide from '@mui/material/Slide';
 import {TransitionProps} from '@mui/material/transitions';
 import AdminTabs from './adminTabs';
-import {InterfaceParticipant} from '../datainterface';
+import {InterfaceParticipant, TimeLineHistory} from '../datainterface';
 
 const Transition = React.forwardRef(function Transition(
 	props: TransitionProps & {
@@ -30,6 +30,7 @@ export default function AdminDialog(props: {
 	participant: InterfaceParticipant[];
 	fcfs: boolean;
 	eventId: number;
+	history: TimeLineHistory[] | undefined;
 	sPopUp: {show: Function; message: Function};
 	fPopUp: {show: Function; message: Function};
 }) {
@@ -83,6 +84,7 @@ export default function AdminDialog(props: {
 					eventId={props.eventId}
 					href={props.href}
 					title={props.title}
+					history={props.history}
 					sPopUp={props.sPopUp}
 					fPopUp={props.fPopUp}></AdminTabs>
 			</List>
