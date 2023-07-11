@@ -9,6 +9,7 @@ import IconButton, {IconButtonProps} from '@mui/material/IconButton';
 import Link from 'next/link';
 import Timeline from './timeline';
 import API from '../API';
+import {TimeLineHistory} from '../datainterface';
 
 interface ExpandMoreProps extends IconButtonProps {
 	expand: boolean;
@@ -36,7 +37,7 @@ export default function ProfileCards(props: {
 	failed?: number;
 	failedLabel?: string | string[];
 	variant?: string;
-	history?: any;
+	history?: TimeLineHistory[];
 }) {
 	const [expanded, setExpanded] = React.useState(false);
 	let applicationStatus = '';
@@ -122,10 +123,7 @@ export default function ProfileCards(props: {
 						</CardActions>
 						<Collapse in={expanded} timeout="auto" unmountOnExit>
 							<CardContent>
-								<Timeline
-									current={1}
-									failed={props.failed}
-									failedLabel={'hello'}></Timeline>
+								<Timeline history={props.history}></Timeline>
 							</CardContent>
 						</Collapse>
 					</>

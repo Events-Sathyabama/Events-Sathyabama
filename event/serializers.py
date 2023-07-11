@@ -186,15 +186,11 @@ class EventDetailSerializerHodDeanVC(EventDetailSerializerStudent):
         ]
 
 class EventDetailSerializerOrganizer(EventDetailSerializerStudent):
-    approval_message = serializers.SerializerMethodField()
     participant = serializers.SerializerMethodField()
     accepted_role = serializers.SerializerMethodField()
     declined_count = serializers.SerializerMethodField()
 
-    def get_approval_message(self, obj):
-        if obj.history is None:
-            return []
-        return obj.history
+    
 
     def get_accepted_role(self, obj):
         rv = []
@@ -227,7 +223,6 @@ class EventDetailSerializerOrganizer(EventDetailSerializerStudent):
 
     class Meta:
         fields = [
-            'approval_message',
             'participant',
             'accepted_role',
             'declined_count',
@@ -235,6 +230,7 @@ class EventDetailSerializerOrganizer(EventDetailSerializerStudent):
             'hod_verified',
             'dean_verified',
             'report_verified',
+            'history',
         ]
 
 
@@ -262,8 +258,6 @@ class EventCreateSerializer(serializers.ModelSerializer):
             'total_strength',
         ]
 
-    def save(self, *args, **kwargs):
-        return super().save(*args, **kwargs)
 
     def to_representation(self, instance):
         # Override to_representation method to customize serialized output
@@ -281,7 +275,15 @@ class EventCreateSerializer(serializers.ModelSerializer):
 
 
 class EventUpdateSerializer(EventCreateSerializer):
-    pass
+    def save(self, **kwargs):
+        instance = super().save(**kwargs)
+        instance.clear_timeline()  # Run create_timeline() function
+        instance.rejected = False
+        instance.status = 1
+        instance.save()
+        return instance
+    
+
 
 
 class EventProgressSerializer(serializers.ModelSerializer):
@@ -324,7 +326,8 @@ class EventRegisterdCompletedPending(serializers.ModelSerializer):
             'title',
             'applicationStatus',
             'club',
-            'eventStatus'
+            'eventStatus',
+            'history'
         ]
 
     def get_eventStatus(self, obj):

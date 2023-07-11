@@ -195,13 +195,19 @@ class Event(models.Model):
     }
     '''
 
-    def create_timeline(self, level, user, msg):
+    def create_timeline(self, level, user, msg, status):
         if level < 0 or level > 9:
             return False
         self.history[level]['user'] = UserDetail(user).data
         self.history[level]['message'] = msg
+        self.history[level]['status'] = status
         return True
-
+    
+    def clear_timeline(self):
+        for history in self.history:
+            if history['status'] == 0:
+                history['status'] = -1
+        
     def get_participant_data(self):
         if not hasattr(self, '_participants_dict'):
             data = {

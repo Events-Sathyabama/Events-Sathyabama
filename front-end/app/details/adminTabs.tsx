@@ -3,7 +3,7 @@ import * as React from 'react';
 import Tab from '@mui/material/Tab';
 import TabsContainer from '@mui/material/Tabs';
 import Applications from './applications';
-import {InterfaceParticipant} from '../datainterface';
+import {InterfaceParticipant, TimeLineHistory} from '../datainterface';
 import TextField from '@mui/material/TextField/TextField';
 import Timeline from '../profile/timeline';
 import {Button} from '@mui/material';
@@ -41,6 +41,7 @@ export default function AdminTabs(props: {
 	eventId: number;
 	href: string;
 	title: any;
+	history: TimeLineHistory[] | undefined;
 	sPopUp: {show: Function; message: Function};
 	fPopUp: {show: Function; message: Function};
 }) {
@@ -175,7 +176,7 @@ export default function AdminTabs(props: {
 			</TabsContainer>
 			<div className="w-full pt-3 border-t border-gray-300">
 				<TabPanel value={value} index={0} className="px-5 pt-8 w-full pb-5">
-					<Timeline current={6} failed={6} failedLabel={'Hello'}></Timeline>
+					<Timeline history={props.history}></Timeline>
 				</TabPanel>
 				<TabPanel value={value} index={2} className="px-5 pt-2 w-full pb-5">
 					<div className="flex flex-col p-4 w-full rounded-md border bg-blue-50 border-blue-300">
@@ -246,7 +247,7 @@ export default function AdminTabs(props: {
 									borderColor: '#c62828',
 								},
 							}}
-							color='error'
+							color="error"
 							onChange={(e) => setDeleteVal(e.target.value)}
 							helperText="This field is Case-Sensitive."
 							style={{marginBottom: '1rem'}}
