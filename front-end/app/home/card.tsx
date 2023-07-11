@@ -30,7 +30,7 @@ export default function HomeCard(props: HomeCardProps) {
 			<div
 				className={
 					(hover === true
-						? 'sm:hover:scale-105 sm:hover:shadow-lg hover:border-blue-500 sm:hover:my-2 sm:hover:mx-1 '
+						? 'sm:hover:shadow-lg hover:border-blue-500 border border-gray-400'
 						: '') +
 					'border border-gray-400 rounded-md bg-white transition-all duration-300 w-80 animateFadeIn'
 				}>

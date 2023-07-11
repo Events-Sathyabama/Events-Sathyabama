@@ -4,8 +4,6 @@ import * as React from 'react';
 import TextField from '@mui/material/TextField';
 import {useState} from 'react';
 import Autocomplete, {createFilterOptions} from '@mui/material/Autocomplete';
-import Checkbox from '@mui/material/Checkbox';
-import FormControlLabel from '@mui/material/FormControlLabel';
 import Button from '@mui/material/Button';
 import {MobileDatePicker} from '@mui/x-date-pickers/MobileDatePicker';
 import {LocalizationProvider} from '@mui/x-date-pickers/LocalizationProvider';
@@ -17,8 +15,6 @@ import {usePathname} from 'next/navigation';
 import {
 	InterfaceClub,
 	InterfaceBranch,
-	InterfaceOrganizer,
-	InterfaceData,
 	InterfaceError,
 	InterfaceCreateEvent,
 } from '../datainterface';
@@ -121,11 +117,15 @@ export default function Create(props: {
 					<form
 						onSubmit={handleSubmit}
 						className="flex flex-col w-full mx-5 gap-4 max-w-sm md:max-w-full">
+						<p className="text-sm text-red-600">
+							The asterisk (*) indicates a required field. These fields are mandatory
+							to be filled out.
+						</p>
 						<TextField
 							autoComplete="off"
 							required
 							id="outlined-required"
-							label="Event Name Here"
+							label="Event's Name Here"
 							fullWidth
 							error={getError.title !== null}
 							onChange={(e) => {
@@ -135,7 +135,7 @@ export default function Create(props: {
 							value={getData.title}
 							helperText={
 								getError.title ||
-								"Please limit the length of your event name, as it will be displayed on both the homepage cards and the event's details page."
+								"Please enter your event's name in this field, it will be displayed on both the homepage cards and your event's details page."
 							}
 						/>
 						<Autocomplete
@@ -197,12 +197,12 @@ export default function Create(props: {
 									{...params}
 									error={getError.club !== null}
 									required
-									label="Organiser/Club Name Here"
+									label="Club / Organiser's Name Here"
 									variant="outlined"
 									value={getData.club?.name}
 									helperText={
 										getError.club ||
-										"Please enter your club or organiser's name in this field. This will reflect on both the homepage cards and the event's details page."
+										"Please enter your club or organiser's name in this field. This will reflect on both the homepage cards and your event's details page."
 									}
 								/>
 							)}
@@ -215,7 +215,7 @@ export default function Create(props: {
 								(getError.image !== null ? 'border-red-700 text-red-700' : '') +
 								' w-auto max-w-xl truncate h-10'
 							}>
-							{imageName ? imageName : 'Upload your Event Poster Here*'}
+							{imageName ? imageName : "Upload your Event's Poster Here *"}
 							<input
 								hidden
 								accept="image/*"
@@ -229,12 +229,12 @@ export default function Create(props: {
 						</Button>
 						<p className="-mt-2 text-xs text-gray-500 ml-3">
 							{getError.image ||
-								"Event Poster will be displayed on both the homepage cards and the event's details page."}
+								"The Event's Poster will be displayed on both the homepage cards and your event's details page."}
 						</p>
 						<LocalizationProvider dateAdapter={AdapterDayjs}>
-							<div className="flex flex-col sm:flex-row w-full gap-2 sm:gap-5">
+							<div className="flex flex-col items-center sm:flex-row w-full gap-2 sm:gap-5">
 								<div className="flex flex-col gap-1">
-									<p className="ml-1">Your Event's Start Date*</p>
+									<p className="ml-1 text-gray-500">Your Event's Start Date *</p>
 									<MobileDatePicker
 										className="w-fit"
 										value={getData.start_date}
@@ -251,7 +251,7 @@ export default function Create(props: {
 									<p className="text-red-600">{getError.start_date}</p>
 								</div>
 								<div className="flex flex-col gap-1">
-									<p className="ml-1">Your Event's End Date*</p>
+									<p className="ml-1 text-gray-500">Your Event's End Date *</p>
 									<MobileDatePicker
 										disabled={getData.start_date === undefined}
 										className="w-fit"
@@ -265,14 +265,16 @@ export default function Create(props: {
 								</div>
 							</div>
 							<p className="-mt-3 text-xs text-gray-500 ml-3">
-								Date fields are optional. If it is a single day event, please specify
-								the same date for the start and end date.
+								If you are unsure about your event's date, please specify an
+								approximate date. You can edit/update this later. If it is a
+								single-day event, please specify the same date for the start and end
+								date.
 							</p>
 						</LocalizationProvider>
 						<TextField
 							autoComplete="off"
 							id="outlined-required"
-							label="Short Description Here*"
+							label="Short Description Here *"
 							fullWidth
 							error={getError.short_description !== null}
 							onChange={(event) => {
@@ -282,7 +284,7 @@ export default function Create(props: {
 							value={getData.short_description}
 							helperText={
 								getError.short_description ||
-								"This will be reflected on the homepage cards and the event's details page header."
+								"This will be reflected on the homepage cards and your event's details page header."
 							}
 							inputProps={{maxLength: 100}}
 						/>
@@ -300,7 +302,7 @@ export default function Create(props: {
 							}}
 							helperText={
 								getError.long_description ||
-								'Please provide a detailed explanation of the event in this field. Include any important details or context about the event here.'
+								'Please provide a detailed explanation of your event in this field. Include any important details or context about your event here.'
 							}
 						/>
 						{/* Branch */}
@@ -329,7 +331,7 @@ export default function Create(props: {
 									{...params}
 									error={getError.branch !== null}
 									label={getError.branch || "Event's Branch and Batch Selection"}
-									placeholder="Start typing here.."
+									placeholder="Start typing or select from the list of branches and batches here"
 								/>
 							)}
 						/>
@@ -373,41 +375,50 @@ export default function Create(props: {
 									label={
 										getError.organizer || 'Faculty and Student Coordinators Here'
 									}
-									placeholder="Name, Employee ID or Register Number Here"
+									placeholder="Select by Name, Employee ID or Register Number Here"
 								/>
 							)}
 						/>
 						<TextField
-							inputProps={{inputMode: 'numeric', pattern: '[0-9]*'}}
+							inputProps={{inputMode: 'numeric', pattern: '[0-9]*', min: 1}}
 							id="outlined-required"
-							label="Total Strength"
+							label="Total Capacity or Strength Here"
+							autoComplete="off"
 							error={getError.total_strength !== null}
 							onChange={(e) => {
-								setData.total_strength(e.target.value);
-								setError.total_strength(null);
+								if (e.target.value === '' || parseInt(e.target.value) >= 0) {
+									setData.total_strength(e.target.value);
+									setError.total_strength(null);
+								}
 							}}
 							value={getData.total_strength}
-							helperText={getError.total_strength || 'Number of Students'}
+							helperText={
+								getError.total_strength ||
+								'Please enter the total number of participants who can attend your event in this field.'
+							}
 							type="number"
 						/>
-
 						<FormControl fullWidth>
 							<InputLabel htmlFor="firstComeFirstServe-select">
-								First Come First Serve
+								Do you want to enable the FCFS application approval?
 							</InputLabel>
 							<Select
-								label="First Come First Serve"
+								label="Do you want to enable the FCFS application approval?"
 								id="firstComeFirstServe-select"
 								value={getData.fcfs}
 								onChange={(e: any) => {
 									setData.fcfs(e.target.value);
 									setError.fcfs(null);
 								}}>
-								<MenuItem value={'true'}>True</MenuItem>
-								<MenuItem value={'false'}>False</MenuItem>
+								<MenuItem value={'true'}>Yes, I would like to enable it.</MenuItem>
+								<MenuItem value={'false'}>
+									No, I'll manually approve applicants.
+								</MenuItem>
 							</Select>
 							<FormHelperText>
-								Choose whether to enable First Come First Serve option.
+								Please select whether to enable the First Come First Serve option,
+								participation is granted to applicants based on their application
+								submission order.
 							</FormHelperText>
 						</FormControl>
 
@@ -425,7 +436,7 @@ export default function Create(props: {
 							}}
 							helperText={
 								getError.date ||
-								"Please specify the dates for each sub-event(optional) in the text field above. This will be displayed on the event's details page."
+								"Please specify the dates for each sub-event (optional) in the text field above. These dates will be displayed on your event's details page."
 							}
 						/>
 						<TextField
@@ -457,9 +468,12 @@ export default function Create(props: {
 								setData.venue(event.target.value);
 								setError.venue(null);
 							}}
-							helperText={getError.venue || 'Venue is optional.'}
+							helperText={
+								getError.venue ||
+								'Please provide details regarding the venue of your event, including directions from the College Arch.'
+							}
 						/>
-						<p className="text-xs text-gray-500 ml-3 md:hidden">
+						<p className="bg-red-50 p-2 rounded-md border border-red-300 font-medium text-center md:hidden">
 							Please review the preview of your event's homepage card below and click
 							submit.
 						</p>
