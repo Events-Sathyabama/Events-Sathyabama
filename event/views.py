@@ -14,6 +14,7 @@ from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
 import user.serializers as user_serializer
 from django.contrib.auth import get_user_model
+from django.db import transaction
 
 User = get_user_model()
 class CompletedEventList(SearchQueryMixins, generics.ListAPIView):
@@ -213,6 +214,43 @@ class EventTimeLine(generics.RetrieveAPIView):
     queryset = Event.objects.all()
 
 
+class ParticipantList(generics.ListAPIView):
+    serializer_class = serializers.EventParticipantList
+    lookup_field='event_id'
+    pagination_class = None
+
+    def get_queryset(self):
+        return EventParticipant.objects.filter(event_id=self.kwargs['event_id'], owner=False, organizer=False)
+
+
+
+
+@api_view(['POST'])
+def application_approval(request, pk):
+    
+    data_dict = {data.get('pk'): '3' if data.get('status') == 1 else '1' for data in request.data}
+    participants_to_update = []
+
+    # Fetch the existing participants from the database
+    existing_participants = EventParticipant.objects.filter(user_id__in=data_dict.keys(), event=pk, owner=False, organizer=False)
+    participant_dict = {participant.user_id: participant for participant in existing_participants}
+
+    # Update the statuses and store them in the list
+    for user_id, status in data_dict.items():
+        participant = participant_dict.get(user_id)
+        if participant:
+            participant.status = status
+            participants_to_update.append(participant)
+
+    # Perform bulk update using bulk_update() method
+    with transaction.atomic():
+        EventParticipant.objects.bulk_update(
+            participants_to_update,
+            fields=['status']
+        )
+    return Response({'message': 'Application Updated', 'status':200})
+
+
 @api_view(['POST'])
 def approve_event(request, event_id):
     user_role = request.user.role
@@ -355,3 +393,11 @@ def club_branch(request):
     club = serializers.ClubSerializer(Club.objects.all(), many=True)
     branch = BranchSerializer(Branch.objects.all(), many=True)
     return Response({'club': club.data, 'branch': branch.data})
+
+
+@api_view(['GET'])
+def delete_event(reuqest, pk):
+    event = get_object_or_404(Event, pk=pk)
+    title = event.title
+    event.delete()
+    return Response({'message': f"'{title}' Deleted!!", 'status':200})

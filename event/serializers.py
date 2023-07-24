@@ -382,6 +382,20 @@ class ClubSerializer(serializers.ModelSerializer):
         fields = ['abbreviation', 'name']
 
 
+class EventParticipantList(serializers.ModelSerializer):
+    name = serializers.CharField(source='user.college_id', read_only=True)
+    register_number = serializers.CharField(source='user.full_name', read_only=True)
+    batch = serializers.CharField(source='user.batch', read_only=True)
+    branch = serializers.CharField(source='user.branch.name', read_only=True)
+    class Meta:
+        model = EventParticipant
+        fields = [
+            'register_number',
+            'name',
+            'batch',
+            'branch'
+        ]
+
 
 class EventTimeLine(serializers.ModelSerializer):
     class Meta:

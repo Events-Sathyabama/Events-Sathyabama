@@ -23,5 +23,9 @@ urlpatterns = [
     path('deny/<int:event_id>/', views.deny_event),
     path('report/upload/<int:event_id>/', views.upload_report),
     path('timeline/<int:pk>/', views.EventTimeLine.as_view()),
+    path('application_approval/<int:pk>/', views.application_approval),
+    path('participant_list/<int:event_id>/', views.ParticipantList.as_view()),
+    path('delete/<int:pk>/', views.delete_event),
+
 
 ]

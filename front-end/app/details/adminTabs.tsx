@@ -10,6 +10,7 @@ import {Button} from '@mui/material';
 import Link from 'next/link';
 import LoadingButton from '@mui/lab/LoadingButton';
 import API from '../API';
+import {useRouter} from 'next/navigation';
 import {FileUploader} from 'react-drag-drop-files';
 
 const axios = new API.Axios();
@@ -49,13 +50,27 @@ export default function AdminTabs(props: {
 	const handleChange = (event: React.SyntheticEvent, newValue: number) => {
 		setValue(newValue);
 	};
-
+	const router = useRouter();
 	const [isDeleting, setIsDeleting] = React.useState(false);
 	const [deleteVal, setDeleteVal] = React.useState('');
-	//TODO fetch timeline
-	function deleteEvent() {
+	async function deleteEvent() {
 		setIsDeleting(true);
-		//TODO delete event here after deleting throw him to home page
+		//BUG Popup is not showing.
+		try {
+			const response = await axios.get(API.get_url('event:delete', props.eventId));
+			if (response.data && response.data.status === 200) {
+				props.sPopUp.message(response.data.message);
+				props.sPopUp.show();
+				router.push('/home/upcoming');
+			} else {
+				props.fPopUp.message('Something Went Wrong!!');
+				props.fPopUp.show();
+			}
+		} catch (e) {
+			props.fPopUp.message('Could Not Delete the Event!!');
+			props.fPopUp.show();
+		}
+		setIsDeleting(false);
 	}
 
 	const reportUpload = async (file: File) => {
@@ -274,7 +289,7 @@ export default function AdminTabs(props: {
 							<p className="text-lg text-[#014361]">
 								Click to view and download all accepted applicants.
 							</p>
-							<Link href="/applicants">
+							<Link href={`/applicants/${props.eventId}/`}>
 								<Button
 									variant="contained"
 									style={{backgroundColor: '#1565c0'}}

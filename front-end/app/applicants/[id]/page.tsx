@@ -8,9 +8,13 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
+import useEffect from '@/app/useEffect';
+import API from '@/app/API';
+
+const axios = new API.Axios();
 
 interface Column {
-	id: 'name' | 'registerNum' | 'branch' | 'batch';
+	id: 'name' | 'register_number' | 'branch' | 'batch';
 	label: string;
 	minWidth?: number;
 	align?: 'right';
@@ -20,7 +24,7 @@ interface Column {
 const columns: readonly Column[] = [
 	{id: 'name', label: 'Name', minWidth: 130},
 	{
-		id: 'registerNum',
+		id: 'register_number',
 		label: 'Register Number',
 		minWidth: 100,
 		format: (value: number) => value.toLocaleString('en-US'),
@@ -37,47 +41,44 @@ const columns: readonly Column[] = [
 interface Data {
 	name: string;
 	branch: string;
-	registerNum: number;
+	register_number: number;
 	batch: string;
 }
 
 function createData(
 	name: string,
 	branch: string,
-	registerNum: number,
+	register_number: number,
 	batch: string
 ): Data {
-	return {name, branch, registerNum, batch};
+	return {name, branch, register_number, batch};
 }
 
 const jsonData = [
 	{
 		name: 'Abhishek Manikandan',
 		branch: 'BE CSE',
-		registerNum: 40110017,
+		register_number: 40110017,
 		batch: '2020-2024',
 	},
 	{
 		name: 'Rohit Challa',
 		branch: 'BE CSE',
-		registerNum: 40110017,
+		register_number: 40110017,
 		batch: '2020-2023',
 	},
 	{
 		name: 'Bandepalli Surya Anjani Kumar',
 		branch: 'BE CSE',
-		registerNum: 40110156,
+		register_number: 40110156,
 		batch: '2020-2024',
 	},
-	{name: 'Adithya', branch: 'BE CSE', registerNum: 40110127, batch: '1992-1994'},
+	{name: 'Adithya', branch: 'BE CSE', register_number: 40110127, batch: '1992-1994'},
 	// TODO Fetch data in this format
 ];
 
-const rows = jsonData.map((data) =>
-	createData(data.name, data.branch, data.registerNum, data.batch)
-);
-
-export default function Applicants() {
+export default function Applicants(props: {params: {id: number}}) {
+	const [rows, setRows] = React.useState<Data[]>([]);
 	const [page, setPage] = React.useState(0);
 	const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
@@ -93,12 +94,24 @@ export default function Applicants() {
 	function handleDownload() {
 		//TODO download excel file here bro
 	}
-
+	const [loader, setLoader] = React.useState(0);
+	const [pageNo, setPageNo] = React.useState(1);
+	useEffect(
+		async () => {
+			const response = await axios.get(
+				API.get_url('event:participant_list', props.params.id)
+			);
+			console.log(response.data);
+			setRows(response.data);
+		},
+		[pageNo],
+		setLoader
+	);
 	return (
 		<div className="flex flex-col w-full items-center">
 			<div className="flex flex-col gap-2 sm:flex-row sm:justify-between py-3 items-center w-full bg-[#1976d2]">
 				<div className="flex flex-row justify-center items-center ml-6">
-					<IconButton href='/details/11'>
+					<IconButton href="/details/11">
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							fill="none"
@@ -165,7 +178,7 @@ export default function Applicants() {
 										hover
 										role="checkbox"
 										tabIndex={-1}
-										key={row.registerNum}>
+										key={row.register_number}>
 										{columns.map((column) => {
 											const value = row[column.id];
 											return (

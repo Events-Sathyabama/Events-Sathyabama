@@ -328,7 +328,10 @@ const url: {[key: string]: Function} = {
 		return `event/apply/${id}/`;
 	},
 	'event:update_application': (id: string) => {
-		return `event/application/${id}/`;
+		return `event/application_approval/${id}/`;
+	},
+	'event:participant_list': (id: string) => {
+		return `event/participant_list/${id}/`;
 	},
 	'event:registered': () => {
 		return 'event/registered/';
@@ -350,6 +353,9 @@ const url: {[key: string]: Function} = {
 	},
 	'event:upload_report': (id: number) => {
 		return `event/report/upload/${id}/`;
+	},
+	'event:delete': (id: number) => {
+		return `event/delete/${id}/`;
 	},
 	'user:organizer': () => {
 		return 'user/organizer/';
