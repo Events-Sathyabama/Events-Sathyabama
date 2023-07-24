@@ -84,6 +84,8 @@ export default function details(props: {params: {id: number}}) {
 			setTotalStrenth(data.total_strength);
 
 			setData(data);
+			document.getElementsByTagName('title')[0].innerHTML =
+				data.title + ' | Events@Sathyabama';
 			console.log(data);
 		},
 		[],
