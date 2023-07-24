@@ -43,39 +43,25 @@ interface Data {
 	branch: string;
 	register_number: number;
 	batch: string;
+	event_name: string;
 }
 
-function createData(
-	name: string,
-	branch: string,
-	register_number: number,
-	batch: string
-): Data {
-	return {name, branch, register_number, batch};
-}
+const exportToCsv = function (data: string[][], file_name: string) {
+	var CsvString = '';
 
-const jsonData = [
-	{
-		name: 'Abhishek Manikandan',
-		branch: 'BE CSE',
-		register_number: 40110017,
-		batch: '2020-2024',
-	},
-	{
-		name: 'Rohit Challa',
-		branch: 'BE CSE',
-		register_number: 40110017,
-		batch: '2020-2023',
-	},
-	{
-		name: 'Bandepalli Surya Anjani Kumar',
-		branch: 'BE CSE',
-		register_number: 40110156,
-		batch: '2020-2024',
-	},
-	{name: 'Adithya', branch: 'BE CSE', register_number: 40110127, batch: '1992-1994'},
-	// TODO Fetch data in this format
-];
+	data.forEach(function (RowItem, RowIndex) {
+		RowItem.forEach(function (ColItem, ColIndex) {
+			CsvString += ColItem + ',';
+		});
+		CsvString += '\r\n';
+	});
+	CsvString = 'data:application/csv,' + encodeURIComponent(CsvString);
+	var x = document.createElement('A');
+	x.setAttribute('href', CsvString);
+	x.setAttribute('download', `${file_name}.csv`);
+	document.body.appendChild(x);
+	x.click();
+};
 
 export default function Applicants(props: {params: {id: number}}) {
 	const [rows, setRows] = React.useState<Data[]>([]);
@@ -92,10 +78,21 @@ export default function Applicants(props: {params: {id: number}}) {
 	};
 
 	function handleDownload() {
-		//TODO download excel file here bro
+		if (rows.length === 0) {
+			return;
+		}
+		const exportData = [['Register Number', 'Name', 'Batch', 'Branch']];
+		rows.forEach((val) => {
+			exportData.push([
+				String(val.register_number),
+				val.name,
+				val.batch,
+				val.branch,
+			]);
+		});
+		exportToCsv(exportData, rows[0].event_name);
 	}
 	const [loader, setLoader] = React.useState(0);
-	const [pageNo, setPageNo] = React.useState(1);
 	useEffect(
 		async () => {
 			const response = await axios.get(
@@ -104,8 +101,9 @@ export default function Applicants(props: {params: {id: number}}) {
 			console.log(response.data);
 			setRows(response.data);
 		},
-		[pageNo],
-		setLoader
+		[],
+		setLoader,
+		true
 	);
 	return (
 		<div className="flex flex-col w-full items-center">
@@ -130,26 +128,29 @@ export default function Applicants(props: {params: {id: number}}) {
 						Accepted Applicants
 					</p>
 				</div>
-				<Button
-					variant="outlined"
-					className="bg-white hover:bg-white sm:mr-3"
-					startIcon={
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							fill="none"
-							viewBox="0 0 24 24"
-							strokeWidth={1.5}
-							stroke="currentColor"
-							className="w-6 h-6">
-							<path
-								strokeLinecap="round"
-								strokeLinejoin="round"
-								d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"
-							/>
-						</svg>
-					}>
-					Download Excel(.xlsx) File
-				</Button>
+				{rows.length > 0 && (
+					<Button
+						variant="outlined"
+						className="bg-white hover:bg-white sm:mr-3"
+						onClick={handleDownload}
+						startIcon={
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								fill="none"
+								viewBox="0 0 24 24"
+								strokeWidth={1.5}
+								stroke="currentColor"
+								className="w-6 h-6">
+								<path
+									strokeLinecap="round"
+									strokeLinejoin="round"
+									d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"
+								/>
+							</svg>
+						}>
+						Download CSV File
+					</Button>
+				)}
 			</div>
 			<TableContainer className="mb-16 px-5">
 				<Table

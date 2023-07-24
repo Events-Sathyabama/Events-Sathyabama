@@ -383,13 +383,15 @@ class ClubSerializer(serializers.ModelSerializer):
 
 
 class EventParticipantList(serializers.ModelSerializer):
-    name = serializers.CharField(source='user.college_id', read_only=True)
-    register_number = serializers.CharField(source='user.full_name', read_only=True)
+    name = serializers.CharField(source='user.full_name', read_only=True)
+    register_number = serializers.CharField(source='user.college_id', read_only=True)
     batch = serializers.CharField(source='user.batch', read_only=True)
     branch = serializers.CharField(source='user.branch.name', read_only=True)
+    event_name = serializers.CharField(source='event.title', read_only=True)
     class Meta:
         model = EventParticipant
         fields = [
+            'event_name',
             'register_number',
             'name',
             'batch',
