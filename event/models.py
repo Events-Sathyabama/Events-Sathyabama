@@ -220,16 +220,16 @@ class Event(models.Model):
                 'involved_user': FakeQuerySet()
             }
             for participant in EventParticipant.objects.filter(event=self.pk):
-                if participant.status == '3':
+                if participant.owner:
+                    data['owner'] = participant.user
+                elif participant.organizer:
+                    data['organizer'].add(participant.user)
+                elif participant.status == '3':
                     data['accepted'].add(participant.user)
                 elif participant.status == '2':
                     data['applied'].add(participant.user)
                 elif participant.status == '1':
                     data['declined'].add(participant.user)
-                elif participant.owner:
-                    data['owner'] = participant.user
-                elif participant.organizer:
-                    data['organizer'].add(participant.user)
                 data['involved_user'].add(participant)
             self._participants_dict = data
 
