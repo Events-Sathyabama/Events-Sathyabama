@@ -56,42 +56,93 @@ export default function Applications(props: ApplicationProps) {
 		setDisabled(false);
 	};
 
+	const handleUndo = (index: number) => {
+		const updatedStatus = [...updatedApplications];
+		updatedStatus[index].status = 0;
+		setUpdatedApplications(updatedStatus);
+		setDisabled(true);
+	};
+
 	return (
-		<div className="flex flex-col w-full -mt-3">
-			{updatedApplications.map((applicant, index) => (
-				<div
-					key={index}
-					className="flex flex-row w-full px-4 justify-between items-center mt-3 border-0 border-b pb-2">
-					<h1 className="text-xl p-2 w-9/12 mr-2">{applicant.name}</h1>
-					{applicant.status === 0 && (
-						<div className="flex flex-row gap-2 w-56 justify-end">
-							<Button
-								variant="outlined"
-								color="success"
-								onClick={() => handleAccept(index)}>
-								Accept
-							</Button>
-							<Button
-								variant="outlined"
-								color="error"
-								onClick={() => handleDeny(index)}>
-								Deny
-							</Button>
-						</div>
-					)}
-					{applicant.status === 1 && (
-						<div className="flex flex-row gap-2 w-56 justify-end">
-							{' '}
-							<p className="text-green-700">Accepted</p>
-						</div>
-					)}
-					{applicant.status === -1 && (
-						<div className="flex flex-row gap-2 w-56 justify-end">
-							<p className="text-red-500">Denied</p>
-						</div>
-					)}
-				</div>
-			))}
+		<div className="flex flex-col w-full">
+			<div className="flex flex-col w-full min-h-[54vh]">
+				{updatedApplications.map((applicant, index) => (
+					<div
+						key={index}
+						className="flex flex-row w-full px-4 justify-between items-center mt-3 border-0 border-b pb-2">
+						<h1 className="text-xl p-2 w-9/12 mr-2">{applicant.name}</h1>
+						{applicant.status === 0 && (
+							<div className="flex flex-row gap-2 w-56 justify-end">
+								<Button
+									variant="outlined"
+									color="success"
+									onClick={() => handleAccept(index)}>
+									Accept
+								</Button>
+								<Button
+									variant="outlined"
+									color="error"
+									onClick={() => handleDeny(index)}>
+									Deny
+								</Button>
+							</div>
+						)}
+						{applicant.status === 1 && (
+							<div className="flex flex-row gap-3 w-56 justify-end items-center">
+								{' '}
+								<p className="text-green-700 text-md">ACCEPTED</p>
+								<Button
+									startIcon={
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											fill="none"
+											viewBox="0 0 24 24"
+											strokeWidth={1.5}
+											stroke="currentColor"
+											className="w-6 h-6 text-[#1976d2] rotate-90">
+											<path
+												strokeLinecap="round"
+												strokeLinejoin="round"
+												d="M15 15l-6 6m0 0l-6-6m6 6V9a6 6 0 0112 0v3"
+											/>
+										</svg>
+									}
+									variant="outlined"
+									color="primary"
+									onClick={() => handleUndo(index)}>
+									Undo
+								</Button>
+							</div>
+						)}
+						{applicant.status === -1 && (
+							<div className="flex flex-row gap-2 w-56 justify-end items-center">
+								<p className="text-red-500 text-md">DENIED</p>
+								<Button
+									startIcon={
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											fill="none"
+											viewBox="0 0 24 24"
+											strokeWidth={1.5}
+											stroke="currentColor"
+											className="w-6 h-6 text-[#1976d2] rotate-90">
+											<path
+												strokeLinecap="round"
+												strokeLinejoin="round"
+												d="M15 15l-6 6m0 0l-6-6m6 6V9a6 6 0 0112 0v3"
+											/>
+										</svg>
+									}
+									variant="outlined"
+									color="primary"
+									onClick={() => handleUndo(index)}>
+									Undo
+								</Button>
+							</div>
+						)}
+					</div>
+				))}
+			</div>
 			<div className="flex flex-col w-full justify-center items-center mt-4 gap-4">
 				<Button
 					disabled={disabled}
@@ -106,7 +157,7 @@ export default function Applications(props: ApplicationProps) {
 					page={page}
 					onChange={handleChange}
 					color="primary"
-					size="small"
+					size="medium"
 				/>
 			</div>
 		</div>

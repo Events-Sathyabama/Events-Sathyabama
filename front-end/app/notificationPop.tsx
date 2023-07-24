@@ -81,7 +81,7 @@ export default function Notifications() {
 	const [loading, setLoading] = useState(false);
 	return (
 		<div className="fixed right-24 sm:right-28 w-full md:max-w-sm">
-			<div className="absolute left-1/2 z-10 mt-3 w-96 md:max-w-sm -translate-x-1/2 transform px-4 sm:px-0 lg:max-w-3xl">
+			<div className="absolute left-1/2 z-10 mt-3 w-[23rem] md:max-w-sm -translate-x-1/2 transform px-4 sm:px-0 lg:max-w-3xl">
 				<div className="border -mt-1 border-gray-300 overflow-hidden rounded-lg shadow-lg ring-1 ring-black ring-opacity-5">
 					<div className="bg-gray-200 p-4 py-2">
 						<span className="flex items-center">

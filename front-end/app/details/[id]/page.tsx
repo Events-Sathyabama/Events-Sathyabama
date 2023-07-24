@@ -175,7 +175,7 @@ export default function details(props: {params: {id: number}}) {
 									</div>
 								) : (
 									<ProgressBar
-										registeredStudents={data?.accepted_count || 0}
+										registeredStudents={appliedCount}
 										totalCapacity={totalStrenth || 1}></ProgressBar>
 								)}
 							</div>
@@ -211,9 +211,9 @@ export default function details(props: {params: {id: number}}) {
 													fcfs={data?.fcfs || false}></BatchesComponent>
 												<Button
 													variant="contained"
-													className="w-10/12 lg:w-5/12 h-10 m-2"
+													className="w-10/12 lg:w-5/12 h-10"
 													size="large"
-													style={{backgroundColor: '#1565c0'}}
+													style={{backgroundColor: '#1565c0', margin: '0.5rem'}}
 													onClick={() => {
 														setDialog(true);
 													}}>

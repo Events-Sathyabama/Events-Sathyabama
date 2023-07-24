@@ -253,7 +253,7 @@ export default function AdminTabs(props: {
 							</ol>
 						</div>
 						<TextField
-							label="Your Event's Name Here"
+							label="Event's Name Here"
 							value={deleteVal}
 							autoComplete="off"
 							sx={{

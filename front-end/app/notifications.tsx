@@ -20,7 +20,7 @@ export default function NotificationIconButton({
 	notificationCount,
 }: NotificationIconButtonProps) {
 	return (
-		<div className="flex w-10 justify-center items-center h-10 hover:bg-blue-50 hover:border-blue-300 transition-all duration-400 border border-gray-300 rounded-full">
+		<div className="flex w-10 justify-center items-center h-10 transition-all duration-400 border border-gray-300 rounded-full">
 			{notificationCount > 0 ? (
 				<StyledBadge badgeContent={notificationCount} color="warning">
 					<svg
