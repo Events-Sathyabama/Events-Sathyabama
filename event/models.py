@@ -218,7 +218,7 @@ class Event(models.Model):
                 'organizer': FakeQuerySet(),
                 'involved_user': FakeQuerySet()
             }
-            for participant in self.participants.through.objects.filter(event=self.pk):
+            for participant in EventParticipant.objects.filter(event=self.pk):
                 if participant.status == '3':
                     data['accepted'].add(participant.user)
                 elif participant.status == '2':

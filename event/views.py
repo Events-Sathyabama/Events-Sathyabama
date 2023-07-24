@@ -12,8 +12,10 @@ from .mixins import SearchQueryMixins
 from django.db.models import Q
 from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
+import user.serializers as user_serializer
+from django.contrib.auth import get_user_model
 
-
+User = get_user_model()
 class CompletedEventList(SearchQueryMixins, generics.ListAPIView):
     serializer_class = serializers.EventCardSerializer
 
@@ -92,6 +94,11 @@ class EventCreate(generics.CreateAPIView):
 
     def perform_create(self, serializer):
         event = serializer.save()
+        organizer = []
+        
+        for pk in User.objects.filter(pk__in=self.request.data.getlist('organizer[]')):
+            organizer.append(EventParticipant(event=event, user=pk, status='0', organizer=True))
+        EventParticipant.objects.bulk_create(organizer)
         event.set_owner(self.request.user)
 
 

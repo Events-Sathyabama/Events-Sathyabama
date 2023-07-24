@@ -236,13 +236,11 @@ class EventDetailSerializerOrganizer(EventDetailSerializerStudent):
 
 class EventCreateSerializer(serializers.ModelSerializer):
     pk = serializers.ReadOnlyField()
-    organizer = user_serializer.OrganizerSerializer(many=True)
 
     class Meta:
         model = Event
         fields = [
             'pk',
-            'organizer',
             'image',
             'title',
             'short_description',
@@ -266,6 +264,8 @@ class EventCreateSerializer(serializers.ModelSerializer):
         #     instance.organizer.all(), many=True).data
         return representation
 
+
+    
     def validate_title(self, value):
         value = value.strip()
         value = value.title()
