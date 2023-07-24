@@ -22,13 +22,20 @@ export default function Applications(props: ApplicationProps) {
 		setPage(value);
 	};
 
-	function submitApplications() {
-		//TODO make post request here, array name is updatedApplications
+	async function submitApplications() {
 		console.log(updatedApplications);
-		// axios.post(API.get_url('event:update_application', props.eventId), updatedApplications);
-		props.showSuccessPopup();
-		// for Failure popup
-		// props.showFailurePopup();
+		// TODO set the popup messages.
+		try {
+			const response = await axios.post(
+				API.get_url('event:update_application', props.eventId),
+				updatedApplications
+			);
+			if (response.status === 200) {
+				props.showSuccessPopup();
+			}
+		} catch (e) {
+			props.showFailurePopup();
+		}
 	}
 
 	const {applications} = props;

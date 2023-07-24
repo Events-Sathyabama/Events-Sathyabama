@@ -66,7 +66,7 @@ export default function Page() {
 				const rv = [];
 				for (let i = 0; i < coordinator.length; i++) {
 					if (coordinator[i].college_id !== owner.college_id) {
-						rv.push(parseInt(coordinator[i].college_id));
+						rv.push(coordinator[i].pk);
 					}
 				}
 				return rv;
