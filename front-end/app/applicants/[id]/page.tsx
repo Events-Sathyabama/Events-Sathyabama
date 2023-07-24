@@ -90,7 +90,8 @@ export default function Applicants(props: {params: {id: number}}) {
 				val.branch,
 			]);
 		});
-		exportToCsv(exportData, rows[0].event_name);
+		const file_name = rows[0].event_name.split(' ').join('_') + '(Participant_List)';
+		exportToCsv(exportData, file_name);
 	}
 	const [loader, setLoader] = React.useState(0);
 	useEffect(
