@@ -228,7 +228,7 @@ export default function Page(props: {params: {id: string}}) {
 			setMessage('Event Updation Successful!');
 			setErrorPopUp(false);
 			setSuccessPopUp(true);
-			router.push(`details/${request.data.pk}`);
+			// router.push(`details/${request.data.pk}`);
 		} catch (error: any) {
 			console.error(error);
 			if (error.message === 'Network Error') {

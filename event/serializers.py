@@ -1,8 +1,9 @@
 from rest_framework import serializers
-from .models import Event, Club
+from .models import Event, Club, EventParticipant
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 import user.serializers as user_serializer
+from django.db import transaction
 
 User = get_user_model()
 
@@ -265,7 +266,16 @@ class EventCreateSerializer(serializers.ModelSerializer):
         return representation
 
 
-    
+    def save(self, *args, **kwargs):
+        event = super().save(*args, **kwargs)
+        organizer_list = self.context['request'].data.getlist('organizer[]')
+        existing_participants = EventParticipant.objects.filter(event=event).exclude(user__pk__in=organizer_list).exclude(owner=True)
+        existing_participants.delete()
+        new_participants = [EventParticipant(event=event, user_id=user_pk, organizer=True) for user_pk in organizer_list]
+        with transaction.atomic():
+            EventParticipant.objects.bulk_create(new_participants, ignore_conflicts=True)
+        return event
+
     def validate_title(self, value):
         value = value.strip()
         value = value.title()
@@ -281,6 +291,9 @@ class EventUpdateSerializer(EventCreateSerializer):
         instance.rejected = False
         instance.status = 1
         instance.save()
+
+        
+
         return instance
     
 

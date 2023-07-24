@@ -94,11 +94,7 @@ class EventCreate(generics.CreateAPIView):
 
     def perform_create(self, serializer):
         event = serializer.save()
-        organizer = []
         
-        for pk in User.objects.filter(pk__in=self.request.data.getlist('organizer[]')):
-            organizer.append(EventParticipant(event=event, user=pk, status='0', organizer=True))
-        EventParticipant.objects.bulk_create(organizer)
         event.set_owner(self.request.user)
 
 

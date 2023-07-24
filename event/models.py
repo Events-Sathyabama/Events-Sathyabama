@@ -9,6 +9,7 @@ from user.serializers import UserDetail
 from django.utils import timezone
 import os
 
+
 User = get_user_model()
 
 
