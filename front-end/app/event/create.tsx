@@ -78,6 +78,7 @@ export default function Create(props: {
 		const request = await axios.get(API.get_url('user:organizer'), {
 			q: val,
 		});
+		console.log(request.data.results);
 		setCoordinatorList(request.data.results);
 	}
 

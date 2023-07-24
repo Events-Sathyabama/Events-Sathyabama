@@ -9,6 +9,7 @@ from user.serializers import UserDetail
 from django.utils import timezone
 import os
 
+
 User = get_user_model()
 
 
@@ -218,7 +219,7 @@ class Event(models.Model):
                 'organizer': FakeQuerySet(),
                 'involved_user': FakeQuerySet()
             }
-            for participant in self.participants.through.objects.filter(event=self.pk):
+            for participant in EventParticipant.objects.filter(event=self.pk):
                 if participant.status == '3':
                     data['accepted'].add(participant.user)
                 elif participant.status == '2':

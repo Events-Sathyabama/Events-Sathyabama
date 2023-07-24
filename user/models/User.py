@@ -109,8 +109,13 @@ class User(AbstractBaseUser, PermissionsMixin):
     class Meta(AbstractUser.Meta):
         swappable = "AUTH_USER_MODEL"
 
+    
     def __str__(self):
         return f"{self.first_name} {self.last_name} ({self.email})"
+
+    @property
+    def batch(self):
+        return f'{self.joining_year if self.joining_year else "TBD"} - {self.leaving_year if self.leaving_year else "TBD"}'
 
     @property
     def full_name(self):

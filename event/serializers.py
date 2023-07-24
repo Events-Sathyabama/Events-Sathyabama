@@ -1,8 +1,9 @@
 from rest_framework import serializers
-from .models import Event, Club
+from .models import Event, Club, EventParticipant
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 import user.serializers as user_serializer
+from django.db import transaction
 
 User = get_user_model()
 
@@ -236,13 +237,11 @@ class EventDetailSerializerOrganizer(EventDetailSerializerStudent):
 
 class EventCreateSerializer(serializers.ModelSerializer):
     pk = serializers.ReadOnlyField()
-    organizer = user_serializer.OrganizerSerializer(many=True)
 
     class Meta:
         model = Event
         fields = [
             'pk',
-            'organizer',
             'image',
             'title',
             'short_description',
@@ -266,6 +265,17 @@ class EventCreateSerializer(serializers.ModelSerializer):
         #     instance.organizer.all(), many=True).data
         return representation
 
+
+    def save(self, *args, **kwargs):
+        event = super().save(*args, **kwargs)
+        organizer_list = self.context['request'].data.getlist('organizer[]')
+        existing_participants = EventParticipant.objects.filter(event=event).exclude(user__pk__in=organizer_list).exclude(owner=True)
+        existing_participants.delete()
+        new_participants = [EventParticipant(event=event, user_id=user_pk, organizer=True) for user_pk in organizer_list]
+        with transaction.atomic():
+            EventParticipant.objects.bulk_create(new_participants, ignore_conflicts=True)
+        return event
+
     def validate_title(self, value):
         value = value.strip()
         value = value.title()
@@ -281,6 +291,9 @@ class EventUpdateSerializer(EventCreateSerializer):
         instance.rejected = False
         instance.status = 1
         instance.save()
+
+        
+
         return instance
     
 
@@ -368,6 +381,22 @@ class ClubSerializer(serializers.ModelSerializer):
         model = Club
         fields = ['abbreviation', 'name']
 
+
+class EventParticipantList(serializers.ModelSerializer):
+    name = serializers.CharField(source='user.full_name', read_only=True)
+    register_number = serializers.CharField(source='user.college_id', read_only=True)
+    batch = serializers.CharField(source='user.batch', read_only=True)
+    branch = serializers.CharField(source='user.branch.name', read_only=True)
+    event_name = serializers.CharField(source='event.title', read_only=True)
+    class Meta:
+        model = EventParticipant
+        fields = [
+            'event_name',
+            'register_number',
+            'name',
+            'batch',
+            'branch'
+        ]
 
 
 class EventTimeLine(serializers.ModelSerializer):
