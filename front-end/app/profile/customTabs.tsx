@@ -9,6 +9,7 @@ import API from '../API';
 import ProfileCards from './profileCards';
 import Image from 'next/image';
 import Paginator from '../pagination';
+import {CardsLoader} from './LoadingCards';
 
 const axios = new API.Axios();
 
@@ -85,10 +86,16 @@ function RegisteredEventPanel(props: InterfacePanelProps) {
 						/>
 					);
 				})
+			) : event?.data === undefined ? (
+				<CardsLoader></CardsLoader>
 			) : (
 				<div className="flex flex-col w-full py-4 sm:py-0 sm:min-h-[68vh] items-center justify-center">
-					<Image src="/noData.svg" width={500} height={500} alt="No Data"></Image>
-					<p className="text-lg font-normal text-[#1976d2] -mt-4">
+					<Image
+						src="/profileFallback.svg"
+						width={250}
+						height={250}
+						alt="No Data"></Image>
+					<p className="text-lg font-normal text-[#1976d2] mt-4">
 						No registered events.
 					</p>
 				</div>
@@ -156,10 +163,16 @@ function PendingEventPanel(props: InterfacePanelProps) {
 						/>
 					);
 				})
+			) : event?.data === undefined ? (
+				<CardsLoader></CardsLoader>
 			) : (
 				<div className="flex flex-col w-full py-4 sm:py-0 sm:min-h-[68vh] items-center justify-center">
-					<Image src="/noData.svg" width={500} height={500} alt="No Data"></Image>
-					<p className="text-lg font-normal text-[#1976d2] -mt-4">
+					<Image
+						src="/profileFallback.svg"
+						width={250}
+						height={250}
+						alt="No Data"></Image>
+					<p className="text-lg font-normal text-[#1976d2] mt-4">
 						No registered events.
 					</p>
 				</div>
@@ -220,10 +233,16 @@ function CompletedEventPanel(props: InterfacePanelProps) {
 						/>
 					);
 				})
+			) : event?.data === undefined ? (
+				<CardsLoader></CardsLoader>
 			) : (
 				<div className="flex flex-col w-full py-4 sm:py-0 sm:min-h-[68vh] items-center justify-center">
-					<Image src="/noData.svg" width={500} height={500} alt="No Data"></Image>
-					<p className="text-lg font-normal text-[#1976d2] -mt-4">
+					<Image
+						src="/profileFallback.svg"
+						width={250}
+						height={250}
+						alt="No Data"></Image>
+					<p className="text-lg font-normal text-[#1976d2] mt-4">
 						No completed events.
 					</p>
 				</div>
@@ -290,10 +309,16 @@ function OrganisingEventPanel(props: InterfacePanelProps) {
 						/>
 					);
 				})
+			) : event?.data === undefined ? (
+				<CardsLoader></CardsLoader>
 			) : (
 				<div className="flex flex-col w-full py-4 sm:py-0 sm:min-h-[68vh] items-center justify-center">
-					<Image src="/noData.svg" width={500} height={500} alt="No Data"></Image>
-					<p className="text-lg font-normal text-[#1976d2] -mt-4">
+					<Image
+						src="/profileFallback.svg"
+						width={250}
+						height={250}
+						alt="No Data"></Image>
+					<p className="text-lg font-normal text-[#1976d2] mt-4">
 						No organising events.
 					</p>
 				</div>

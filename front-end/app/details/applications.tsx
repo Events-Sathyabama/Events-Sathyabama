@@ -90,7 +90,9 @@ export default function Applications(props: ApplicationProps) {
 						{applicant.status === 1 && (
 							<div className="flex flex-row gap-3 w-56 justify-end items-center">
 								{' '}
-								<p className="text-green-700 text-md">ACCEPTED</p>
+								<p className="text-green-700 font-medium text-md border border-green-700 p-1 px-2 rounded-md">
+									ACCEPTED
+								</p>
 								<Button
 									startIcon={
 										<svg
@@ -116,7 +118,9 @@ export default function Applications(props: ApplicationProps) {
 						)}
 						{applicant.status === -1 && (
 							<div className="flex flex-row gap-2 w-56 justify-end items-center">
-								<p className="text-red-500 text-md">DENIED</p>
+								<p className="text-red-500 font-medium text-md border border-red-600 p-1 px-2 rounded-md">
+									DENIED
+								</p>
 								<Button
 									startIcon={
 										<svg

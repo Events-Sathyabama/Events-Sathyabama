@@ -178,7 +178,7 @@ REST_FRAMEWORK = {
 
     ),
     "DEFAULT_PAGINATION_CLASS": "event_management.pagination.CustomPagination",
-    "PAGE_SIZE": 2,
+    "PAGE_SIZE": 12,
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',
         'rest_framework.renderers.BrowsableAPIRenderer',
