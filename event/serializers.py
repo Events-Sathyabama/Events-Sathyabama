@@ -271,7 +271,7 @@ class EventCreateSerializer(serializers.ModelSerializer):
         organizer_list = self.context['request'].data.getlist('organizer[]')
         existing_participants = EventParticipant.objects.filter(event=event).exclude(user__pk__in=organizer_list).exclude(owner=True)
         existing_participants.delete()
-        new_participants = [EventParticipant(event=event, user_id=user_pk, organizer=True) for user_pk in organizer_list]
+        new_participants = [EventParticipant(event=event, user_id=user_pk, organizer=True, status='0') for user_pk in organizer_list]
         with transaction.atomic():
             EventParticipant.objects.bulk_create(new_participants, ignore_conflicts=True)
         return event

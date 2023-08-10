@@ -81,17 +81,16 @@ const FileUploader: React.FC<FileUploaderProps> = ({eventId, mode}) => {
 			setUploading(true);
 			const formData = new FormData();
 			// TODO axios call here bro
-			// formData.append('file', file);
+			formData.append('file', file);
 
-			// const response = await axios.post(
-			// 	API.get_url('event:upload_report', eventId),
-			// 	formData,
-			// 	{
-			// 		headers: {
-			// 			'Content-Type': 'multipart/form-data',
-			// 		},
-			// 	}
-			// );
+			const response = await axios.post(
+				API.get_url('event:upload_report', eventId),
+				formData,
+				{
+					'Content-Type': 'multipart/form-data',
+				}
+			);
+			console.log(response);
 
 			setFileUploaded(true);
 			setUploadedFileName(file.name);
@@ -134,6 +133,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({eventId, mode}) => {
 	const deleteUploadedFile = () => {
 		setFileUploaded(false);
 		setUploadedFileName('');
+		setFileUploaded(true);
 	};
 
 	const openFileInput = () => {
@@ -161,9 +161,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({eventId, mode}) => {
 						size="large"
 						color="error"
 						onClick={() => {
-							setDeleting(true);
-							setFileUploaded(false);
-							// TODO make a call to delete the report bro
+							deleteUploadedFile();
 						}}
 						loading={deleting}
 						loadingIndicator="Deleting..."
