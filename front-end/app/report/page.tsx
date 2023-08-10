@@ -243,7 +243,7 @@ export default function Report() {
 								<a
 									href="https://github.com/Surya-Kumar-03/Event-Management"
 									target="_blank"
-									className="mx-1 cursor-pointer hover:underline">
+									className="mx-1 cursor-pointer underline text-blue-600 hover:text-red-700 transition-all duration-750">
 									link
 								</a>
 								to get started.

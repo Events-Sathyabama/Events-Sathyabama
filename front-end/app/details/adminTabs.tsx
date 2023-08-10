@@ -176,28 +176,27 @@ export default function AdminTabs(props: {
 					<Timeline history={props.history}></Timeline>
 				</TabPanel>
 				<TabPanel value={value} index={2} className="px-5 pt-2 w-full pb-5">
-					<div className="flex flex-col p-4 w-full rounded-md border bg-blue-50 border-blue-300">
-						<div className="flex w-full h-auto p-2 bg-white rounded-md my-4 border">
+					<div className="flex flex-col p-4 w-full rounded-md border border-blue-300">
+						<div className="flex w-full h-auto p-2 bg-white rounded-md my-4">
 							<ol className="space-y-1 text-gray-500 list-decimal list-inside">
 								<li>
 									To edit (or) update your event, click on the
 									<span className="font-semibold text-gray-900 ml-1">
 										EDIT / UPDATE EVENT
 									</span>{' '}
-									button.
+									button below.
 								</li>
 								<li>
-									Changes will be reflected
+									After saving, changes will be reflected
 									<span className="font-semibold text-gray-900 ml-1">
 										immediately
 									</span>{' '}
-									on both student and admin views, after saving.
+									on both student and admin views.
 								</li>
 								<li>
 									Unsaved changes will be
-									<span className="font-semibold text-gray-900 ml-1">
-										discarded.
-									</span>
+									<span className="font-semibold text-gray-900 mx-1">discarded</span>
+									automatically.
 								</li>
 							</ol>
 						</div>
@@ -210,8 +209,8 @@ export default function AdminTabs(props: {
 							</Button>
 						</Link>
 					</div>
-					<div className="flex flex-col p-4 w-full rounded-md mt-3 border bg-red-50 border-red-300">
-						<div className="flex w-full h-auto p-2 bg-white rounded-md my-4 border">
+					<div className="flex flex-col p-4 w-full rounded-md mt-3 border border-red-500">
+						<div className="flex w-full h-auto p-2 bg-white rounded-md my-4">
 							<ol className="space-y-1 text-gray-500 list-decimal list-inside">
 								<li>
 									This will
@@ -226,7 +225,7 @@ export default function AdminTabs(props: {
 									</span>{' '}
 								</li>
 								<li>
-									To delete your event, please type
+									To delete your event, please type your event's name i.e.
 									<span className="font-semibold text-gray-900 ml-1 select-none">
 										"{props.title}"
 									</span>{' '}
@@ -238,12 +237,6 @@ export default function AdminTabs(props: {
 							label="Event's Name Here"
 							value={deleteVal}
 							autoComplete="off"
-							sx={{
-								'color': '#c62828',
-								'& .MuiOutlinedInput-notchedOutline': {
-									borderColor: '#c62828',
-								},
-							}}
 							color="error"
 							onChange={(e) => setDeleteVal(e.target.value)}
 							helperText="This field is Case-Sensitive."
@@ -271,14 +264,14 @@ export default function AdminTabs(props: {
 							<p className="text-lg text-[#014361]">
 								Click to view and download all accepted applicants.
 							</p>
-							<Link href={`/applicants/${props.eventId}/`}>
+							<a href={`/applicants/${props.eventId}/`} target="_blank">
 								<Button
 									variant="contained"
 									style={{backgroundColor: '#1565c0'}}
 									className="w-72">
 									Accepted Applicants
 								</Button>
-							</Link>
+							</a>
 						</div>
 						{!props.fcfs && (
 							<Applications

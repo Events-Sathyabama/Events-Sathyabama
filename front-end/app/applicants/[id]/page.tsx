@@ -10,6 +10,7 @@ import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import useEffect from '@/app/useEffect';
 import API from '@/app/API';
+import CircularLoader from '@/app/circularLoader';
 
 const axios = new API.Axios();
 
@@ -131,8 +132,7 @@ export default function Applicants(props: {params: {id: number}}) {
 				</div>
 				{rows.length > 0 && (
 					<Button
-						variant="outlined"
-						className="bg-white hover:bg-white sm:mr-3"
+						sx={{color: 'white', marginRight: '1rem'}}
 						onClick={handleDownload}
 						startIcon={
 							<svg
@@ -153,53 +153,62 @@ export default function Applicants(props: {params: {id: number}}) {
 					</Button>
 				)}
 			</div>
-			<TableContainer className="mb-16 px-5">
-				<Table
-					stickyHeader
-					aria-label="sticky table"
-					className="border border-gray-300 mt-4 rounded-sm">
-					<TableHead>
-						<TableRow>
-							{columns.map((column) => (
-								<TableCell
-									className="text-lg text-white bg-[#1976d2]"
-									key={column.id}
-									align={column.align}
-									style={{minWidth: column.minWidth}}>
-									{column.label}
-								</TableCell>
-							))}
-						</TableRow>
-					</TableHead>
-					<TableBody>
-						{rows
-							.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-							.map((row) => {
-								return (
-									<TableRow
-										hover
-										role="checkbox"
-										tabIndex={-1}
-										key={row.register_number}>
-										{columns.map((column) => {
-											const value = row[column.id];
-											return (
-												<TableCell key={column.id} align={column.align}>
-													{value}
-												</TableCell>
-											);
-										})}
-									</TableRow>
-								);
-							})}
-					</TableBody>
-				</Table>
-			</TableContainer>
+			{loader ? (
+				<TableContainer className="mb-16 px-5">
+					<Table
+						stickyHeader
+						aria-label="sticky table"
+						className="border border-gray-300 mt-4 rounded-sm">
+						<TableHead>
+							<TableRow>
+								{columns.map((column) => (
+									<TableCell
+										sx={{
+											backgroundColor: '#1976d2',
+											fontSize: '1.125rem',
+											lineHeight: '1.75rem',
+											color: 'white',
+										}}
+										key={column.id}
+										align={column.align}
+										style={{minWidth: column.minWidth}}>
+										{column.label}
+									</TableCell>
+								))}
+							</TableRow>
+						</TableHead>
+						<TableBody>
+							{rows
+								.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+								.map((row) => {
+									return (
+										<TableRow
+											hover
+											role="checkbox"
+											tabIndex={-1}
+											key={row.register_number}>
+											{columns.map((column) => {
+												const value = row[column.id];
+												return (
+													<TableCell key={column.id} align={column.align}>
+														{value}
+													</TableCell>
+												);
+											})}
+										</TableRow>
+									);
+								})}
+						</TableBody>
+					</Table>
+				</TableContainer>
+			) : (
+				<CircularLoader remainingHeight="70vh" remainingWidth=""></CircularLoader>
+			)}
 			<TablePagination
 				rowsPerPageOptions={[10, 25, 100]}
 				component="div"
 				count={rows.length}
-				className="fixed bottom-0 right-0 bg-white w-full border border-t-2 border-blue-300"
+				className="fixed bottom-0 right-0"
 				rowsPerPage={rowsPerPage}
 				page={page}
 				onPageChange={handleChangePage}

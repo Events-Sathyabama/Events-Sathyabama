@@ -173,7 +173,7 @@ function PendingEventPanel(props: InterfacePanelProps) {
 						height={250}
 						alt="No Data"></Image>
 					<p className="text-lg font-normal text-[#1976d2] mt-4">
-						No registered events.
+						No events pending for approval.
 					</p>
 				</div>
 			)}
