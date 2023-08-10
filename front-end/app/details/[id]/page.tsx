@@ -60,6 +60,7 @@ export default function details(props: {params: {id: number}}) {
 
 	const [data, setData] = useState<InterfaceData>();
 	const [Loader, setLoader] = useState(0);
+	const [isCompleted, setCompleted] = useState(false);
 	const runOnce = true; // makes this useEffect only run once
 	useEffect(
 		async () => {
@@ -80,6 +81,9 @@ export default function details(props: {params: {id: number}}) {
 				setIsDeclined(data.is_declined);
 			}
 
+			const endDate = new Date(data.end_date);
+			const currentDate = new Date();
+			setCompleted(endDate.getTime() <= currentDate.getTime());
 			setAppliedCount(data.applied_count);
 			setTotalStrenth(data.total_strength);
 
@@ -206,7 +210,7 @@ export default function details(props: {params: {id: number}}) {
 														</Alert>
 													);
 											})()
-										) : (
+										) : (appliedCount < totalStrenth && !isCompleted) ? (
 											<div className="flex flex-col lg:flex-row bg-slate-50 border border-slate-300 py-2 justify-between items-center lg:items-start rounded-md w-full">
 												<BatchesComponent
 													batches={data?.branch}
@@ -222,7 +226,7 @@ export default function details(props: {params: {id: number}}) {
 													Apply for Event
 												</Button>
 											</div>
-										)}
+										) : null}
 									</>
 								) : (
 									<></>
