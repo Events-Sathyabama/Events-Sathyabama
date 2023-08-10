@@ -33,6 +33,7 @@ export default function AdminDialog(props: {
 	history: TimeLineHistory[] | undefined;
 	sPopUp: {show: Function; message: Function};
 	fPopUp: {show: Function; message: Function};
+	report_link: string | undefined;
 }) {
 	const handleClose = () => {
 		props.adminClose();
@@ -76,6 +77,7 @@ export default function AdminDialog(props: {
 			</AppBar>
 			<List>
 				<AdminTabs
+					report_link={props.report_link}
 					showSuccessPopup={() => props.showSuccessPopup()}
 					showFailurePopup={() => props.showFailurePopup()}
 					isOrganizer={props.isOrganizer}

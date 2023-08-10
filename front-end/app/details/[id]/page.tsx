@@ -64,13 +64,13 @@ export default function details(props: {params: {id: number}}) {
 	const runOnce = true; // makes this useEffect only run once
 	useEffect(
 		async () => {
-			const request = await axios.get(
+			const response = await axios.get(
 				API.get_url('event:detail', [props.params.id])
 			);
-			const data = request.data;
+			const data = response.data;
 			console.log(data);
-			if (request.status !== 200) {
-				setLoader(request.status);
+			if (response.status !== 200) {
+				setLoader(response.status);
 				return;
 			}
 			if (!data.hasOwnProperty('is_applied')) {
@@ -210,7 +210,7 @@ export default function details(props: {params: {id: number}}) {
 														</Alert>
 													);
 											})()
-										) : (appliedCount < totalStrenth && !isCompleted) ? (
+										) : appliedCount < totalStrenth && !isCompleted ? (
 											<div className="flex flex-col lg:flex-row bg-slate-50 border border-slate-300 py-2 justify-between items-center lg:items-start rounded-md w-full">
 												<BatchesComponent
 													batches={data?.branch}
@@ -281,6 +281,7 @@ export default function details(props: {params: {id: number}}) {
 							)}
 							{showAdmin && (
 								<AdminDialog
+									report_link={data?.report}
 									href={`/event/update/${props.params.id}`}
 									adminClose={closeAdmin}
 									title={data?.title}

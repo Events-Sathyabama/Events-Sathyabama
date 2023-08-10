@@ -350,7 +350,7 @@ def upload_report(request, event_id):
         event.report = report_file
         event.status = 6
         event.save()
-        return Response(data={'detail': 'Report Uploaded!!'})
+        return Response(data={'detail': 'Report Uploaded!!', 'link': request.build_absolute_uri(event.report.url)})
     else:
         return Response(data={'detail': 'Please send a valid File!!'})
 
