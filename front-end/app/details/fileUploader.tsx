@@ -18,7 +18,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({eventId, mode}) => {
 	const [dragText, setDragText] = useState(
 		'Drag and drop (or) click here to upload file'
 	);
-	const [fileUploaded, setFileUploaded] = useState(true);
+	const [fileUploaded, setFileUploaded] = useState(false);
 	const [uploading, setUploading] = useState(false);
 	const [deleting, setDeleting] = useState(false);
 	const [uploadedFileName, setUploadedFileName] = useState('');
