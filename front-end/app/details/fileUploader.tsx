@@ -82,7 +82,6 @@ const FileUploader: React.FC<FileUploaderProps> = ({eventId, mode}) => {
 			const formData = new FormData();
 			// TODO axios call here bro
 			formData.append('file', file);
-
 			const response = await axios.post(
 				API.get_url('event:upload_report', eventId),
 				formData,
@@ -130,10 +129,16 @@ const FileUploader: React.FC<FileUploaderProps> = ({eventId, mode}) => {
 		}
 	};
 
-	const deleteUploadedFile = () => {
+	const deleteUploadedFile = async () => {
 		setFileUploaded(false);
 		setUploadedFileName('');
-		setFileUploaded(true);
+		setDeleting(false);
+		const response = await axios.get(API.get_url('event:delete_report', eventId));
+		if (response.status === 200) {
+			setPopupMessage(`Report Deleted!!`);
+			setShowSuccessPopup(true);
+		}
+		console.log(response);
 	};
 
 	const openFileInput = () => {
@@ -154,9 +159,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({eventId, mode}) => {
 			onClick={openFileInput}>
 			{fileUploaded ? (
 				<div className="flex flex-col items-center w-full gap-3 p-4">
-					<p className="text-xl text-center w-80 truncate">
-						{uploadedFileName}.{mode}
-					</p>
+					<p className="text-xl text-center w-80 truncate">{uploadedFileName}</p>
 					<LoadingButton
 						size="large"
 						color="error"
