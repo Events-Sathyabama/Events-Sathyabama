@@ -105,6 +105,7 @@ export interface InterfaceData {
 	// for organizer and admins
 	rejected?: boolean;
 	report_verified?: boolean;
+	report?: string;
 }
 
 export interface InterfaceError {

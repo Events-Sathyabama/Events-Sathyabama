@@ -26,6 +26,7 @@ urlpatterns = [
     path('application_approval/<int:pk>/', views.application_approval),
     path('participant_list/<int:event_id>/', views.ParticipantList.as_view()),
     path('delete/<int:pk>/', views.delete_event),
+    path('report/<int:pk>/', views.delete_report),
 
 
 ]

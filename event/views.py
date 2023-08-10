@@ -350,7 +350,7 @@ def upload_report(request, event_id):
         event.report = report_file
         event.status = 6
         event.save()
-        return Response(data={'detail': 'Report Uploaded!!'})
+        return Response(data={'detail': 'Report Uploaded!!', 'link': request.build_absolute_uri(event.report.url)})
     else:
         return Response(data={'detail': 'Please send a valid File!!'})
 
@@ -401,3 +401,12 @@ def delete_event(reuqest, pk):
     title = event.title
     event.delete()
     return Response({'message': f"'{title}' Deleted!!", 'status':200})
+
+@api_view(['GET'])
+def delete_report(request, pk):
+    event = get_object_or_404(Event, pk=pk)
+    file_name = event.report
+    event.report = ''
+    event.save()
+    return Response({'message': f"Report Deleted!!", 'status':200})
+

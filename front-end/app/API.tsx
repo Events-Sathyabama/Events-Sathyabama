@@ -227,15 +227,21 @@ function parseJwt(token: string) {
 	return JSON.parse(jsonPayload);
 }
 
-function get_url(key: string, params?: Array<string>) {
+type UrlKeys = keyof typeof url;
+
+function get_url<K extends UrlKeys>(
+	key: K,
+	...params: Parameters<(typeof url)[K]>
+): string {
 	try {
 		if (params) {
-			if (typeof params === 'object') return url[key](...params);
+			if (Array.isArray(params)) return url[key](...params);
 			return url[key](params);
 		}
 		return url[key]();
 	} catch (e) {
 		console.log(`Can't find any url with '${key}'`);
+		return ''; // or throw an error or handle the error in another way
 	}
 }
 
@@ -293,7 +299,7 @@ const extractError = (err: any) => {
 	return rv;
 };
 
-const url: {[key: string]: Function} = {
+const url: {[key: string]: (...args: any[]) => string} = {
 	'login': () => {
 		return 'user/token/';
 	},
@@ -357,6 +363,9 @@ const url: {[key: string]: Function} = {
 	'event:delete': (id: number) => {
 		return `event/delete/${id}/`;
 	},
+	'event:delete_report': (id: number) => {
+		return `event/report/${id}/`;
+	},
 	'user:organizer': () => {
 		return 'user/organizer/';
 	},
@@ -369,7 +378,7 @@ const url: {[key: string]: Function} = {
 	'user:reset_password': () => {
 		return 'user/reset_password/';
 	},
-};
+} as const;
 const API: {[key: string]: any} = {
 	Axios: AxiosInstance,
 	jwt: parseJwt,

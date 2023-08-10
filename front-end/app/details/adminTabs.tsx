@@ -45,6 +45,7 @@ export default function AdminTabs(props: {
 	history: TimeLineHistory[] | undefined;
 	sPopUp: {show: Function; message: Function};
 	fPopUp: {show: Function; message: Function};
+	report_link?: string;
 }) {
 	const [value, setValue] = React.useState(0);
 	const handleChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -285,7 +286,10 @@ export default function AdminTabs(props: {
 				</TabPanel>
 				<TabPanel value={value} index={3}>
 					<div className="w-full h-full flex justify-center items-center">
-						<FileUpload eventId={props.eventId.toString()} mode="pdf"></FileUpload>
+						<FileUpload
+							eventId={props.eventId.toString()}
+							mode="pdf"
+							path={props.report_link}></FileUpload>
 					</div>
 				</TabPanel>
 			</div>
