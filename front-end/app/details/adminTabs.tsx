@@ -11,7 +11,7 @@ import Link from 'next/link';
 import LoadingButton from '@mui/lab/LoadingButton';
 import API from '../API';
 import {useRouter} from 'next/navigation';
-import {FileUploader} from 'react-drag-drop-files';
+import FileUpload from './fileUploader';
 
 const axios = new API.Axios();
 
@@ -73,24 +73,6 @@ export default function AdminTabs(props: {
 		setIsDeleting(false);
 	}
 
-	const reportUpload = async (file: File) => {
-		try {
-			const response = await axios.post(
-				API.get_url('event:upload_report', props.eventId),
-				{file: file},
-				{
-					'Content-Type': 'multipart/form-data',
-				}
-			);
-			props.sPopUp.show(true);
-			props.sPopUp.message('File Uploaded Successfully');
-			console.log('File uploaded successfully:', response.data);
-		} catch (error) {
-			props.fPopUp.show(true);
-			props.fPopUp.message('Error uploading file');
-			console.error(error);
-		}
-	};
 	return (
 		<div className="flex flex-col w-full sm:items-center">
 			<TabsContainer
@@ -310,25 +292,7 @@ export default function AdminTabs(props: {
 				</TabPanel>
 				<TabPanel value={value} index={3}>
 					<div className="w-full h-full flex justify-center items-center">
-						<FileUploader
-							className="helppe"
-							multiple={false}
-							handleChange={reportUpload}
-							name="file"
-							label="Drag Your File Here"
-							hoverTitle="Upload Report"
-							types={['PDF']}
-							onTypeError={(err: any) => {
-								props.fPopUp.show(true);
-								props.fPopUp.message('Only PDFs are allowed');
-								console.error(err);
-							}}
-							maxSize={10}
-							onSizeError={(err: any) => {
-								props.fPopUp.show(true);
-								props.fPopUp.message('File cannot be more than 10 MB');
-							}}
-						/>
+						<FileUpload eventId={props.eventId.toString()} mode="pdf"></FileUpload>
 					</div>
 				</TabPanel>
 			</div>
