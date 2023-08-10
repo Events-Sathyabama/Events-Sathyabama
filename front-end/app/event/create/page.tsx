@@ -171,7 +171,7 @@ export default function Page() {
 			const request = await axios.post(API.get_url('event:create'), sendData(), {
 				'Content-Type': 'multipart/form-data',
 			});
-			router.push(`details/${request.data.pk}`);
+			router.push(`/details/${request.data.pk}`);
 		} catch (error: any) {
 			for (let field in setError) {
 				setError[field](null);
