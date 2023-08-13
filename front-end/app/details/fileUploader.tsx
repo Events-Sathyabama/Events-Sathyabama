@@ -18,7 +18,7 @@ const getFileNameFromUrl = (url: string): string => {
 const FileUploader: React.FC<FileUploaderProps> = (props: FileUploaderProps) => {
 	const eventId = props.eventId;
 	const mode = props.mode;
-	let path = props.path;
+	const [path, setPath] = useState(props.path);
 
 	const [isDragOver, setIsDragOver] = useState(false);
 	const [showSuccessPopup, setShowSuccessPopup] = useState(false);
@@ -31,7 +31,7 @@ const FileUploader: React.FC<FileUploaderProps> = (props: FileUploaderProps) => 
 	const [uploading, setUploading] = useState(false);
 	const [deleting, setDeleting] = useState(false);
 	const [uploadedFileName, setUploadedFileName] = useState(
-		getFileNameFromUrl(props.path || '')
+		getFileNameFromUrl(path || '')
 	);
 	const allowedFileTypes = {
 		pdf: ['application/pdf'],
@@ -91,7 +91,6 @@ const FileUploader: React.FC<FileUploaderProps> = (props: FileUploaderProps) => 
 		try {
 			setUploading(true);
 			const formData = new FormData();
-			// TODO axios call here bro
 			formData.append('file', file);
 			const response = await axios.post(
 				API.get_url('event:upload_report', eventId),
@@ -101,7 +100,7 @@ const FileUploader: React.FC<FileUploaderProps> = (props: FileUploaderProps) => 
 				}
 			);
 			console.log(response);
-			path = response.data.link;
+			setPath(response.data.link);
 			setFileUploaded(true);
 			setUploadedFileName(file.name);
 			setPopupMessage('File Uploaded Successfully!');
