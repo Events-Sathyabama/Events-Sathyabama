@@ -35,7 +35,7 @@ const FileUploader: React.FC<FileUploaderProps> = (props: FileUploaderProps) => 
 	);
 	const allowedFileTypes = {
 		pdf: ['application/pdf'],
-		zip: ['.zip'],
+		zip: ['application/x-zip-compressed'],
 		image: ['image/jpeg', 'image/png'],
 	};
 

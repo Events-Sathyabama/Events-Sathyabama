@@ -15,7 +15,6 @@ export default function Paginator(props: pageProps) {
 				props.setPageNo(value);
 			}}
 			color="primary"
-			
 		/>
 	);
 }

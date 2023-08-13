@@ -3,7 +3,7 @@ import LetterAvatar from '../avatar';
 interface ProfileProps {
 	id: string;
 	branch?: string;
-	batch?: string,
+	batch?: string;
 	name: string;
 	role: string;
 }

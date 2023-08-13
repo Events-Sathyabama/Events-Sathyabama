@@ -154,53 +154,57 @@ export default function Applicants(props: {params: {id: number}}) {
 				)}
 			</div>
 			{loader ? (
-				<TableContainer className="mb-16 px-5">
-					<Table
-						stickyHeader
-						aria-label="sticky table"
-						className="border border-gray-300 mt-4 rounded-sm">
-						<TableHead>
-							<TableRow>
-								{columns.map((column) => (
-									<TableCell
-										sx={{
-											backgroundColor: '#1976d2',
-											fontSize: '1.125rem',
-											lineHeight: '1.75rem',
-											color: 'white',
-										}}
-										key={column.id}
-										align={column.align}
-										style={{minWidth: column.minWidth}}>
-										{column.label}
-									</TableCell>
-								))}
-							</TableRow>
-						</TableHead>
-						<TableBody>
-							{rows
-								.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-								.map((row) => {
-									return (
-										<TableRow
-											hover
-											role="checkbox"
-											tabIndex={-1}
-											key={row.register_number}>
-											{columns.map((column) => {
-												const value = row[column.id];
-												return (
-													<TableCell key={column.id} align={column.align}>
-														{value}
-													</TableCell>
-												);
-											})}
-										</TableRow>
-									);
-								})}
-						</TableBody>
-					</Table>
-				</TableContainer>
+				rows.length > 0 ? (
+					<TableContainer className="mb-16 px-5">
+						<Table
+							stickyHeader
+							aria-label="sticky table"
+							className="border border-gray-300 mt-4 rounded-sm">
+							<TableHead>
+								<TableRow>
+									{columns.map((column) => (
+										<TableCell
+											sx={{
+												backgroundColor: '#1976d2',
+												fontSize: '1.125rem',
+												lineHeight: '1.75rem',
+												color: 'white',
+											}}
+											key={column.id}
+											align={column.align}
+											style={{minWidth: column.minWidth}}>
+											{column.label}
+										</TableCell>
+									))}
+								</TableRow>
+							</TableHead>
+							<TableBody>
+								{rows
+									.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+									.map((row) => {
+										return (
+											<TableRow
+												hover
+												role="checkbox"
+												tabIndex={-1}
+												key={row.register_number}>
+												{columns.map((column) => {
+													const value = row[column.id];
+													return (
+														<TableCell key={column.id} align={column.align}>
+															{value}
+														</TableCell>
+													);
+												})}
+											</TableRow>
+										);
+									})}
+							</TableBody>
+						</Table>
+					</TableContainer>
+				) : (
+					<div className="text-center text-xl mt-4">No accepted applicants!</div>
+				)
 			) : (
 				<CircularLoader remainingHeight="70vh" remainingWidth=""></CircularLoader>
 			)}
