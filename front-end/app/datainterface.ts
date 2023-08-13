@@ -95,7 +95,7 @@ export interface InterfaceData {
 	accepted_role?: string[];
 	declined_count?: number;
 	pending_count?: number;
-	history?: TimeLineHistory[]
+	history?: TimeLineHistory[];
 
 	// for HOD VC Dean Only
 	hod_verified?: boolean;
@@ -170,12 +170,12 @@ export interface InterfacePaginatedData {
 	results: any[];
 }
 
-export interface TimeLineHistory{
-		user: {pk: number; full_name: string; branch: string};
-		title: string;
-		message: string;
-		date: string;
-		status: number;
-	}
+export interface TimeLineHistory {
+	user: {pk: number; full_name: string; branch: string};
+	title: string;
+	message: string;
+	date: string;
+	status: number;
+}
 
 export default {};

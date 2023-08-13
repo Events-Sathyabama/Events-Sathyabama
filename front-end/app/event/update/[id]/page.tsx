@@ -225,10 +225,10 @@ export default function Page(props: {params: {id: string}}) {
 					'Content-Type': 'multipart/form-data',
 				}
 			);
-			setMessage('Event Updation Successful!');
+			setMessage('Event Updation Successful, Redirecting...');
 			setErrorPopUp(false);
 			setSuccessPopUp(true);
-			router.push(`details/${request.data.pk}`);
+			setTimeout(() => router.push(`details/${request.data.pk}`), 2000);
 		} catch (error: any) {
 			console.error(error);
 			if (error.message === 'Network Error') {
