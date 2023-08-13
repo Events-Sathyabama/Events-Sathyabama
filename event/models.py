@@ -8,6 +8,7 @@ from .fakequeryset import FakeQuerySet
 from user.serializers import UserDetail
 from django.utils import timezone
 import os
+from .utils import compress
 
 
 User = get_user_model()
@@ -50,8 +51,12 @@ class EventParticipant(models.Model):
     organizer = models.BooleanField(default=False)
     certificate = models.ImageField(upload_to=event_certificate_upload_path, null=True, blank=True)
     
+    
 
     def save(self, *args, **kwargs):
+        if self.certificate:
+            cert = compress(self.certificate)
+            self.certificate = cert
         if self.owner or self.organizer:
             self.status = '0'
         if self.owner:
@@ -274,6 +279,8 @@ class Event(models.Model):
     #             raise ValidationError(f"{participant.full_name} ({participant.college_id}) is not in the applied participant List")
 
     def save(self, *args, **kwargs):
+        image = compress(self.image)
+        self.image = image
         if self.pk is None or self.history is None:
             self.history = default_history(self.owner)
         super().save(*args, **kwargs)
