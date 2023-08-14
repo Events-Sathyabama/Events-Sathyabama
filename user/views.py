@@ -12,6 +12,8 @@ from rest_framework.decorators import api_view, authentication_classes, permissi
 from django.contrib.auth import get_user_model
 from rest_framework.permissions import AllowAny
 from django.shortcuts import get_object_or_404
+from rest_framework.response import Response
+import re
 
 User = get_user_model()
 
@@ -49,16 +51,32 @@ class GetOrganizer(generics.ListAPIView):
 @api_view(['POST'])
 @authentication_classes([])
 @permission_classes([AllowAny])
-def verify_otp(request):
+def send_otp(request):
     college_id = request.data.get('college_id')
     try:
         user = get_object_or_404(User, college_id=college_id)
-        otp = request.data.get('otp')
-        if user.verify_otp(otp):
-            return HttpResponse('Verified', status=200)
+        username, domain = user.email.split('@')
+        modified_username = username[:3] + re.sub(r'\w', '*', username[3:-2]) + username[-2:] + '@' + domain
+        if user.send_otp():
+            return Response({'detail': 'OTP Sent', 'email': modified_username, 'status':200})
     except:
-        return HttpResponse("Something Went Wrong", status=500)
-    return HttpResponse('Invalid OTP',  status=400)
+        return Response({'detail': "Something Went Wrong", 'status':200}, status=500)
+    return Response({'detail': "Couldn't send OTP try again later", 'status': 200},  status=400)
+
+@api_view(['POST'])
+@authentication_classes([])
+@permission_classes([AllowAny])
+def verify_otp(request):
+    college_id = request.data.get('college_id')
+    opt = request.data.get('otp')
+    try:
+        user = get_object_or_404(User, college_id=college_id)
+        if user.verify_otp(otp):
+            return Response({'detail': 'OTP Verified', 'status':200})
+    except:
+        return Response({'detail': "Something Went Wrong", 'status':200}, status=500)
+    return Response({'detail': 'Invalid OTP', 'status': 200},  status=400)
+
 
 @api_view(['POST'])
 @authentication_classes([])
@@ -73,7 +91,7 @@ def reset_password(request):
             user = get_object_or_404(User, college_id=college_id)
             if user.verify_otp(otp):
                 user.new_password(password1)
-                return HttpResponse('Password reset successfully', status=200)
-        return HttpResponse('Passwords do not match', status=400)
+                return  Response({'detail': 'Password reset successfully', 'status':200}, status=200)
+        return Response({'detail':'Passwords do not match', 'status': 200}, status=400)
     except:
-        return HttpResponse('Something went wrong', status=500)
+        return Response({'detail':'Something went wrong', 'status': 200}, status=500)

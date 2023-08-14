@@ -137,15 +137,14 @@ class AxiosInstance {
 	}
 
 	async send_otp(college_id: string) {
-		const response = await instance.post(get_url('mail:send_otp'), {
+		const response = await instance.post(get_url('user:send_otp'), {
 			college_id: college_id,
 		});
-		console.log(response);
+		return response;
 	}
 
 	async verify_otp(otp: string) {
 		const response = await instance.post(get_url('user:verify_otp'), {otp: otp});
-		console.log(response);
 		return response;
 	}
 
@@ -154,6 +153,7 @@ class AxiosInstance {
 			password1: password1,
 			passwrod2: passwrod2,
 		});
+		return response;
 	}
 
 	async update_token() {
@@ -369,8 +369,8 @@ const url: {[key: string]: (...args: any[]) => string} = {
 	'user:organizer': () => {
 		return 'user/organizer/';
 	},
-	'mail:send_otp': () => {
-		return 'email/forgot_password/';
+	'user:send_otp': () => {
+		return 'user/send_otp/';
 	},
 	'user:verify_otp': () => {
 		return 'user/verify_otp/';

@@ -131,12 +131,15 @@ class User(AbstractBaseUser, PermissionsMixin):
     def new_password(self, password):
         self.set_password(password)
         self.save()
-        mail = Mail('password_changed')
-        mail.send_email({
-            'recipients': self.email,
-            'context': {'name': self.full_name}
-            })
-        return True
+        try:
+            mail = Mail('password_changed')
+            mail.send_email({
+                'recipients': self.email,
+                'context': {'name': self.full_name}
+                })
+            return True
+        except:
+            return False
 
     def send_otp(self):
         otp = str(random.randint(1000, 9999))
@@ -144,13 +147,16 @@ class User(AbstractBaseUser, PermissionsMixin):
         token = otp_jwt.generate_jwt_token(make_password(otp))
         self.forgot_otp = token
         self.save()
-        mail = Mail('forgot_password')
-        mail.send_email({
-            'message': {'otp': otp},
-            'recipients': self.email,
-            'context': {'otp': otp}
-        })
-        self.otp = otp
+        try:
+            mail = Mail('forgot_password')
+            mail.send_email({
+                'message': {'otp': otp},
+                'recipients': self.email,
+                'context': {'otp': otp}
+            })
+            return True
+        except: 
+            return False
 
     def verify_otp(self, otp):
         stored_otp = otp_jwt.decode_jwt_token(self.forgot_otp)
