@@ -15,6 +15,9 @@ from django.shortcuts import get_object_or_404
 import user.serializers as user_serializer
 from django.contrib.auth import get_user_model
 from django.db import transaction
+from .messages import Message
+
+message = Message()
 
 User = get_user_model()
 class CompletedEventList(SearchQueryMixins, generics.ListAPIView):
@@ -42,7 +45,6 @@ class UpcomingEventList(SearchQueryMixins, generics.ListAPIView):
 
 
 class EventDetail(generics.RetrieveAPIView):
-
     serializers = {
         'student': serializers.EventDetailSerializerStudent,
         'organizer': serializers.EventDetailSerializerOrganizer,
@@ -56,7 +58,7 @@ class EventDetail(generics.RetrieveAPIView):
             event = Event.objects.prefetch_related('eventparticipant_set__user').get(pk=event_id)
             return event
         except:
-            raise Http404("No Event Found!!!")
+            raise Http404(message.detail.not_found)
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
@@ -248,24 +250,25 @@ def application_approval(request, pk):
             participants_to_update,
             fields=['status']
         )
-    return Response({'message': 'Application Updated', 'status':200})
+    return Response({'message': message.applicaition_approval.success, 'status':200})
 
 
 @api_view(['POST'])
 def approve_event(request, event_id):
+    msg = message.event_approval
     user_role = request.user.role
     user = request.user
     if user_role < 2:
-        return Response(data={'detail': 'Operation Not Allowed'}, status=403)
+        return Response(data={'detail': msg.forbidden}, status=403)
     event = Event.objects.filter(pk=event_id)
     if not event.exists():
-        return Response(data={'detail': 'No Event Found'}, status=404)
+        return Response(data={'detail': msg.forbidden}, status=404)
     event = event.first()
     try:
         if user_role == 2: # hod
             if event.hod_verified is False:
                 event.hod_verified = True
-                if not event.create_timeline(level=1, user=user, msg='Verified by HOD', status=1):
+                if not event.create_timeline(level=1, user=user, msg=msg.hod_verified, status=1):
                     raise Exception
                 event.save()
 
@@ -273,40 +276,41 @@ def approve_event(request, event_id):
             if event.dean_verified is False:
                 if event.hod_verified is True:
                     event.dean_verified = True
-                    if not event.create_timeline(level=2, user=user, msg='Verified by Dean', status=1):
+                    if not event.create_timeline(level=2, user=user, msg=msg.dean_verified, status=1):
                         raise Exception
                     event.save()
                 else:
-                    return Response(data={'detail': 'This event need to be verified by HOD first'})
+                    return Response(data={'detail': msg.verify_hod_first})
 
         elif user_role == 4: # VC
             if event.vc_verified is False:
                 if event.hod_verified is False:
-                    return Response(data={'detail': 'This event need to be verified by HOD first'})
+                    return Response(data={'detail': msg.verify_hod_first})
                 if event.dean_verified is False:
-                    return Response(data={'detail': 'This event need to be verified by Dean first'})
+                    return Response(data={'detail': msg.verify_hod_first})
                 event.vc_verified = True
                 event.status = 4
-                if not event.create_timeline(level=3, user=user, msg='Verified by Vice-Chancellor', status=1):
+                if not event.create_timeline(level=3, user=user, msg=msg.vc_verified, status=1):
                     raise Exception
-                if not event.create_timeline(level=4, user=user, msg='Displayed', status=1):
+                if not event.create_timeline(level=4, user=user, msg=msg.approval_process_done, status=1):
                     raise Exception
                 event.save()
     except:
-        return Response(data={'detail': 'Something went Wrong'}, status=500)
+        return Response(data={'detail': msg.server_error}, status=500)
 
-    return Response(data={'detail': 'Approved Successfully'})
+    return Response(data={'detail': msg.success})
 
 @api_view(['POST'])
 def deny_event(request, event_id):
+    msg = message.event_deny
     user_role = request.user.role
     user = request.user
     msg = request.POST.get('message')
     if user_role < 2:
-        return Response(data={'detail': 'Operation Not Allowed'}, status=403)
+        return Response(data={'detail': msg.forbidden}, status=403)
     event = Event.objects.filter(pk=event_id)
     if not event.exists():
-        return Response(data={'detail': 'No Event Found'}, status=404)
+        return Response(data={'detail': msg.not_found}, status=404)
     event = event.first()
 
     if user_role == 2: # hod
@@ -314,52 +318,54 @@ def deny_event(request, event_id):
             event.hod_verified = False
             event.rejected = True
             event.status = 3
-            if not event.create_timeline(level=1, user=user, msg='Declined By HOD', status=0):
+            if not event.create_timeline(level=1, user=user, msg=msg.hod_declined, status=0):
                 raise Exception
             event.save()
-        return Response(data={'detail': 'Approved Successfully'})
+        return Response(data={'detail': msg.success})
 
     if user_role == 3: # Dean
         if event.dean_verified is False:
             event.dean_verified = False
             event.rejected = True
             event.status = 3
-            if not event.create_timeline(level=2, user=user, msg='Declined by Dean', status=0):
+            if not event.create_timeline(level=2, user=user, msg=msg.dean_declined, status=0):
                 raise Exception
             event.save()
-        return Response(data={'detail': 'Approved Successfully'})
+        return Response(data={'detail': msg.success})
         
     if user_role == 4: # VC
         if event.vc_verified is False:
             event.vc_verified = False
             event.rejected = True
             event.status = 3
-            if not event.create_timeline(level=3, user=user, msg='Declined by VC', status=0):
+            if not event.create_timeline(level=3, user=user, msg=msg.vc_declined, status=0):
                 raise Exception
             event.save()
-        return Response(data={'detail': 'Approved Successfully'})
+        return Response(data={'detail': msg.sucecss})
 
-    return Response(data={'detail': 'Something went Wrong'}, status=500)
+    return Response(data={'detail': msg.server_error}, status=500)
 
 
 @api_view(['POST'])
 def upload_report(request, event_id):
+    msg = message.report_upload
     event = Event.objects.get(id=event_id)
     report_file = request.FILES.get('file')
     if report_file:
         event.report = report_file
         event.status = 6
         event.save()
-        return Response(data={'detail': 'Report Uploaded!!', 'link': request.build_absolute_uri(event.report.url)})
+        return Response(data={'detail': msg.success, 'link': request.build_absolute_uri(event.report.url)})
     else:
-        return Response(data={'detail': 'Please send a valid File!!'})
+        return Response(data={'detail': msg.error})
 
 @api_view(['POST'])
 def upload_certs(request, event_id):
+    msg = message.cert_upload
     # Retrieve all EventParticipant objects for the specified event
     event_participants = EventParticipant.objects.filter(event_id=event_id)
     if handle_upload(request.FILES.get('cert')) is False:
-        return Response(data={'detail': 'Upload Failed'}, status=400)
+        return Response(data={'detail': msg.error}, status=400)
     participants_to_update = []
     for participant in event_participants:
         user_id = participant.user_id  # Get the user ID for each participant
@@ -369,11 +375,12 @@ def upload_certs(request, event_id):
         participants_to_update.append(participant)
 
     EventParticipant.objects.bulk_update(participants_to_update, ['certificate'])
-    return Response(data={'detail': 'Uploaded Successfully'}, status=200)
+    return Response(data={'detail': msg.success}, status=200)
 
 @api_view(['GET'])
 def apply_event(request, pk):
-    response = Response({'message': 'Event application successfull!!'})
+    msg = message.apply_event
+    response = Response({'message': msg.success})
     try:
         event = Event.objects.get(pk=pk)
         status, message = event.register_participant(user=request.user)
@@ -384,7 +391,7 @@ def apply_event(request, pk):
             response.status_code = 403
             response.data['message'] = message
     except:
-        response = Response(status=404, data={'message': 'No Event Found!!'})
+        response = Response(status=404, data={'message': msg.not_found})
     return response
 
 
@@ -397,16 +404,18 @@ def club_branch(request):
 
 @api_view(['GET'])
 def delete_event(reuqest, pk):
+    msg = message.delete_event
     event = get_object_or_404(Event, pk=pk)
     title = event.title
     event.delete()
-    return Response({'message': f"'{title}' Deleted!!", 'status':200})
+    return Response({'message': msg.success, 'status':200})
 
 @api_view(['GET'])
 def delete_report(request, pk):
+    msg = message.delete_report
     event = get_object_or_404(Event, pk=pk)
     file_name = event.report
     event.report = ''
     event.save()
-    return Response({'message': f"Report Deleted!!", 'status':200})
+    return Response({'message': msg.success, 'status':200})
 
