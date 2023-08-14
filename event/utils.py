@@ -3,6 +3,7 @@ from PIL import Image #Imported to compress images
 from django.core.files import File #to store files
 
 def compress(image):
+    return image
     if image is None:
         return None   
     im = Image.open(image)   

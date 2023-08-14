@@ -236,6 +236,7 @@ export default function Page(props: {params: {id: string}}) {
 				setSuccessPopUp(false);
 				setErrorPopUp(true);
 			} else {
+				// debugger
 				for (let field in setError) {
 					setError[field](null);
 				}
