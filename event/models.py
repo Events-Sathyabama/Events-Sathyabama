@@ -9,7 +9,9 @@ from user.serializers import UserDetail
 from django.utils import timezone
 import os
 from .utils import compress
+from .messages import Validation
 
+event = Validation().event()
 
 User = get_user_model()
 
@@ -17,7 +19,7 @@ User = get_user_model()
 def confirm_organizer(value):
     user = User.objects.get(pk=value)
     if user.role == 0:
-        raise ValidationError("Access denied for event creation.")
+        raise ValidationError(event.non_organizer_forbidden)
 
 def event_certificate_upload_path(instance, filename):
     # Construct the file path based on the event ID
@@ -34,7 +36,7 @@ def FileToLarge(value):
     size_in_mb = 10
     limit = size_in_mb * 1024 * 1024
     if value.size > limit:
-        raise ValidationError(f'File too large. Size should not exceed {size_in_mb} MiB.')
+        raise ValidationError(event.report_file_limit.format(size_in_mb))
 
 class EventParticipant(models.Model):
     STATUS_CHOICES = (
@@ -67,73 +69,74 @@ class EventParticipant(models.Model):
         unique_together = ('event', 'user')
 
 def default_history(user):
+    title = event.Timeline()
     return [
             {
                 'user': UserDetail(user).data,
-                'title': 'Event Created',
+                'title': title.title_created,
                 'message': '',
                 'date': timezone.now().isoformat(),
                 'status':1
             },
             {
                 'user': None,
-                'title': 'Approved by the Head of Department',
+                'title': title.title_hod,
                 'message': '',
                 'date': None,
                 'status': -1,
             },
             {
                 'user': None,
-                'title': 'Approved by the Dean',
+                'title': title.title_dean,
                 'message': '',
                 'date': None,
                 'status': -1,
             },
             {
                 'user': None,
-                'title': 'Approved by the Vice-Chancellor',
+                'title': title.title_vc,
                 'message': '',
                 'date': None,
                 'status': -1,
             },
             {
                 'user': None,
-                'title': 'Displayed to Students',
+                'title': title.title_display,
                 'message': '',
                 'date': None,
                 'status': -1,
             },
             {
                 'user': None,
-                'title': 'Event Ongoing',
+                'title': title.title_ongoing,
                 'message': '',
                 'date': None,
                 'status': -1,
             },
             {
                 'user': None,
-                'title': 'Event Completed',
+                'title': title.title_completed,
                 'message': '',
                 'date': None,
                 'status': -1,
             },
             {
                 'user': None,
-                'title': 'Report Submitted',
+                'title': title.title_report_uploaded,
                 'message': '',
                 'date': None,
                 'status': -1,
             },
             {
                 'user': None,
-                'title': 'Report Approved',
+                'title': title.title_report_approved,
                 'message': '',
                 'date': None,
                 'status': -1,
             },
             {
                 'user': None,
-                'title': 'Issued Certifications',
+                'title': title.title_certified,
                 'message': '',
                 'date': None,
                 'status': -1,
@@ -283,6 +286,8 @@ class Event(models.Model):
         self.image = image
         if self.pk is None or self.history is None:
             self.history = default_history(self.owner)
+        if self.hod_verified and self.dean_verified and self.vc_verified and self.status < 4:
+            self.status = 4
         super().save(*args, **kwargs)
 
     def register_participant(self, user):
@@ -290,22 +295,22 @@ class Event(models.Model):
         if message is True:
             status = '3' if self.fcfs else '2'
             self.participants.add(user, through_defaults={'status': status})
-            return [True, 'Event enrolment successful!!' if self.fcfs else 'Event application successful!!']
+            return [True, event.register_participant_fcfs_true if self.fcfs else event.register_participant_fcfs_false]
         return [False, message]
 
     def is_eligible_to_apply(self, user):
         if user.role not in self.accepted_role:
-            return f"Not open to {user.get_role_display()}"
-        if self.accepted_participant.count() > self.total_strength:
-            return "Registration quota exceeded."
+            return event.not_open_to_this_role(user.get_role_display())
+        if self.accepted_participant.count() >= self.total_strength:
+            return event.strength_full
         if self.is_organizer(user):
-            return "Not open to organisers."
+            return event.not_open_to_organizer
         if self.is_owner(user):
-            return 'Owner ineligible to apply.'
+            return event.not_open_to_owner
         if not user.has_email():
-            return "Update Email to apply."
+            return event.email_required
         if self.require_number and not user.has_phone():
-            return "Update WhatsApp to apply."
+            return event.whatsapp_required
         return True
 
     def set_owner(self, user):

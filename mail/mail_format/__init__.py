@@ -27,6 +27,7 @@ class Mail:
 
     def send_email(self, message={}, bcc=[], cc=[]):
         # send email to user with attachment
+        pass
 
         if isinstance(message, list):
         # Bulk email
