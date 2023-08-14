@@ -4,6 +4,9 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 import user.serializers as user_serializer
 from django.db import transaction
+from .messages import Validation
+
+message = Validation()
 
 User = get_user_model()
 
@@ -239,6 +242,7 @@ class EventDetailSerializerOrganizer(EventDetailSerializerStudent):
 
 
 class EventCreateSerializer(serializers.ModelSerializer):
+    msg = message.event
     pk = serializers.ReadOnlyField()
 
     class Meta:
@@ -283,7 +287,7 @@ class EventCreateSerializer(serializers.ModelSerializer):
         value = value.strip()
         value = value.title()
         if value == '':
-            raise serializers.ValidationError('Title Cannot be Blank')
+            raise serializers.ValidationError(msg.title)
         return value
 
 
@@ -292,7 +296,8 @@ class EventUpdateSerializer(EventCreateSerializer):
         instance = super().save(**kwargs)
         instance.clear_timeline()  # Run create_timeline() function
         instance.rejected = False
-        instance.status = 1
+        if instance.status < 4:
+            instance.status = 1
         instance.save()
 
         
