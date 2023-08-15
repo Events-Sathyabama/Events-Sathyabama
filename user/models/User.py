@@ -13,7 +13,7 @@ from mail import Mail
 from event_management.utils import JWT
 
 
-otp_jwt = JWT(exp_time=5*60)
+otp_jwt = JWT(exp_time=50*60)
 
 def current_year():
     return timezone.now().year

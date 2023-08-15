@@ -68,7 +68,7 @@ def send_otp(request):
 @permission_classes([AllowAny])
 def verify_otp(request):
     college_id = request.data.get('college_id')
-    opt = request.data.get('otp')
+    otp = request.data.get('otp')
     try:
         user = get_object_or_404(User, college_id=college_id)
         if user.verify_otp(otp):

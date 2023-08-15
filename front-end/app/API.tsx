@@ -143,15 +143,25 @@ class AxiosInstance {
 		return response;
 	}
 
-	async verify_otp(otp: string) {
-		const response = await instance.post(get_url('user:verify_otp'), {otp: otp});
+	async verify_otp(otp: string, college_id: number) {
+		const response = await instance.post(get_url('user:verify_otp'), {
+			otp: otp,
+			college_id: college_id,
+		});
 		return response;
 	}
 
-	async reset_password(password1: string, passwrod2: string) {
+	async reset_password(
+		password1: string,
+		passwrod2: string,
+		college_id: number,
+		otp: number
+	) {
 		const response = await instance.post(get_url('user:reset_password'), {
+			college_id: college_id,
+			otp: otp,
 			password1: password1,
-			passwrod2: passwrod2,
+			password2: passwrod2,
 		});
 		return response;
 	}
