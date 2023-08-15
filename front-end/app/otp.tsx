@@ -17,12 +17,12 @@ export default function OtpField(props: any): JSX.Element {
 		// TODO id is here
 		const user_id = localStorage.getItem('user_id');
 		try {
-			const response = await axios.verify_otp(finalValue, user_id);
 			props.setBackdrop(true);
+			const response = await axios.verify_otp(finalValue, user_id);
 			console.log(finalValue);
-			props.setBackdrop(false);
 			props.changetoPassword();
 			localStorage.setItem('otp', finalValue);
+			props.setBackdrop(false);
 		} catch (error: any) {
 			setPopUpMessage(error.response.data.detail);
 			setErrorPopUp(true);
