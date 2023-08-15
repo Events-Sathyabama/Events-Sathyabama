@@ -24,6 +24,7 @@ export default function OtpField(props: any): JSX.Element {
 			localStorage.setItem('otp', finalValue);
 			props.setBackdrop(false);
 		} catch (error: any) {
+			props.setBackdrop(false);
 			setPopUpMessage(error.response.data.detail);
 			setErrorPopUp(true);
 		}
