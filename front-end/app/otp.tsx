@@ -13,7 +13,8 @@ export default function OtpField(props: any): JSX.Element {
 
 	const handleComplete = async (finalValue: string) => {
 		// TODO do your api call here
-		//TODO I need userId here
+		// TODO id is here
+		// const user_id = localStorage.getItem('user_id');
 		const response = await axios.verify_otp(finalValue);
 		props.setBackdrop(true);
 		console.log(finalValue);

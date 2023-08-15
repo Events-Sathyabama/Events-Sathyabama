@@ -51,10 +51,13 @@ export default function LoginForm(props: {
 				if (props.variant === 'forgot') {
 					const url = API.get_url('user:send_otp');
 					const response = await axios.send_otp(values.id);
-					console.log(response);
+					console.log(response.status);
+					if (response.status === 200) {
+						localStorage.setItem('user_id', values.id);
+					}
 					props.setBackdrop(false);
 					// if the register number exists share their mail to me and change to otp page (Success)
-					debugger;
+					// debugger;
 					props.userMail(response.data.email);
 					props.changetoOtp();
 				} else {

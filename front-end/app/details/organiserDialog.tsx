@@ -36,7 +36,7 @@ export default function OrganiserDialog(props: {
 		} else if (accept === '0') {
 			url += 'reject';
 		}
-		debugger;
+		// debugger;
 		const response = await axios.post(API.get_url(url, props.id), {
 			message: messageRef.current?.value,
 		});
