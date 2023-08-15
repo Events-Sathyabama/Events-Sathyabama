@@ -1,6 +1,6 @@
 import jwt
-from datetime import datetime, timedelta
 from django.conf import settings
+from django.utils import timezone
 
 
 class JWT:
@@ -9,12 +9,12 @@ class JWT:
         self.throw_error = throw_error
 
     def generate_jwt_token(self, data):
-        secret_key = settings.SECRET_KEY  # Replace with your own secret key
-        expiration_time = datetime.utcnow() + timedelta(seconds=self.exp_time)
-
+        secret_key = settings.SECRET_KEY  
+        expiration_time = timezone.now() + timezone.timedelta(seconds=self.exp_time)
+        expiration_time = int(expiration_time.timestamp())
         payload = {
-            'iat': datetime.utcnow().isoformat(),
-            'exp': expiration_time.isoformat(),
+            'iat': int(timezone.now().timestamp()),
+            'exp': expiration_time,
             'data':data
         }
 
@@ -22,7 +22,7 @@ class JWT:
         return token
 
     def decode_jwt_token(self, token):
-        secret_key = 'your_secret_key'  # Replace with your own secret key
+        secret_key = settings.SECRET_KEY 
 
         try:
             decoded_payload = jwt.decode(token, secret_key, algorithms=['HS256'])
@@ -35,3 +35,5 @@ class JWT:
             if self.throw_error:
                 raise "Invalid Token"
             return None
+        except:
+            raise "Something Went Wrong"

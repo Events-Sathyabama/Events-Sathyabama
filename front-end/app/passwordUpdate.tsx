@@ -34,10 +34,22 @@ export default function PasswordPage(props: {
 				props.setBackdrop(true);
 				// TODO: save the password here
 				// success login that user bro
+				const college_id = localStorage.getItem('user_id');
+				const otp = localStorage.getItem('otp');
+				const response = await axios.reset_password(
+					values.password,
+					values.confirmPassword,
+					college_id,
+					otp
+				);
+				console.log(response);
+				const login_res = await axios.login(college_id, values.password);
+				console.log(login_res);
 				if (typeof window !== 'undefined') {
 					router.push('/home/upcoming');
 				}
 			} catch (err: any) {
+				console.error(err);
 				props.setBackdrop(false);
 				props.showPopUp(true, err.response?.data?.detail || 'An error occurred');
 			}

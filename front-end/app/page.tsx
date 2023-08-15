@@ -21,8 +21,6 @@ export default function LoginPage(): JSX.Element {
 	const [otp, setOtpPage] = useState(false);
 	const [passwordPage, setPasswordPage] = useState(false);
 
-	const [collegeId, setCollegeId] = useState();
-
 	const router = useRouter();
 	useEffect(() => {
 		if (API.is_logged_in()) {

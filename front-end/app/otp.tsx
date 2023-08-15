@@ -1,25 +1,32 @@
 import React from 'react';
 import {MuiOtpInput} from 'mui-one-time-password-input';
 import API from './API';
+import Popup from './popup';
 
 const axios = new API.Axios();
 
 export default function OtpField(props: any): JSX.Element {
 	const [value, setValue] = React.useState<string>('');
-
+	const [popUpMessage, setPopUpMessage] = React.useState('');
+	const [errorPopUp, setErrorPopUp] = React.useState(false);
 	const handleChange = (newValue: string) => {
 		setValue(newValue);
 	};
 
 	const handleComplete = async (finalValue: string) => {
-		// TODO do your api call here
 		// TODO id is here
-		// const user_id = localStorage.getItem('user_id');
-		const response = await axios.verify_otp(finalValue);
-		props.setBackdrop(true);
-		console.log(finalValue);
-		props.setBackdrop(false);
-		props.changetoPassword();
+		const user_id = localStorage.getItem('user_id');
+		try {
+			const response = await axios.verify_otp(finalValue, user_id);
+			props.setBackdrop(true);
+			console.log(finalValue);
+			props.setBackdrop(false);
+			props.changetoPassword();
+			localStorage.setItem('otp', finalValue);
+		} catch (error: any) {
+			setPopUpMessage(error.response.data.detail);
+			setErrorPopUp(true);
+		}
 	};
 
 	const validateChar = (value: any, index: any) => {
@@ -32,13 +39,18 @@ export default function OtpField(props: any): JSX.Element {
 	};
 
 	return (
-		<MuiOtpInput
-			value={value}
-			onChange={handleChange}
-			onComplete={handleComplete}
-			length={4}
-			validateChar={validateChar}
-			autoFocus={true}
-		/>
+		<>
+			{errorPopUp === true && (
+				<Popup.Error message={popUpMessage} showpopup={() => setErrorPopUp(false)} />
+			)}
+			<MuiOtpInput
+				value={value}
+				onChange={handleChange}
+				onComplete={handleComplete}
+				length={4}
+				validateChar={validateChar}
+				autoFocus={true}
+			/>
+		</>
 	);
 }
