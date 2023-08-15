@@ -95,6 +95,16 @@ export default function Applicants(props: {params: {id: number}}) {
 		exportToCsv(exportData, file_name);
 	}
 	const [loader, setLoader] = React.useState(0);
+
+	const [backUrl, setBackUrl] = React.useState('');
+
+	useEffect(() => {
+		const currentURL = window.location.href;
+		const parts = currentURL.split('/');
+		const lastPart = parts[parts.length - 1];
+		setBackUrl('/details/' + lastPart.toString());
+	}, []);
+
 	useEffect(
 		async () => {
 			const response = await axios.get(
@@ -111,7 +121,7 @@ export default function Applicants(props: {params: {id: number}}) {
 		<div className="flex flex-col w-full items-center">
 			<div className="flex flex-col gap-2 sm:flex-row sm:justify-between py-3 items-center w-full bg-[#1976d2]">
 				<div className="flex flex-row justify-center items-center ml-6">
-					<IconButton href="/details/11">
+					<IconButton href={backUrl}>
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							fill="none"
