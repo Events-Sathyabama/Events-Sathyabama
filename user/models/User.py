@@ -3,6 +3,7 @@ from django.contrib.auth.models import (
 )
 from django.db import models
 from django.utils import timezone
+from django.utils.timesince import timesince
 from .Branch import Branch
 from django.utils.translation import gettext_lazy as _
 from django.core.validators import MaxValueValidator, MinValueValidator
@@ -10,10 +11,11 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth.hashers import make_password, check_password
 import random
 from mail import Mail
+from django.conf import settings
 from event_management.utils import JWT
 
 
-otp_jwt = JWT(exp_time=50*60)
+otp_jwt = JWT(exp_time=settings.OTP_VALIDITY_DURATION)
 
 def current_year():
     return timezone.now().year
@@ -152,10 +154,14 @@ class User(AbstractBaseUser, PermissionsMixin):
             mail.send_email({
                 'message': {'otp': otp},
                 'recipients': self.email,
-                'context': {'otp': otp}
+                'context': {
+                    'otp': otp,
+                    'otp_validTime': settings.OTP_VALIDITY_DURATION,
+                    }
             })
             return True
-        except: 
+        except err:
+            raise err
             return False
 
     def verify_otp(self, otp):
