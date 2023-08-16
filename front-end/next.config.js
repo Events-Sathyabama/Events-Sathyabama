@@ -16,7 +16,7 @@ const nextConfig = {
 	},
 	experimental: {
 		appDir: true,
-		esmExternals: true,
+		esmExternals: "loose",
 		forceSwcTransforms: true,
 	},
 	compiler: {

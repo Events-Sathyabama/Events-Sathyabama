@@ -21,6 +21,7 @@ import Acceptance from '../organiserAccept';
 import AdminDialog from '../adminDialog';
 import CircularLoader from '@/app/circularLoader';
 import {useRouter} from 'next/router';
+import ViewReport from '../viewReport';
 
 const axios = new API.Axios();
 
@@ -40,6 +41,18 @@ const DisplayApprovalTab = (Data: InterfaceData | undefined) => {
 	} else if (user_detail.role.toLowerCase() === 'dean' && dean === false) {
 		return true;
 	} else if (user_detail.role.toLowerCase() === 'vice-chancellor' && vc === false) {
+		return true;
+	}
+	return false;
+};
+
+const isAuthority = () => {
+	const user_detail = API.get_user_detail();
+	if (user_detail.role.toLowerCase() === 'hod') {
+		return true;
+	} else if (user_detail.role.toLowerCase() === 'dean') {
+		return true;
+	} else if (user_detail.role.toLowerCase() === 'vice-chancellor') {
 		return true;
 	}
 	return false;
@@ -186,6 +199,9 @@ export default function details(props: {params: {id: number}}) {
 								)}
 							</div>
 							<div className="flex flex-col w-full justify-center items-center mt-2 gap-3">
+								{data?.report !== '' && isAuthority() ? (
+									<ViewReport reportLink={data?.report}></ViewReport>
+								) : null}
 								{!isOrganizer && data?.vc_verified ? (
 									<>
 										{isApplied ? (

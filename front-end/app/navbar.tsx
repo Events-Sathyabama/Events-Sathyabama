@@ -36,10 +36,14 @@ export default function Navbar() {
 		}
 	}, [navigator]);
 	const [isAdmin, setAdmin] = useState(false);
+	const [isVC, setIsVC] = useState(false);
 	useEffect(() => {
 		const role: String = localStorage.getItem('role_name') || '';
 		if (role === 'Teacher' || role === 'HOD' || role === 'Vice-Chancellor') {
 			setAdmin(true);
+			if (role === 'Vice-Chancellor') {
+				setIsVC(true);
+			}
 		}
 	}, []);
 
@@ -156,6 +160,20 @@ export default function Navbar() {
 													</Link>
 												)}
 											</Menu.Item>
+											{isVC && (
+												<Menu.Item>
+													{({active}) => (
+														<Link
+															href="/admin_panel"
+															className={classNames(
+																active ? 'bg-blue-50' : '',
+																'block px-4 py-2 text-lg text-gray-700'
+															)}>
+															EMS Admin Panel
+														</Link>
+													)}
+												</Menu.Item>
+											)}
 											{isAdmin ? (
 												<Menu.Item>
 													{({active}) => (
