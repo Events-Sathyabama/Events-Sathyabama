@@ -105,7 +105,7 @@ export default function OrganiserDialog(props: {
 	);
 }
 
-function AcceptDeny(props: {setValue: Function; value: string}) {
+export function AcceptDeny(props: {setValue: Function; value: string}) {
 	const {value, setValue} = props;
 
 	const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
