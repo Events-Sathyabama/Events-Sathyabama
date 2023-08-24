@@ -51,6 +51,45 @@ export default function LoginPage(): JSX.Element {
 		setPasswordPage(true);
 	}
 
+	const [timer, setTimer] = useState(0);
+	const [retryCount, setRetryCount] = useState(0);
+
+	useEffect(() => {
+		if (timer > 0) {
+			const timerInterval = setInterval(() => {
+				setTimer((prevTimer) => prevTimer - 1);
+			}, 1000);
+
+			return () => clearInterval(timerInterval);
+		}
+	}, [timer]);
+
+	const handleResend = () => {
+		// TODO axios call here bro
+		// Show Success Popup after sending otp
+
+		if (retryCount === 0) {
+			setTimer(30);
+		} else if (retryCount === 1) {
+			setTimer(60);
+		} else if (retryCount >= 2) {
+			setTimer(300);
+		}
+
+		setRetryCount((prevCount) => prevCount + 1);
+	};
+
+	const formatTime = (timeInSeconds: any) => {
+		const minutes = Math.floor(timeInSeconds / 60);
+		const seconds = timeInSeconds % 60;
+
+		if (minutes === 0) {
+			return `${seconds}s`;
+		} else {
+			return `${minutes}m ${seconds}s`;
+		}
+	};
+
 	return (
 		<div className="flex flex-col w-full min-h-screen">
 			<LandingNav></LandingNav>
@@ -150,6 +189,15 @@ export default function LoginPage(): JSX.Element {
 										setBackdrop={(state: boolean) => setValidBackdrop(state)}
 										showPopUp={handleChange}
 										changetoPassword={changetoPassword}></OtpField>
+									<button
+										onClick={handleResend}
+										disabled={timer > 0}
+										className={`text-blue-600 mt-2 w-max cursor-pointer font-roboto text-sm ${
+											timer > 0 ? 'opacity-50 cursor-not-allowed' : 'hover:underline'
+										}`}
+										id="resendButton">
+										{timer > 0 ? `Resend OTP in ${formatTime(timer)}` : 'Resend OTP'}
+									</button>
 								</div>
 							) : (
 								<></>
