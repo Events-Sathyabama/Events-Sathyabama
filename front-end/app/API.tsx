@@ -370,11 +370,17 @@ const url: {[key: string]: (...args: any[]) => string} = {
 	'event:upload_report': (id: number) => {
 		return `event/report/upload/${id}/`;
 	},
+	'event:upload_cert': (id: number) => {
+		return `event/cert/upload/${id}/`;
+	},
 	'event:delete': (id: number) => {
 		return `event/delete/${id}/`;
 	},
 	'event:delete_report': (id: number) => {
 		return `event/report/${id}/`;
+	},
+	'event:delete_cert': (id: number) => {
+		return `event/cert/${id}/`;
 	},
 	'user:organizer': () => {
 		return 'user/organizer/';
