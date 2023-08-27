@@ -216,7 +216,10 @@ class Event(models.Model):
         for history in self.history:
             if history['status'] == 0:
                 history['status'] = -1
-        
+    @property
+    def no_of_certificate(self):
+        self.get_participant_data()
+
     def get_participant_data(self):
         if not hasattr(self, '_participants_dict'):
             data = {
@@ -225,23 +228,37 @@ class Event(models.Model):
                 'declined': FakeQuerySet(),
                 'owner': None,
                 'organizer': FakeQuerySet(),
-                'involved_user': FakeQuerySet()
+                'involved_user': FakeQuerySet(),
+                'owner_detail': FakeQuerySet(),
+                'organizer_detail': FakeQuerySet(),
+                'accepted_detail': FakeQuerySet(),
+                'applied_detail': FakeQuerySet(),
+                'declined_detail': FakeQuerySet(),
             }
             for participant in EventParticipant.objects.filter(event=self.pk):
                 if participant.owner:
+                    data['owner_detail'].add(participant)
                     data['owner'] = participant.user
                 elif participant.organizer:
+                    data['organizer_detail'].add(participant)
                     data['organizer'].add(participant.user)
                 elif participant.status == '3':
+                    data['accepted_detail'].add(participant)
                     data['accepted'].add(participant.user)
                 elif participant.status == '2':
+                    data['applied_detail'].add(participant)
                     data['applied'].add(participant.user)
                 elif participant.status == '1':
+                    data['declined_detail'].add(participant)
                     data['declined'].add(participant.user)
                 data['involved_user'].add(participant)
             self._participants_dict = data
 
         return self._participants_dict
+
+    @property
+    def participant_data(self):
+        return self.get_participant_data()
 
     @property
     def involved_user(self):

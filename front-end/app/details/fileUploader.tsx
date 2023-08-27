@@ -5,11 +5,12 @@ import LoadingButton from '@mui/lab/LoadingButton';
 
 interface FileUploaderProps {
 	accepted_files: string;
-	uploadLink: string;
+	handleUpload: Function;
 	path?: string;
 	setPath?: Function;
 	fileSizeBytes: number;
-	deleteLink: string;
+	handleDelete: Function;
+	text?: string;
 }
 
 const axios = new API.Axios();
@@ -32,8 +33,6 @@ function convertKBToWords(kilobytes: number) {
 const FileUploader: React.FC<FileUploaderProps> = (props: FileUploaderProps) => {
 	const fileSize = props.fileSizeBytes;
 	const accepted_files = props.accepted_files;
-	const uploadLink = props.uploadLink;
-	const deleteLink = props.deleteLink;
 
 	const path = props.path;
 	const setPath = props.setPath || function () {};
@@ -43,7 +42,7 @@ const FileUploader: React.FC<FileUploaderProps> = (props: FileUploaderProps) => 
 	const [showErrorPopup, setShowErrorPopup] = useState(false);
 	const [popupMessage, setPopupMessage] = useState('');
 	const [dragText, setDragText] = useState(
-		'Drag and drop (or) click here to upload file'
+		props.text || 'Drag and drop (or) click here to upload file'
 	);
 	const [fileUploaded, setFileUploaded] = useState(path ? true : false);
 	const [uploading, setUploading] = useState(false);
@@ -72,7 +71,7 @@ const FileUploader: React.FC<FileUploaderProps> = (props: FileUploaderProps) => 
 	const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
 		e.preventDefault();
 		setIsDragOver(false);
-		setDragText('Drag and drop (or) click here to upload file');
+		setDragText(props.text || 'Drag and drop (or) click here to upload file');
 	};
 
 	const handleDrop = async (e: React.DragEvent<HTMLDivElement>) => {
@@ -90,25 +89,25 @@ const FileUploader: React.FC<FileUploaderProps> = (props: FileUploaderProps) => 
 				setPopupMessage(`Only ${accepted_files} files are allowed!`);
 				setShowErrorPopup(true);
 			} else {
-				await reportUpload(file);
+				await fileUpload(file);
 			}
 		}
 
-		setDragText('Drag and drop (or) click here to upload file');
+		setDragText(props.text || 'Drag and drop (or) click here to upload file');
 	};
 
-	const reportUpload = async (file: File) => {
+	const fileUpload = async (file: File) => {
 		try {
 			setUploading(true);
 			const formData = new FormData();
 			formData.append('file', file);
-			const response = await axios.post(uploadLink, formData, {
-				'Content-Type': 'multipart/form-data',
-			});
+			const response = await props.handleUpload(formData);
 			console.log(response);
-			setPath(response.data.link);
-			setFileUploaded(true);
-			setUploadedFileName(file.name);
+			if (response.data.link) {
+				setPath(response.data.link);
+				setFileUploaded(true);
+				setUploadedFileName(file.name);
+			}
 			setPopupMessage('File Uploaded Successfully!');
 			setShowSuccessPopup(true);
 			setUploading(false);
@@ -132,7 +131,7 @@ const FileUploader: React.FC<FileUploaderProps> = (props: FileUploaderProps) => 
 				setPopupMessage(`Only ${accepted_files} files are allowed!`);
 				setShowErrorPopup(true);
 			} else {
-				await reportUpload(file);
+				await fileUpload(file);
 			}
 		}
 	};
@@ -141,7 +140,7 @@ const FileUploader: React.FC<FileUploaderProps> = (props: FileUploaderProps) => 
 		setFileUploaded(false);
 		setUploadedFileName('');
 		setDeleting(false);
-		const response = await axios.get(deleteLink);
+		const response = await props.handleDelete();
 		if (response.status === 200) {
 			setPopupMessage(`Report Deleted!!`);
 			setShowSuccessPopup(true);

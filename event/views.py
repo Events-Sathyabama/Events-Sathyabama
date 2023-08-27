@@ -172,10 +172,6 @@ class OrganizingEvent(generics.ListAPIView):
     def get_queryset(self):
         q = (Q(participants__id=self.request.user.pk) 
                 & (Q(eventparticipant__owner=True) | Q(eventparticipant__organizer=True))
-                & Q(status__in=[2,4])
-                # & Q(hod_verified=True)
-                # & Q(dean_verified=True)
-                # & Q(vc_verified=True)
 
         )
         event = Event.objects.filter(q)
@@ -309,7 +305,7 @@ def deny_event(request, event_id):
     msg = message.event_deny
     user_role = request.user.role
     user = request.user
-    msg = request.POST.get('message')
+    deny_message = request.POST.get('message')
     if user_role < 2:
         return Response(data={'detail': msg.forbidden}, status=403)
     event = Event.objects.filter(pk=event_id)
@@ -397,7 +393,7 @@ def upload_certs(request, event_id):
         college_id = participant.user.college_id  # Get the user ID for each participant
         
         # Check if the image exists in the zip file
-        if college_id in student_certificate:
+        if participant.status == '3' and college_id in student_certificate:
             # Update the certificate field and add to the update list
             file_name = student_certificate[college_id][0]
             image_data = student_certificate[college_id][1]
@@ -410,14 +406,14 @@ def upload_certs(request, event_id):
     if len(participants_to_update) > 0:
         with transaction.atomic():
             EventParticipant.objects.bulk_update(participants_to_update, ['certificate'])
-        return Response(data={'detail': msg.success, 'invalid_files': invalid_files}, status=200)
+        return Response(data={'detail': msg.success, 'certified_quantity': len(participants_to_update), 'invalid_files': invalid_files}, status=200)
     else:
         return Response(data={'detail': 'No certificates to update', 'invalid_files': invalid_files}, status=400)
 
-@api_view(['POST'])
-def delete_certs(request, event_id):
+@api_view(['GET'])
+def delete_certs(request, pk):
     msg = message.delete_cert
-    event_participants = EventParticipant.objects.filter(event_id=event_id)
+    event_participants = EventParticipant.objects.filter(event_id=pk, status='3')
     participants_to_update = []
     for participant in event_participants:
         participant.certificate = None  
@@ -435,13 +431,13 @@ def apply_event(request, pk):
     response = Response({'detail': msg.success})
     try:
         event = Event.objects.get(pk=pk)
-        status, message = event.register_participant(user=request.user)
+        status, event_message = event.register_participant(user=request.user)
         if status is True:
-            response.data['detail'] = message
+            response.data['detail'] = event_message
             response.status_code = 200
         else:
             response.status_code = 403
-            response.data['detail'] = message
+            response.data['detail'] = event_message
     except:
         response = Response(status=404, data={'detail': msg.not_found})
     return response
