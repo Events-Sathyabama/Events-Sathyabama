@@ -26,9 +26,9 @@ export default function EventTime(props: {
 								</svg>
 							</div>
 						</div>
-						<p className="ml-14 -mt-11 p-2 border border-gray-300 rounded-md text-lg bg-gray-50 font-normal text-gray-800 mb-3">
+						<pre className="ml-14 -mt-11 p-2 border border-gray-300 rounded-md text-lg bg-gray-50 font-normal text-gray-800 mb-3 whitespace-pre-line font-roboto">
 							{props.dates || 'Date TBD'}
-						</p>
+						</pre>
 					</li>
 					<li className="flex flex-col w-full ml-6 gap-1">
 						<div className="flex flex-row h-full items-center gap-4">
@@ -48,9 +48,9 @@ export default function EventTime(props: {
 								</svg>
 							</div>
 						</div>
-						<p className="ml-14 -mt-11 p-2 border border-gray-300 rounded-md text-lg font-normal text-gray-800 mb-3">
+						<pre className="ml-14 -mt-11 p-2 border border-gray-300 rounded-md text-lg font-normal text-gray-800 mb-3 whitespace-pre-line font-roboto">
 							{props.time || 'Duration TBD'}
-						</p>
+						</pre>
 					</li>
 					<li className="flex flex-col w-full ml-6 gap-1">
 						<div className="flex flex-row h-full items-center gap-4">
@@ -75,9 +75,9 @@ export default function EventTime(props: {
 								</svg>
 							</div>
 						</div>
-						<p className="ml-14 -mt-11 p-2 border border-gray-300 bg-gray-50 rounded-md text-lg font-normal text-gray-800 mb-3">
+						<pre className="ml-14 -mt-11 p-2 border border-gray-300 bg-gray-50 rounded-md text-lg font-normal text-gray-800 mb-3 whitespace-pre-line font-roboto">
 							{props.venue || 'Venue TBD'}
-						</p>
+						</pre>
 					</li>
 				</ol>
 			</div>
