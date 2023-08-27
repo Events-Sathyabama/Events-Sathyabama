@@ -341,7 +341,7 @@ def deny_event(request, event_id):
             if not event.create_timeline(level=3, user=user, msg=msg.vc_declined, status=0):
                 raise Exception
             event.save()
-        return Response(data={'detail': msg.sucecss})
+        return Response(data={'detail': msg.success})
 
     return Response(data={'detail': msg.server_error}, status=500)
 

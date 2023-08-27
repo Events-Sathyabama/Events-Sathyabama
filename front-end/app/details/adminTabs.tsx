@@ -391,7 +391,7 @@ export default function AdminTabs(props: {
 					<div className="w-full h-full flex justify-center items-center">
 						<FileUpload
 							fileSizeBytes={50 * 1024 * 1024}
-							accepted_files="application/x-compressed,application/zip"
+							accepted_files="application/x-compressed,application/zip,application/x-zip-compressed"
 							handleUpload={handleCertUpload}
 							text={certUploadText}
 							handleDelete={handleCertDelete}></FileUpload>
