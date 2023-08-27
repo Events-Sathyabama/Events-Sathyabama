@@ -302,8 +302,7 @@ class EventUpdateSerializer(EventCreateSerializer):
         instance = super().save(**kwargs)
         instance.clear_timeline()  # Run create_timeline() function
         instance.rejected = False
-        if instance.status < 4:
-            instance.status = 1
+        instance.status = 1
         instance.save()
 
         

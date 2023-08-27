@@ -235,13 +235,19 @@ export default function Page(props: {params: {id: string}}) {
 				setMessage('Check your Internet Connection!!');
 				setSuccessPopUp(false);
 				setErrorPopUp(true);
+			} else if (error.response.data.detail) {
+				setMessage(error.response.data.detail);
+				setSuccessPopUp(false);
+				setErrorPopUp(true);
 			} else {
 				// debugger
 				for (let field in setError) {
 					setError[field](null);
 				}
 				for (let field in error.response.data) {
-					setError[field](API.extract_error(error.response.data[field]));
+					if (setError.hasOwnProperty(field)) {
+						setError[field](API.extract_error(error.response.data[field]));
+					}
 				}
 				window.scroll({
 					top: 0,

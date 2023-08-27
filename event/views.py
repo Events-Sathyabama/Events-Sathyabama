@@ -112,6 +112,15 @@ class EventUpdate(generics.UpdateAPIView):
     # TODO not allowd if the user is not Organizer
     def patch(self, request, *args, **kwargs):
         # Modify request.data before validation
+        event = self.get_object()
+        msg = message.event_update
+        if event.status >= 3:
+            return Response(
+                {"detail": msg.event_is_completed},
+                status=400
+            )
+        lock_fields = ['title', 'club', 'short_description']
+
         data = {}
         data['branch'] = []
         data['organizer'] = []
@@ -120,6 +129,12 @@ class EventUpdate(generics.UpdateAPIView):
                 data[i[:-2]] = request.data.getlist(i)
             else:
                 data[i] = request.data.get(i)
+        if event.status == 2:
+            for field in lock_fields:
+                if field in data:
+                    field = [x.capitalize() for x in field.split('-')]
+                    field = " ".join(field)
+                    return Response(data={'detail': msg.fields_not_changed_after_approved.format(field)}, status=400)
         request._data = data
         return super().patch(request, *args, **kwargs)
 
@@ -258,43 +273,52 @@ def approve_event(request, event_id):
     msg = message.event_approval
     user_role = request.user.role
     user = request.user
+    approve_message = request.POST.get('message')
     if user_role < 2:
         return Response(data={'detail': msg.forbidden}, status=403)
+    
     event = Event.objects.filter(pk=event_id)
+    response_already_approved = Response(data={'detail': msg.already_approved}, status=400)
+   
+    if event.status >= 2:
+        return response_already_approved
     if not event.exists():
         return Response(data={'detail': msg.forbidden}, status=404)
     event = event.first()
     try:
         if user_role == 2: # hod
-            if event.hod_verified is False:
-                event.hod_verified = True
-                if not event.create_timeline(level=1, user=user, msg=msg.hod_verified, status=1):
-                    raise Exception
-                event.save()
+            if event.hod_verified:
+                return response_already_approved
+            event.hod_verified = True
+            if not event.create_timeline(level=1, user=user, msg=approve_message, status=1):
+                raise Exception
+            event.save()
 
         elif user_role == 3: # Dean
-            if event.dean_verified is False:
-                if event.hod_verified is True:
-                    event.dean_verified = True
-                    if not event.create_timeline(level=2, user=user, msg=msg.dean_verified, status=1):
-                        raise Exception
-                    event.save()
-                else:
-                    return Response(data={'detail': msg.verify_hod_first})
-
-        elif user_role == 4: # VC
-            if event.vc_verified is False:
-                if event.hod_verified is False:
-                    return Response(data={'detail': msg.verify_hod_first})
-                if event.dean_verified is False:
-                    return Response(data={'detail': msg.verify_hod_first})
-                event.vc_verified = True
-                event.status = 2
-                if not event.create_timeline(level=3, user=user, msg=msg.vc_verified, status=1):
-                    raise Exception
-                if not event.create_timeline(level=4, user=user, msg=msg.approval_process_done, status=1):
+            if event.dean_verified:
+                return response_already_approved
+            if event.hod_verified is True:
+                event.dean_verified = True
+                if not event.create_timeline(level=2, user=user, msg=approve_message, status=1):
                     raise Exception
                 event.save()
+            else:
+                return Response(data={'detail': msg.verify_hod_first})
+
+        elif user_role == 4: # VC
+            if event.vc_verified:
+                return response_already_approved
+            if event.hod_verified is False:
+                return Response(data={'detail': msg.verify_hod_first})
+            if event.dean_verified is False:
+                return Response(data={'detail': msg.verify_dean_first})
+            event.vc_verified = True
+            event.status = 2
+            if not event.create_timeline(level=3, user=user, msg=approve_message, status=1):
+                raise Exception
+            if not event.create_timeline(level=4, user=user, msg=msg.approval_process_done, status=1):
+                raise Exception
+            event.save()
     except:
         return Response(data={'detail': msg.server_error}, status=500)
 
@@ -309,35 +333,39 @@ def deny_event(request, event_id):
     if user_role < 2:
         return Response(data={'detail': msg.forbidden}, status=403)
     event = Event.objects.filter(pk=event_id)
+
+    response_already_approved = Response(data={'detail': msg.event_already_approved}, status=400)
+    response_already_deny = Response(data={'detail': msg.event_already_denied}, status=400)
+    if event.status > 1:
+        return response_already_approved
     if not event.exists():
         return Response(data={'detail': msg.not_found}, status=404)
     event = event.first()
-
+    if event.rejected:
+        return response_already_deny
     if user_role == 2: # hod
-        if event.hod_verified is False:
-            event.hod_verified = False
-            event.rejected = True
-            if not event.create_timeline(level=1, user=user, msg=msg.hod_declined, status=0):
-                raise Exception
-            event.save()
+        event.hod_verified = False
+        event.rejected = True
+        if not event.create_timeline(level=1, user=user, msg=deny_message, status=0):
+            raise Exception
+        event.save()
+        
         return Response(data={'detail': msg.success})
 
     if user_role == 3: # Dean
-        if event.dean_verified is False:
-            event.dean_verified = False
-            event.rejected = True
-            if not event.create_timeline(level=2, user=user, msg=msg.dean_declined, status=0):
-                raise Exception
-            event.save()
+        event.dean_verified = False
+        event.rejected = True
+        if not event.create_timeline(level=2, user=user, msg=deny_message, status=0):
+            raise Exception
+        event.save()
         return Response(data={'detail': msg.success})
         
     if user_role == 4: # VC
-        if event.vc_verified is False:
-            event.vc_verified = False
-            event.rejected = True
-            if not event.create_timeline(level=3, user=user, msg=msg.vc_declined, status=0):
-                raise Exception
-            event.save()
+        event.vc_verified = False
+        event.rejected = True
+        if not event.create_timeline(level=3, user=user, msg=deny_message, status=0):
+            raise Exception
+        event.save()
         return Response(data={'detail': msg.sucecss})
 
     return Response(data={'detail': msg.server_error}, status=500)
@@ -347,9 +375,14 @@ def deny_event(request, event_id):
 def upload_report(request, event_id):
     msg = message.report_upload
     event = Event.objects.get(id=event_id)
+    if event.status <= 3:
+        return Response(data={'detail': msg.ongoing_event}, status=400)
+    if event.status >= 5:
+        return Response(data={'detail': msg.report_approved}, status=400)
     report_file = request.FILES.get('file')
     if report_file:
         event.report = report_file
+
         event.status = 4
         event.save()
         return Response(data={'detail': msg.success, 'link': request.build_absolute_uri(event.report.url)})
@@ -359,10 +392,15 @@ def upload_report(request, event_id):
 @api_view(['POST'])
 def upload_certs(request, event_id):
     msg = message.cert_upload
+    
+    event = Event.objects.get(pk=event_id)
+    if event.status < 5:
+        return Response(data={'detail': msg.report_approval_required})
 
     # Retrieve all EventParticipant objects for the specified event
     event_participants = EventParticipant.objects.filter(event_id=event_id)
 
+   
     # Check if a zip file is provided in the request
     if 'file' not in request.FILES:
         return Response(data={'detail': msg.file_not_found}, status=400)
@@ -403,6 +441,8 @@ def upload_certs(request, event_id):
     if len(participants_to_update) > 0:
         with transaction.atomic():
             EventParticipant.objects.bulk_update(participants_to_update, ['certificate'])
+        event.status=6
+        event.save()
         return Response(data={'detail': msg.success, 'certified_quantity': len(participants_to_update), 'invalid_files': invalid_files}, status=200)
     else:
         return Response(data={'detail': msg.no_certificates_found, 'invalid_files': invalid_files}, status=400)
@@ -428,6 +468,10 @@ def apply_event(request, pk):
     response = Response({'detail': msg.success})
     try:
         event = Event.objects.get(pk=pk)
+        if event.status == 1:
+            return Response(data={'detail': msg.pending_event}, status=400)
+        if event.status > 2:
+            return Response(data={'detail': msg.completed_event}, status=400)
         status, event_message = event.register_participant(user=request.user)
         if status is True:
             response.data['detail'] = event_message
@@ -451,6 +495,8 @@ def club_branch(request):
 def delete_event(reuqest, pk):
     msg = message.delete_event
     event = get_object_or_404(Event, pk=pk)
+    if event.status >= 3:
+        return Response({'detail': msg.already_completed},status=400)
     title = event.title
     event.delete()
     return Response({'detail': msg.success, 'status':200})
@@ -459,8 +505,12 @@ def delete_event(reuqest, pk):
 def delete_report(request, pk):
     msg = message.delete_report
     event = get_object_or_404(Event, pk=pk)
+    if event.status >= 5:
+        return Response({'detail': msg.already_approved}, status=400)
     file_name = event.report
     event.report = None
+    event.status = 3
+    
     event.save()
     return Response({'detail': msg.success, 'status':200})
 

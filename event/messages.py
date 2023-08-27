@@ -2,12 +2,15 @@ class Message:
     
     class detail:
         not_found = 'No Event Found!!!'
-    
+    class event_update:
+        event_is_completed = 'Event cannot be updated at this point of time'
+        fields_not_changed_after_approved = "'{0}' Fields cannot be changed after approval"
     class applicaition_approval:
         success = 'Application Updated!!'
     
     class event_approval:
         forbidden = 'Operation Not Allowed!!'
+        already_approved = 'Event is already Approved'
         not_found = 'No Event Found'
 
         hod_verified = 'Verified By HOD'
@@ -35,10 +38,14 @@ class Message:
 
         server_error = 'Something Went Wrong'
         success = 'Declined Successfully'
+        event_already_approved = 'Event is Already Approved'
+        event_already_denied = 'Event is Already Rejected'
 
     class report_upload:
         success = 'Report Uploaded!!'
         error = 'Please Send a valid File!'
+        ongoing_event = 'You can Only Upload Report once the event is completed'
+        report_approved = 'Report is already Approved you cannot change it'
     
     class cert_upload:
         success = 'Certificates Uploaded!!'
@@ -46,15 +53,20 @@ class Message:
         invalid_file_type = 'Invalid zip file format'
         no_certificates_found = 'No Certificates to update' # if the zip is uploaded but the file names are incorrect or there is not registered students
         errro = 'Upload Failed'
+        report_approval_required = 'First Get the report Approved'
     
     class apply_event:
         success = 'Event application successfull'
         not_found = 'No Event Found!!'
+        pending_event = 'The event is still pending for approval'
+        completed_event = 'Event is already Completed'
     
     class delete_event:
         success = "'{0}' Deleted!"
+        already_completed = 'This Event is already Completed it cannot be deleted'
     class delete_report:
         success = "Report Deleted!"
+        already_approved = 'Event is already Approved cannot be deleted'
     class delete_cert:
         success = "Certificates Deleted!"
 

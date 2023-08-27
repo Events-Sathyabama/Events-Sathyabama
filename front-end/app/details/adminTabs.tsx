@@ -362,41 +362,45 @@ export default function AdminTabs(props: {
 						)}
 					</div>
 				</TabPanel>
-				<TabPanel value={value} index={3}>
-					<div className="w-full h-full flex justify-center items-center">
-						<FileUpload
-							fileSizeBytes={10 * 1024 * 1024}
-							accepted_files="application/pdf"
-							handleUpload={handleReportUpload}
-							handleDelete={handleReportDelete}
-							path={reportPath}
-							setPath={setReportPath}></FileUpload>
-					</div>
-				</TabPanel>
-				<TabPanel value={value} index={4}>
-					{!certDeleted &&
-						(certifiedQuantity ||
-							(props.eventData.certified_quantity != undefined &&
-								props.eventData.certified_quantity > 0)) && (
-							<>
-								<div>
-									<span className="text-lg">Students Certified:</span>
-									{certifiedQuantity || props.eventData.certified_quantity}
-								</div>
-								<button className="bg-red-500 p-2" onClick={deleteAllCertificate}>
-									Delete All Certificate
-								</button>
-							</>
-						)}
-					<div className="w-full h-full flex justify-center items-center">
-						<FileUpload
-							fileSizeBytes={50 * 1024 * 1024}
-							accepted_files="application/x-compressed,application/zip,application/x-zip-compressed"
-							handleUpload={handleCertUpload}
-							text={certUploadText}
-							handleDelete={handleCertDelete}></FileUpload>
-					</div>
-				</TabPanel>
+				{props.eventData.status.toLowerCase() === 'completed' && (
+					<TabPanel value={value} index={3}>
+						<div className="w-full h-full flex justify-center items-center">
+							<FileUpload
+								fileSizeBytes={10 * 1024 * 1024}
+								accepted_files="application/pdf"
+								handleUpload={handleReportUpload}
+								handleDelete={handleReportDelete}
+								path={reportPath}
+								setPath={setReportPath}></FileUpload>
+						</div>
+					</TabPanel>
+				)}
+				{props.eventData.status.toLowerCase() === 'report approved' && (
+					<TabPanel value={value} index={4}>
+						{!certDeleted &&
+							(certifiedQuantity ||
+								(props.eventData.certified_quantity != undefined &&
+									props.eventData.certified_quantity > 0)) && (
+								<>
+									<div>
+										<span className="text-lg">Students Certified:</span>
+										{certifiedQuantity || props.eventData.certified_quantity}
+									</div>
+									<button className="bg-red-500 p-2" onClick={deleteAllCertificate}>
+										Delete All Certificate
+									</button>
+								</>
+							)}
+						<div className="w-full h-full flex justify-center items-center">
+							<FileUpload
+								fileSizeBytes={50 * 1024 * 1024}
+								accepted_files="application/x-compressed,application/zip,application/x-zip-compressed"
+								handleUpload={handleCertUpload}
+								text={certUploadText}
+								handleDelete={handleCertDelete}></FileUpload>
+						</div>
+					</TabPanel>
+				)}
 			</div>
 		</div>
 	);
