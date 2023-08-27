@@ -431,13 +431,13 @@ def apply_event(request, pk):
     response = Response({'detail': msg.success})
     try:
         event = Event.objects.get(pk=pk)
-        status, message = event.register_participant(user=request.user)
+        status, event_message = event.register_participant(user=request.user)
         if status is True:
-            response.data['detail'] = message
+            response.data['detail'] = event_message
             response.status_code = 200
         else:
             response.status_code = 403
-            response.data['detail'] = message
+            response.data['detail'] = event_message
     except:
         response = Response(status=404, data={'detail': msg.not_found})
     return response
