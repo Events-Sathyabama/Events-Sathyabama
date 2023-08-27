@@ -401,6 +401,9 @@ class EventParticipantList(serializers.ModelSerializer):
     batch = serializers.CharField(source='user.batch', read_only=True)
     branch = serializers.CharField(source='user.branch.name', read_only=True)
     event_name = serializers.CharField(source='event.title', read_only=True)
+
+
+
     class Meta:
         model = EventParticipant
         fields = [
@@ -408,7 +411,8 @@ class EventParticipantList(serializers.ModelSerializer):
             'register_number',
             'name',
             'batch',
-            'branch'
+            'branch',
+            'certificate'
         ]
 
 
