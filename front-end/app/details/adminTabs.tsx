@@ -47,6 +47,8 @@ export default function AdminTabs(props: {
 	fPopUp: {show: Function; message: Function};
 	report_link?: string;
 }) {
+	const [reportPath, setReportPath] = React.useState(props.report_link);
+
 	const [value, setValue] = React.useState(0);
 	const handleChange = (event: React.SyntheticEvent, newValue: number) => {
 		setValue(newValue);
@@ -309,17 +311,30 @@ export default function AdminTabs(props: {
 				<TabPanel value={value} index={3}>
 					<div className="w-full h-full flex justify-center items-center">
 						<FileUpload
-							eventId={props.eventId.toString()}
-							mode="pdf"
-							path={props.report_link}></FileUpload>
+							fileSizeBytes={10 * 1024 * 1024}
+							accepted_files="application/pdf"
+							uploadLink={API.get_url(
+								'event:upload_report',
+								props.eventId.toString()
+							)}
+							deleteLink={API.get_url(
+								'event:delete_report',
+								props.eventId.toString()
+							)}
+							path={reportPath}
+							setPath={setReportPath}></FileUpload>
 					</div>
 				</TabPanel>
 				<TabPanel value={value} index={4}>
 					<div className="w-full h-full flex justify-center items-center">
 						<FileUpload
-							eventId={props.eventId.toString()}
-							mode="zip"
-							path={props.report_link}></FileUpload>
+							fileSizeBytes={50 * 1024 * 1024}
+							accepted_files="application/x-compressed,application/zip"
+							uploadLink={API.get_url('event:upload_cert', props.eventId.toString())}
+							deleteLink={API.get_url(
+								'event:delete_cert',
+								props.eventId.toString()
+							)}></FileUpload>
 					</div>
 				</TabPanel>
 			</div>

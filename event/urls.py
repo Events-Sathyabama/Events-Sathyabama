@@ -21,12 +21,16 @@ urlpatterns = [
     path('pending/', views.PendingEvent.as_view()),
     path('accept/<int:event_id>/', views.approve_event),
     path('deny/<int:event_id>/', views.deny_event),
-    path('report/upload/<int:event_id>/', views.upload_report),
     path('timeline/<int:pk>/', views.EventTimeLine.as_view()),
     path('application_approval/<int:pk>/', views.application_approval),
     path('participant_list/<int:event_id>/', views.ParticipantList.as_view()),
     path('delete/<int:pk>/', views.delete_event),
+    
+    path('report/upload/<int:event_id>/', views.upload_report),
     path('report/<int:pk>/', views.delete_report),
+    
+    path('cert/upload/<int:event_id>/', views.upload_certs),
+    path('cert/<int:pk>/', views.delete_certs),
 
 
 ]

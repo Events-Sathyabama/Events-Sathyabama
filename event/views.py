@@ -16,6 +16,10 @@ import user.serializers as user_serializer
 from django.contrib.auth import get_user_model
 from django.db import transaction
 from .messages import Message
+import zipfile
+from io import BytesIO
+import os
+from PIL import Image
 
 message = Message()
 
@@ -250,7 +254,7 @@ def application_approval(request, pk):
             participants_to_update,
             fields=['status']
         )
-    return Response({'message': message.applicaition_approval.success, 'status':200})
+    return Response({'detail': message.applicaition_approval.success, 'status':200})
 
 
 @api_view(['POST'])
@@ -362,36 +366,84 @@ def upload_report(request, event_id):
 @api_view(['POST'])
 def upload_certs(request, event_id):
     msg = message.cert_upload
+
     # Retrieve all EventParticipant objects for the specified event
     event_participants = EventParticipant.objects.filter(event_id=event_id)
-    if handle_upload(request.FILES.get('cert')) is False:
-        return Response(data={'detail': msg.error}, status=400)
+
+    # Check if a zip file is provided in the request
+    if 'file' not in request.FILES:
+        return Response(data={'detail': msg.file_not_found}, status=400)
+
+    zip_file = request.FILES['file']
+    if not zipfile.is_zipfile(zip_file):
+        return Response(data={'detail': msg.invalid_file_type}, status=400)
+
+    student_certificate = {}
+    invalid_files = []
+    zip_ref = zipfile.ZipFile(zip_file, 'r')
+    certificate_names = zip_ref.namelist()
+    
+    for cert in certificate_names:
+        fileName, file_type = os.path.splitext(cert)
+        if fileName.isnumeric():
+            student_certificate[fileName] = [cert, zip_ref.read(cert)]
+        else:
+            invalid_files.append(fileName)
+    
+        
+
     participants_to_update = []
     for participant in event_participants:
-        user_id = participant.user_id  # Get the user ID for each participant
-        certificate_filename = os.path.join('certs', str(event_id), f"{user_id}.jpg") # Generate the certificate filename based on user ID
+        college_id = participant.user.college_id  # Get the user ID for each participant
         
-        participant.certificate = certificate_filename  # Update the certificate field
-        participants_to_update.append(participant)
+        # Check if the image exists in the zip file
+        if college_id in student_certificate:
+            # Update the certificate field and add to the update list
+            file_name = student_certificate[college_id][0]
+            image_data = student_certificate[college_id][1]
 
-    EventParticipant.objects.bulk_update(participants_to_update, ['certificate'])
-    return Response(data={'detail': msg.success}, status=200)
+            # Convert binary data to an in-memory image
+
+            participant.certificate.save(file_name, BytesIO(image_data))
+            participants_to_update.append(participant)
+
+    if len(participants_to_update) > 0:
+        with transaction.atomic():
+            EventParticipant.objects.bulk_update(participants_to_update, ['certificate'])
+        return Response(data={'detail': msg.success, 'invalid_files': invalid_files}, status=200)
+    else:
+        return Response(data={'detail': 'No certificates to update', 'invalid_files': invalid_files}, status=400)
+
+@api_view(['POST'])
+def delete_certs(request, event_id):
+    msg = message.delete_cert
+    event_participants = EventParticipant.objects.filter(event_id=event_id)
+    participants_to_update = []
+    for participant in event_participants:
+        participant.certificate = None  
+        participants_to_update.append(participant)
+    if len(participants_to_update) > 0:
+        with transaction.atomic():
+            EventParticipant.objects.bulk_update(participants_to_update, ['certificate'])
+
+
+    return Response({'detail': msg.success}, status=200)
 
 @api_view(['GET'])
 def apply_event(request, pk):
     msg = message.apply_event
-    response = Response({'message': msg.success})
+    response = Response({'detail': msg.success})
     try:
         event = Event.objects.get(pk=pk)
         status, message = event.register_participant(user=request.user)
         if status is True:
-            response.data['message'] = message
+            response.data['detail'] = message
             response.status_code = 200
         else:
             response.status_code = 403
-            response.data['message'] = message
+            response.data['detail'] = message
     except:
-        response = Response(status=404, data={'message': msg.not_found})
+        response = Response(status=404, data={'detail': msg.not_found})
     return response
 
 
@@ -408,14 +460,14 @@ def delete_event(reuqest, pk):
     event = get_object_or_404(Event, pk=pk)
     title = event.title
     event.delete()
-    return Response({'message': msg.success, 'status':200})
+    return Response({'detail': msg.success, 'status':200})
 
 @api_view(['GET'])
 def delete_report(request, pk):
     msg = message.delete_report
     event = get_object_or_404(Event, pk=pk)
     file_name = event.report
-    event.report = ''
+    event.report = None
     event.save()
-    return Response({'message': msg.success, 'status':200})
+    return Response({'detail': msg.success, 'status':200})
 

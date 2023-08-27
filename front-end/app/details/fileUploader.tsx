@@ -4,9 +4,12 @@ import API from '../API';
 import LoadingButton from '@mui/lab/LoadingButton';
 
 interface FileUploaderProps {
-	eventId: string;
-	mode: 'pdf' | 'zip' | 'image';
+	accepted_files: string;
+	uploadLink: string;
 	path?: string;
+	setPath?: Function;
+	fileSizeBytes: number;
+	deleteLink: string;
 }
 
 const axios = new API.Axios();
@@ -14,11 +17,26 @@ const getFileNameFromUrl = (url: string): string => {
 	const path = url.split('/');
 	return path[path.length - 1];
 };
+function convertKBToWords(kilobytes: number) {
+	const units = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+	let index = 0;
+	let size = kilobytes;
 
+	while (size >= 1024 && index < units.length - 1) {
+		size /= 1024;
+		index++;
+	}
+
+	return `${size.toFixed(2)} ${units[index]}`;
+}
 const FileUploader: React.FC<FileUploaderProps> = (props: FileUploaderProps) => {
-	const eventId = props.eventId;
-	const mode = props.mode;
-	const [path, setPath] = useState(props.path);
+	const fileSize = props.fileSizeBytes;
+	const accepted_files = props.accepted_files;
+	const uploadLink = props.uploadLink;
+	const deleteLink = props.deleteLink;
+
+	const path = props.path;
+	const setPath = props.setPath || function () {};
 
 	const [isDragOver, setIsDragOver] = useState(false);
 	const [showSuccessPopup, setShowSuccessPopup] = useState(false);
@@ -34,9 +52,9 @@ const FileUploader: React.FC<FileUploaderProps> = (props: FileUploaderProps) => 
 		getFileNameFromUrl(path || '')
 	);
 	const allowedFileTypes = {
-		pdf: ['application/pdf'],
-		zip: ['application/x-zip-compressed'],
-		image: ['image/jpeg', 'image/png'],
+		// pdf: ['application/pdf'],
+		// zip: ['application/x-zip-compressed', '.rar'],
+		// image: ['image/jpeg', 'image/png'],
 	};
 
 	const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -65,19 +83,11 @@ const FileUploader: React.FC<FileUploaderProps> = (props: FileUploaderProps) => 
 
 		if (files.length > 0) {
 			const file = files[0];
-			if (
-				(mode === 'pdf' && file.size > 10 * 1024 * 1024) ||
-				(mode === 'zip' && file.size > 100 * 1024 * 1024) ||
-				(mode === 'image' && file.size > 10 * 1024 * 1024)
-			) {
-				setPopupMessage(
-					`File size exceeds ${
-						mode === 'pdf' ? '10MB' : mode === 'zip' ? '100MB' : '10MB'
-					} limit.`
-				);
+			if (file.size > fileSize) {
+				setPopupMessage(`File size exceeds ${convertKBToWords(fileSize)} limit.`);
 				setShowErrorPopup(true);
-			} else if (!allowedFileTypes[mode].includes(file.type)) {
-				setPopupMessage(`Only ${mode.toUpperCase()} files are allowed!`);
+			} else if (accepted_files.match(file.type) === null) {
+				setPopupMessage(`Only ${accepted_files} files are allowed!`);
 				setShowErrorPopup(true);
 			} else {
 				await reportUpload(file);
@@ -92,13 +102,9 @@ const FileUploader: React.FC<FileUploaderProps> = (props: FileUploaderProps) => 
 			setUploading(true);
 			const formData = new FormData();
 			formData.append('file', file);
-			const response = await axios.post(
-				API.get_url('event:upload_report', eventId),
-				formData,
-				{
-					'Content-Type': 'multipart/form-data',
-				}
-			);
+			const response = await axios.post(uploadLink, formData, {
+				'Content-Type': 'multipart/form-data',
+			});
 			console.log(response);
 			setPath(response.data.link);
 			setFileUploaded(true);
@@ -118,20 +124,12 @@ const FileUploader: React.FC<FileUploaderProps> = (props: FileUploaderProps) => 
 	const handleFileInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
 		const file = e.target.files?.[0];
 		console.log(file?.type);
-
 		if (file) {
-			if (
-				file.size >
-				(mode === 'pdf' ? 10 : mode === 'zip' ? 100 : 10) * 1024 * 1024
-			) {
-				setPopupMessage(
-					`File size exceeds ${
-						mode === 'pdf' ? '10MB' : mode === 'zip' ? '100MB' : '10MB'
-					} limit.`
-				);
+			if (file.size > fileSize) {
+				setPopupMessage(`File size exceeds ${convertKBToWords(fileSize)} limit.`);
 				setShowErrorPopup(true);
-			} else if (!allowedFileTypes[mode].includes(file.type)) {
-				setPopupMessage(`Only ${mode.toUpperCase()} files are allowed!`);
+			} else if (accepted_files.match(file.type) === null) {
+				setPopupMessage(`Only ${accepted_files} files are allowed!`);
 				setShowErrorPopup(true);
 			} else {
 				await reportUpload(file);
@@ -143,7 +141,7 @@ const FileUploader: React.FC<FileUploaderProps> = (props: FileUploaderProps) => 
 		setFileUploaded(false);
 		setUploadedFileName('');
 		setDeleting(false);
-		const response = await axios.get(API.get_url('event:delete_report', eventId));
+		const response = await axios.get(deleteLink);
 		if (response.status === 200) {
 			setPopupMessage(`Report Deleted!!`);
 			setShowSuccessPopup(true);
@@ -156,7 +154,6 @@ const FileUploader: React.FC<FileUploaderProps> = (props: FileUploaderProps) => 
 			fileInputRef.current.click();
 		}
 	};
-
 	return (
 		<>
 			<div
@@ -191,7 +188,7 @@ const FileUploader: React.FC<FileUploaderProps> = (props: FileUploaderProps) => 
 					<React.Fragment>
 						<input
 							type="file"
-							accept={mode === 'pdf' ? '.pdf' : mode === 'zip' ? '.zip' : 'image/*'}
+							accept={accepted_files}
 							className="hidden"
 							ref={fileInputRef}
 							onChange={handleFileInputChange}

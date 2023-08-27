@@ -42,6 +42,9 @@ class Message:
     
     class cert_upload:
         success = 'Certificates Uploaded!!'
+        file_not_found = 'No Zip File was Provided'
+        invalid_file_type = 'Invalid zip file format'
+        no_certificates_found = 'No Certificates to update' # if the zip is uploaded but the file names are incorrect
         errro = 'Upload Failed'
     
     class apply_event:
@@ -52,6 +55,8 @@ class Message:
         success = "'{0}' Deleted!"
     class delete_report:
         success = "Report Deleted!"
+    class delete_cert:
+        success = "Certificates Deleted!"
 
 class Validation:
     class event:
