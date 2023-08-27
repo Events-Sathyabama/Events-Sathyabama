@@ -29,7 +29,7 @@ class CompletedEventList(SearchQueryMixins, generics.ListAPIView):
 
     def get_queryset(self):
         query = super().get_queryset()
-        return query.filter(end_date__lt=timezone.now()).order_by('-end_date')
+        return query.filter(end_date__lt=timezone.now(), status__gte=3).order_by('-end_date')
 
 
 class OngoingEventList(SearchQueryMixins, generics.ListAPIView):
@@ -37,7 +37,7 @@ class OngoingEventList(SearchQueryMixins, generics.ListAPIView):
 
     def get_queryset(self):
         query = super().get_queryset()
-        return query.filter(start_date__lte=timezone.now(), end_date__gte=timezone.now())
+        return query.filter(start_date__lte=timezone.now(), end_date__gte=timezone.now(), status=2)
 
 
 class UpcomingEventList(SearchQueryMixins, generics.ListAPIView):
@@ -45,7 +45,7 @@ class UpcomingEventList(SearchQueryMixins, generics.ListAPIView):
 
     def get_queryset(self):
         query = super().get_queryset()
-        return query.filter(start_date__gt=timezone.now()).order_by('start_date')
+        return query.filter(start_date__gt=timezone.now(), status=2).order_by('start_date')
 
 
 class EventDetail(generics.RetrieveAPIView):
@@ -135,7 +135,7 @@ class RegisteredEvent(generics.ListAPIView):
         q = (Q(participants__id=self.request.user.pk) 
             & Q(eventparticipant__owner=False) 
             & Q(eventparticipant__organizer=False) 
-            & Q(status__in=[4, 9])
+            & Q(status__gte=2)
             & Q(eventparticipant__status__in=['3', '2', '1'])
         )
         event = Event.objects.filter(q)
@@ -152,7 +152,7 @@ class CompletedEvent(generics.ListAPIView):
     def get_queryset(self):
 
         q = (Q(participants__id=self.request.user.pk) 
-                & Q(status__in=[5, 6, 7, 8])
+                & Q(status__gte=3)
                 & (
                     (Q(eventparticipant__status='3') & Q(eventparticipant__owner=False) & Q(eventparticipant__organizer=False))
                     | (Q(eventparticipant__owner=True) | Q(eventparticipant__organizer=True))
@@ -171,7 +171,7 @@ class OrganizingEvent(generics.ListAPIView):
 
     def get_queryset(self):
         q = (Q(participants__id=self.request.user.pk) 
-                & (Q(eventparticipant__owner=True) | Q(eventparticipant__organizer=True))
+                & (Q(eventparticipant__owner=True) | Q(eventparticipant__organizer=True)) & Q(status=2)
 
         )
         event = Event.objects.filter(q)
@@ -196,7 +196,7 @@ class PendingEvent(generics.ListAPIView):
         else:
             q = (Q(participants__id=self.request.user.pk) 
                     & (Q(eventparticipant__owner=True) | Q(eventparticipant__organizer=True))
-                    & Q(status__in=[1,3])
+                    & Q(status=1)
 
             )
         if self.request.user.branch:
@@ -289,7 +289,7 @@ def approve_event(request, event_id):
                 if event.dean_verified is False:
                     return Response(data={'detail': msg.verify_hod_first})
                 event.vc_verified = True
-                event.status = 4
+                event.status = 2
                 if not event.create_timeline(level=3, user=user, msg=msg.vc_verified, status=1):
                     raise Exception
                 if not event.create_timeline(level=4, user=user, msg=msg.approval_process_done, status=1):
@@ -317,7 +317,6 @@ def deny_event(request, event_id):
         if event.hod_verified is False:
             event.hod_verified = False
             event.rejected = True
-            event.status = 3
             if not event.create_timeline(level=1, user=user, msg=msg.hod_declined, status=0):
                 raise Exception
             event.save()
@@ -327,7 +326,6 @@ def deny_event(request, event_id):
         if event.dean_verified is False:
             event.dean_verified = False
             event.rejected = True
-            event.status = 3
             if not event.create_timeline(level=2, user=user, msg=msg.dean_declined, status=0):
                 raise Exception
             event.save()
@@ -337,11 +335,10 @@ def deny_event(request, event_id):
         if event.vc_verified is False:
             event.vc_verified = False
             event.rejected = True
-            event.status = 3
             if not event.create_timeline(level=3, user=user, msg=msg.vc_declined, status=0):
                 raise Exception
             event.save()
-        return Response(data={'detail': msg.success})
+        return Response(data={'detail': msg.sucecss})
 
     return Response(data={'detail': msg.server_error}, status=500)
 
@@ -353,7 +350,7 @@ def upload_report(request, event_id):
     report_file = request.FILES.get('file')
     if report_file:
         event.report = report_file
-        event.status = 6
+        event.status = 4
         event.save()
         return Response(data={'detail': msg.success, 'link': request.build_absolute_uri(event.report.url)})
     else:
@@ -408,7 +405,7 @@ def upload_certs(request, event_id):
             EventParticipant.objects.bulk_update(participants_to_update, ['certificate'])
         return Response(data={'detail': msg.success, 'certified_quantity': len(participants_to_update), 'invalid_files': invalid_files}, status=200)
     else:
-        return Response(data={'detail': 'No certificates to update', 'invalid_files': invalid_files}, status=400)
+        return Response(data={'detail': msg.no_certificates_found, 'invalid_files': invalid_files}, status=400)
 
 @api_view(['GET'])
 def delete_certs(request, pk):

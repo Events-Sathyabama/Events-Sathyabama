@@ -146,14 +146,11 @@ def default_history(user):
 class Event(models.Model):
     STATUS_CHOICES = (
         (1, 'Pending'),
-        (2, 'Approved'),
-        (3, 'Rejected'),
-        (4, 'Displayed'),
-        (5, 'Completed'),
-        (6, 'Report Submitted'),
-        (7, 'Report Approved'),
-        (8, 'Certified'),
-        (9, 'Canceled'),
+        (2, 'Displayed'),
+        (3, 'Completed'),
+        (4, 'Report Submitted'),
+        (5, 'Report Approved'),
+        (6, 'Certified'),
     )
     ROLE_CHOICES = User.ROLE_CHOICE
 
@@ -222,43 +219,19 @@ class Event(models.Model):
 
     def get_participant_data(self):
         if not hasattr(self, '_participants_dict'):
+            all_participant = EventParticipant.objects.filter(event=self.pk).select_related('user')
             data = {
-                'accepted': FakeQuerySet(),
-                'applied': FakeQuerySet(),
-                'declined': FakeQuerySet(),
-                'owner': None,
-                'organizer': FakeQuerySet(),
-                'involved_user': FakeQuerySet(),
-                'owner_detail': FakeQuerySet(),
-                'organizer_detail': FakeQuerySet(),
-                'accepted_detail': FakeQuerySet(),
-                'applied_detail': FakeQuerySet(),
-                'declined_detail': FakeQuerySet(),
+                'accepted': all_participant.filter(status='3'),
+                'applied': all_participant.filter(status='2'),
+                'declined': all_participant.filter(status='1'),
+                'owner': all_participant.filter(owner=True).first().user,
+                'organizer': all_participant.filter(organizer=True),
+                'involved_user': all_participant,
+                
             }
-            for participant in EventParticipant.objects.filter(event=self.pk):
-                if participant.owner:
-                    data['owner_detail'].add(participant)
-                    data['owner'] = participant.user
-                elif participant.organizer:
-                    data['organizer_detail'].add(participant)
-                    data['organizer'].add(participant.user)
-                elif participant.status == '3':
-                    data['accepted_detail'].add(participant)
-                    data['accepted'].add(participant.user)
-                elif participant.status == '2':
-                    data['applied_detail'].add(participant)
-                    data['applied'].add(participant.user)
-                elif participant.status == '1':
-                    data['declined_detail'].add(participant)
-                    data['declined'].add(participant.user)
-                data['involved_user'].add(participant)
             self._participants_dict = data
 
         return self._participants_dict
-
-    @property
-    def participant_data(self):
-        return self.get_participant_data()
 
     @property
     def involved_user(self):
@@ -285,7 +258,7 @@ class Event(models.Model):
         return self.get_participant_data()['organizer']
 
     def is_organizer(self, user):
-        return self.organizer.filter(user.pk).exists()
+        return self.organizer.filter(user_id=user.pk).exists()
 
     def is_owner(self, user):
         if self.owner is None:
@@ -303,8 +276,7 @@ class Event(models.Model):
         self.image = image
         if self.pk is None or self.history is None:
             self.history = default_history(self.owner)
-        if self.hod_verified and self.dean_verified and self.vc_verified and self.status < 4:
-            self.status = 4
+        
         super().save(*args, **kwargs)
 
     def register_participant(self, user):

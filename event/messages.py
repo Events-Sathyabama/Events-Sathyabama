@@ -44,7 +44,7 @@ class Message:
         success = 'Certificates Uploaded!!'
         file_not_found = 'No Zip File was Provided'
         invalid_file_type = 'Invalid zip file format'
-        no_certificates_found = 'No Certificates to update' # if the zip is uploaded but the file names are incorrect
+        no_certificates_found = 'No Certificates to update' # if the zip is uploaded but the file names are incorrect or there is not registered students
         errro = 'Upload Failed'
     
     class apply_event:

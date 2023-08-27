@@ -106,10 +106,11 @@ class BaseEventDetailSerializer(serializers.ModelSerializer):
 
     def get_certificate(self, obj):
         user = self.context.get('request').user
-        if obj.involved_user.filter(pk=user.pk).exists():
-            event_participant = obj.involved_user.get(user.pk)
+        request = self.context.get('request')
+        if obj.involved_user.filter(user_id=user.pk).exists():
+            event_participant = obj.involved_user.get(user=user)
             if event_participant.certificate:
-                return event_participant.certificate
+                return request.build_absolute_uri(event_participant.certificate.url)
         return None
 
     def get_total_strength(self, obj):
@@ -150,22 +151,22 @@ class EventDetailSerializerStudent(BaseEventDetailSerializer):
 
     def get_is_declined(self, obj):
         request = self.context.get('request')
-        if obj.declined_participant.filter(pk=request.user.pk).exists():
+        if obj.declined_participant.filter(user_id=request.user.pk).exists():
             return True
         return False
 
     def get_is_applied(self, obj):
         request = self.context.get('request')
-        if (obj.applied_participant.filter(pk=request.user.pk).exists() or
-            obj.accepted_participant.filter(pk=request.user.pk).exists() or
-                obj.declined_participant.filter(pk=request.user.pk).exists()):
+        if (obj.applied_participant.filter(user_id=request.user.pk).exists() or
+            obj.accepted_participant.filter(user_id=request.user.pk).exists() or
+                obj.declined_participant.filter(user_id=request.user.pk).exists()):
             return True
         return False
 
     def get_is_accepted(self, obj):
         request = self.context.get('request')
 
-        if obj.accepted_participant.filter(pk=request.user.pk).exists():
+        if obj.accepted_participant.filter(user_id=request.user.pk).exists():
             return True
         return False
 
@@ -197,7 +198,7 @@ class EventDetailSerializerOrganizer(EventDetailSerializerStudent):
     
     def get_certified_quantity(self, obj):
         count = 0
-        for participant in obj.participant_data['accepted_detail']:
+        for participant in obj.accepted_participant:
             if participant.certificate:
                 count += 1
         return count
@@ -217,16 +218,16 @@ class EventDetailSerializerOrganizer(EventDetailSerializerStudent):
 
         for participant in obj.applied_participant.union(obj.accepted_participant).union(obj.declined_participant):
             status = 0
-            if obj.accepted_participant.filter(pk=participant.pk).exists():
+            if obj.accepted_participant.filter(user_id=participant.user.pk).exists():
                 status = 1
-            if obj.declined_participant.filter(pk=participant.pk).exists():
+            if obj.declined_participant.filter(user_id=participant.user.pk).exists():
                 status = -1
-
+            user = participant.user
             participant_list.append({
-                "name": participant.full_name,
-                "role": participant.get_role_display(),
-                "college_id": participant.college_id,
-                "pk": participant.pk,
+                "name": user.full_name,
+                "role": user.get_role_display(),
+                "college_id": user.college_id,
+                "pk": user.pk,
                 "status": status
             })
         return participant_list
@@ -367,11 +368,11 @@ class EventRegisterdCompletedPending(serializers.ModelSerializer):
     def get_applicationStatus(self, obj):
         request = self.context.get('request')
         user_id = request.user.pk
-        if obj.declined_participant.filter(pk=user_id).exists():
+        if obj.declined_participant.filter(user_id=user_id).exists():
             return 'Rejected'
-        elif obj.accepted_participant.filter(pk=user_id).exists():
+        elif obj.accepted_participant.filter(user_id=user_id).exists():
             return 'Accepted'
-        elif obj.applied_participant.filter(pk=user_id).exists():
+        elif obj.applied_participant.filter(user_id=user_id).exists():
             return "Pending"
         else:
             return ""
