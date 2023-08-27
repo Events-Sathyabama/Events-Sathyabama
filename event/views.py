@@ -222,7 +222,7 @@ class ParticipantList(generics.ListAPIView):
     pagination_class = None
 
     def get_queryset(self):
-        return EventParticipant.objects.filter(event_id=self.kwargs['event_id'], owner=False, organizer=False)
+        return EventParticipant.objects.filter(event_id=self.kwargs['event_id'], owner=False, organizer=False, status='3')
 
 
 
