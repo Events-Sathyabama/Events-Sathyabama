@@ -116,7 +116,7 @@ export default function details(props: {params: {id: number}}) {
 			console.log(API.get_url('event:apply', props.params.id));
 			const response = await axios.get(API.get_url('event:apply', props.params.id));
 			console.log(response);
-			setPopupMessage(response.data.message);
+			setPopupMessage(response.data.detail);
 			setSpopup(true);
 			if (data?.fcfs) {
 				setAppliedCount((prev) => prev + 1);
