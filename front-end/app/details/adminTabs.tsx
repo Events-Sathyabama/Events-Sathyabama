@@ -59,8 +59,8 @@ export default function AdminTabs(props: {
 	const [certifiedQuantity, setCertifiedQuantity] = React.useState<number>();
 	const [certUploadText, setCertUploadText] = React.useState(
 		props.eventData.certified_quantity && props.eventData.certified_quantity > 0
-			? 'Update Certificate'
-			: 'Upload Certificate'
+			? 'Drag and drop (or) click here to upload certificates'
+			: 'Drag and drop (or) click here to upload certificates'
 	);
 	async function deleteEvent() {
 		setIsDeleting(true);
@@ -378,15 +378,22 @@ export default function AdminTabs(props: {
 						(certifiedQuantity ||
 							(props.eventData.certified_quantity != undefined &&
 								props.eventData.certified_quantity > 0)) && (
-							<>
-								<div>
-									<span className="text-lg">Students Certified:</span>
-									{certifiedQuantity || props.eventData.certified_quantity}
-								</div>
-								<button className="bg-red-500 p-2" onClick={deleteAllCertificate}>
-									Delete All Certificate
-								</button>
-							</>
+							<div className="flex flex-col sm:flex-row sm:justify-between items-center sm:items-start gap-3 w-full p-4 rounded-md">
+								<p className="text-lg text-[#014361]">
+									Number of students successfully certified :{' '}
+									<span className="font-semibold">
+										{certifiedQuantity || props.eventData.certified_quantity}
+									</span>
+								</p>
+								<Button
+									onClick={deleteAllCertificate}
+									variant="outlined"
+									color="error"
+									style={{backgroundColor: 'white'}}
+									className="w-72">
+									Delete Existing Certificates
+								</Button>
+							</div>
 						)}
 					<div className="w-full h-full flex justify-center items-center">
 						<FileUpload

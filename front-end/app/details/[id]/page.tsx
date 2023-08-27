@@ -200,7 +200,10 @@ export default function details(props: {params: {id: number}}) {
 							</div>
 							<div className="flex flex-col w-full justify-center items-center mt-2 gap-3">
 								{data?.report && isAuthority() ? (
-									<ViewReport reportLink={data?.report}></ViewReport>
+									<ViewReport view="report" reportLink={data?.report}></ViewReport>
+								) : null}
+								{data?.certificate != null ? (
+									<ViewReport view="cert" reportLink={data?.certificate}></ViewReport>
 								) : null}
 								{!isOrganizer && data?.vc_verified ? (
 									<>
