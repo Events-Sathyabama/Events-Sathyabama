@@ -197,7 +197,6 @@ class EventDetailSerializerOrganizer(EventDetailSerializerStudent):
     
     def get_certified_quantity(self, obj):
         count = 0
-        print('I am running')
         for participant in obj.participant_data['accepted_detail']:
             if participant.certificate:
                 count += 1

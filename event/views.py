@@ -172,10 +172,6 @@ class OrganizingEvent(generics.ListAPIView):
     def get_queryset(self):
         q = (Q(participants__id=self.request.user.pk) 
                 & (Q(eventparticipant__owner=True) | Q(eventparticipant__organizer=True))
-                & Q(status__in=[2,4])
-                # & Q(hod_verified=True)
-                # & Q(dean_verified=True)
-                # & Q(vc_verified=True)
 
         )
         event = Event.objects.filter(q)
@@ -309,7 +305,7 @@ def deny_event(request, event_id):
     msg = message.event_deny
     user_role = request.user.role
     user = request.user
-    msg = request.POST.get('message')
+    deny_message = request.POST.get('message')
     if user_role < 2:
         return Response(data={'detail': msg.forbidden}, status=403)
     event = Event.objects.filter(pk=event_id)
