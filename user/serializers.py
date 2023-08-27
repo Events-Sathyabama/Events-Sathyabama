@@ -12,13 +12,13 @@ class UserProfile(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['college_id', 'role', 'full_name', 'branch']
+        fields = ['college_id', 'role', 'full_name', 'branch', 'batch']
 
 class UserDetail(serializers.ModelSerializer):
     branch = serializers.SerializerMethodField()
     class Meta:
         model = User
-        fields = ['pk', 'full_name', 'branch']
+        fields = ['pk', 'full_name', 'branch', 'batch']
     
     def get_branch(self, obj):
         return obj.branch.name if obj.branch is not None else ''
@@ -42,6 +42,7 @@ class OrganizerSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = [
+            'batch',
             'name',
             'role',
             'college_id',
