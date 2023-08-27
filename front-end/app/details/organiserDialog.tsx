@@ -28,6 +28,8 @@ export default function OrganiserDialog(props: {
 	const closeDialog = () => {
 		setOpen(false);
 	};
+	const [sPopup, setSpopup] = React.useState(false);
+	const [fPopup, setFpopup] = React.useState(false);
 
 	const approveEvent = async (e: any) => {
 		let url = 'event:';
@@ -43,9 +45,11 @@ export default function OrganiserDialog(props: {
 		if (response.status === 200) {
 			setOpen(false);
 			// TODO make a success popup with respose.data;
-			props.setApproved(true);
+			setSpopup(true);
+			setTimeout(() => props.setApproved(true), 5000);
 		} else {
 			setOpen(false);
+			setFpopup(true);
 			// TODO make a failed popup with response.data
 		}
 		console.log(response);
@@ -56,6 +60,16 @@ export default function OrganiserDialog(props: {
 
 	return (
 		<div className="mt-2">
+			{sPopup && (
+				<Popup.Success
+					message="Action Successful!"
+					showpopup={setSpopup}></Popup.Success>
+			)}
+			{fPopup && (
+				<Popup.Error
+					message="Action Unsuccessful, try again!"
+					showpopup={setSpopup}></Popup.Error>
+			)}
 			<Button
 				variant="contained"
 				onClick={handleClickOpen}
