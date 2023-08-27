@@ -100,8 +100,6 @@ class BaseEventDetailSerializer(serializers.ModelSerializer):
             'status',
             'certificate',
             'vc_verified',
-            
-
         ]
         additional_fields = []
         fields += additional_fields
@@ -195,8 +193,15 @@ class EventDetailSerializerOrganizer(EventDetailSerializerStudent):
     participant = serializers.SerializerMethodField()
     accepted_role = serializers.SerializerMethodField()
     declined_count = serializers.SerializerMethodField()
-
+    certified_quantity = serializers.SerializerMethodField()
     
+    def get_certified_quantity(self, obj):
+        count = 0
+        print('I am running')
+        for participant in obj.participant_data['accepted_detail']:
+            if participant.certificate:
+                count += 1
+        return count
 
     def get_accepted_role(self, obj):
         rv = []
@@ -237,7 +242,8 @@ class EventDetailSerializerOrganizer(EventDetailSerializerStudent):
             'dean_verified',
             'report_verified',
             'history',
-            'report'
+            'report',
+            'certified_quantity'
         ]
 
 

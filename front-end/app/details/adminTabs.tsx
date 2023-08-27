@@ -3,7 +3,11 @@ import * as React from 'react';
 import Tab from '@mui/material/Tab';
 import TabsContainer from '@mui/material/Tabs';
 import Applications from './applications';
-import {InterfaceParticipant, TimeLineHistory} from '../datainterface';
+import {
+	InterfaceData,
+	InterfaceParticipant,
+	TimeLineHistory,
+} from '../datainterface';
 import TextField from '@mui/material/TextField/TextField';
 import Timeline from '../profile/timeline';
 import {Button} from '@mui/material';
@@ -36,18 +40,13 @@ function TabPanel(props: any) {
 export default function AdminTabs(props: {
 	showSuccessPopup: Function;
 	showFailurePopup: Function;
+	eventData: InterfaceData;
 	isOrganizer: boolean;
-	participant: InterfaceParticipant[];
-	fcfs: boolean;
-	eventId: number;
 	href: string;
-	title: any;
-	history: TimeLineHistory[] | undefined;
 	sPopUp: {show: Function; message: Function};
 	fPopUp: {show: Function; message: Function};
-	report_link?: string;
 }) {
-	const [reportPath, setReportPath] = React.useState(props.report_link);
+	const [reportPath, setReportPath] = React.useState(props.eventData.report);
 
 	const [value, setValue] = React.useState(0);
 	const handleChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -56,11 +55,20 @@ export default function AdminTabs(props: {
 	const router = useRouter();
 	const [isDeleting, setIsDeleting] = React.useState(false);
 	const [deleteVal, setDeleteVal] = React.useState('');
+	const [certDeleted, setCertDeleted] = React.useState(false);
+	const [certifiedQuantity, setCertifiedQuantity] = React.useState<number>();
+	const [certUploadText, setCertUploadText] = React.useState(
+		props.eventData.certified_quantity && props.eventData.certified_quantity > 0
+			? 'Update Certificate'
+			: 'Upload Certificate'
+	);
 	async function deleteEvent() {
 		setIsDeleting(true);
 		//BUG Popup is not showing.
 		try {
-			const response = await axios.get(API.get_url('event:delete', props.eventId));
+			const response = await axios.get(
+				API.get_url('event:delete', props.eventData.pk)
+			);
 			if (response.data && response.data.status === 200) {
 				props.sPopUp.message(response.data.message);
 				props.sPopUp.show();
@@ -75,7 +83,53 @@ export default function AdminTabs(props: {
 		}
 		setIsDeleting(false);
 	}
+	const deleteAllCertificate = async () => {
+		const response = await axios.get(
+			API.get_url('event:delete_cert', props.eventData.pk.toString())
+		);
+		console.log(response);
+		setCertDeleted(true);
+	};
 
+	const handleReportUpload = async (formData: FormData) => {
+		const uploadLink = API.get_url(
+			'event:upload_report',
+			props.eventData.pk.toString()
+		);
+
+		const response = await axios.post(uploadLink, formData, {
+			'Content-Type': 'multipart/form-data',
+		});
+		return response;
+	};
+
+	const handleReportDelete = async () => {
+		const response = await axios.get(
+			API.get_url('event:delete_report', props.eventData.pk.toString())
+		);
+		return response;
+	};
+
+	const handleCertUpload = async (formData: FormData) => {
+		const uploadLink = API.get_url(
+			'event:upload_cert',
+			props.eventData.pk.toString()
+		);
+		const response = await axios.post(uploadLink, formData, {
+			'Content-Type': 'multipart/form-data',
+		});
+		setCertUploadText('Update Certificate');
+
+		setCertDeleted(false);
+		setCertifiedQuantity(response.data.certified_quantity);
+		return response;
+	};
+	const handleCertDelete = async () => {
+		const response = await axios.get(
+			API.get_url('event:delete_cert', props.eventData.pk.toString())
+		);
+		return response;
+	};
 	return (
 		<div className="flex flex-col w-full sm:items-center">
 			<TabsContainer
@@ -198,7 +252,7 @@ export default function AdminTabs(props: {
 			</TabsContainer>
 			<div className="w-full pt-3 border-t border-gray-300">
 				<TabPanel value={value} index={0} className="px-5 pt-8 w-full pb-5">
-					<Timeline history={props.history}></Timeline>
+					<Timeline history={props.eventData.history}></Timeline>
 				</TabPanel>
 				<TabPanel value={value} index={2} className="px-5 pt-2 w-full pb-5">
 					<div className="flex flex-col p-4 w-full rounded-md border border-blue-300">
@@ -252,7 +306,7 @@ export default function AdminTabs(props: {
 								<li>
 									To delete your event, please type your event's name i.e.
 									<span className="font-semibold text-gray-900 ml-1 select-none">
-										"{props.title}"
+										"{props.eventData.title}"
 									</span>{' '}
 									in the textbox provided below.
 								</li>
@@ -271,11 +325,11 @@ export default function AdminTabs(props: {
 							loadingIndicator="Deleting…"
 							variant="contained"
 							className="w-72"
-							disabled={deleteVal !== props.title}
+							disabled={deleteVal !== props.eventData.title}
 							onClick={deleteEvent}
 							loading={isDeleting}
 							style={
-								!isDeleting && deleteVal === props.title
+								!isDeleting && deleteVal === props.eventData.title
 									? {backgroundColor: '#c62828'}
 									: {}
 							}>
@@ -289,7 +343,7 @@ export default function AdminTabs(props: {
 							<p className="text-lg text-[#014361]">
 								Click to view and download all accepted applicants.
 							</p>
-							<a href={`/applicants/${props.eventId}/`} target="_blank">
+							<a href={`/applicants/${props.eventData.pk}/`} target="_blank">
 								<Button
 									variant="contained"
 									style={{backgroundColor: '#1565c0'}}
@@ -298,12 +352,12 @@ export default function AdminTabs(props: {
 								</Button>
 							</a>
 						</div>
-						{!props.fcfs && (
+						{!props.eventData.fcfs && (
 							<Applications
-								applications={props.participant}
+								applications={props.eventData.participant || []}
 								showSuccessPopup={props.showSuccessPopup}
 								showFailurePopup={props.showFailurePopup}
-								eventId={props.eventId}
+								eventId={props.eventData.pk}
 							/>
 						)}
 					</div>
@@ -313,28 +367,34 @@ export default function AdminTabs(props: {
 						<FileUpload
 							fileSizeBytes={10 * 1024 * 1024}
 							accepted_files="application/pdf"
-							uploadLink={API.get_url(
-								'event:upload_report',
-								props.eventId.toString()
-							)}
-							deleteLink={API.get_url(
-								'event:delete_report',
-								props.eventId.toString()
-							)}
+							handleUpload={handleReportUpload}
+							handleDelete={handleReportDelete}
 							path={reportPath}
 							setPath={setReportPath}></FileUpload>
 					</div>
 				</TabPanel>
 				<TabPanel value={value} index={4}>
+					{!certDeleted &&
+						(certifiedQuantity ||
+							(props.eventData.certified_quantity != undefined &&
+								props.eventData.certified_quantity > 0)) && (
+							<>
+								<div>
+									<span className="text-lg">Students Certified:</span>
+									{certifiedQuantity || props.eventData.certified_quantity}
+								</div>
+								<button className="bg-red-500 p-2" onClick={deleteAllCertificate}>
+									Delete All Certificate
+								</button>
+							</>
+						)}
 					<div className="w-full h-full flex justify-center items-center">
 						<FileUpload
 							fileSizeBytes={50 * 1024 * 1024}
 							accepted_files="application/x-compressed,application/zip"
-							uploadLink={API.get_url('event:upload_cert', props.eventId.toString())}
-							deleteLink={API.get_url(
-								'event:delete_cert',
-								props.eventId.toString()
-							)}></FileUpload>
+							handleUpload={handleCertUpload}
+							text={certUploadText}
+							handleDelete={handleCertDelete}></FileUpload>
 					</div>
 				</TabPanel>
 			</div>

@@ -295,20 +295,15 @@ export default function details(props: {params: {id: number}}) {
 							) : (
 								<></>
 							)}
-							{showAdmin && (
+							{showAdmin && data != undefined && (
 								<AdminDialog
-									report_link={data?.report}
+									eventData={data}
 									href={`/event/update/${props.params.id}`}
 									adminClose={closeAdmin}
-									title={data?.title}
 									showAdmin={showAdmin}
 									showSuccessPopup={() => setSpopup(true)}
 									showFailurePopup={() => setFpopup(true)}
 									isOrganizer={isOrganizer}
-									participant={data?.participant || []}
-									fcfs={data?.fcfs || false}
-									eventId={props.params.id}
-									history={data?.history}
 									sPopUp={{show: setSpopup, message: setPopupMessage}}
 									fPopUp={{show: setFpopup, message: setPopupMessage}}></AdminDialog>
 							)}

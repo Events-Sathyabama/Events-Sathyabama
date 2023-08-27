@@ -106,6 +106,7 @@ export interface InterfaceData {
 	rejected?: boolean;
 	report_verified?: boolean;
 	report?: string;
+	certified_quantity?:number;
 }
 
 export interface InterfaceError {

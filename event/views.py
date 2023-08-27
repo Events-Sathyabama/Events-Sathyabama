@@ -397,7 +397,7 @@ def upload_certs(request, event_id):
         college_id = participant.user.college_id  # Get the user ID for each participant
         
         # Check if the image exists in the zip file
-        if college_id in student_certificate:
+        if participant.status == '3' and college_id in student_certificate:
             # Update the certificate field and add to the update list
             file_name = student_certificate[college_id][0]
             image_data = student_certificate[college_id][1]
@@ -410,14 +410,14 @@ def upload_certs(request, event_id):
     if len(participants_to_update) > 0:
         with transaction.atomic():
             EventParticipant.objects.bulk_update(participants_to_update, ['certificate'])
-        return Response(data={'detail': msg.success, 'invalid_files': invalid_files}, status=200)
+        return Response(data={'detail': msg.success, 'certified_quantity': len(participants_to_update), 'invalid_files': invalid_files}, status=200)
     else:
         return Response(data={'detail': 'No certificates to update', 'invalid_files': invalid_files}, status=400)
 
-@api_view(['POST'])
-def delete_certs(request, event_id):
+@api_view(['GET'])
+def delete_certs(request, pk):
     msg = message.delete_cert
-    event_participants = EventParticipant.objects.filter(event_id=event_id)
+    event_participants = EventParticipant.objects.filter(event_id=pk, status='3')
     participants_to_update = []
     for participant in event_participants:
         participant.certificate = None  

@@ -8,7 +8,11 @@ import Typography from '@mui/material/Typography';
 import Slide from '@mui/material/Slide';
 import {TransitionProps} from '@mui/material/transitions';
 import AdminTabs from './adminTabs';
-import {InterfaceParticipant, TimeLineHistory} from '../datainterface';
+import {
+	InterfaceParticipant,
+	TimeLineHistory,
+	InterfaceData,
+} from '../datainterface';
 
 const Transition = React.forwardRef(function Transition(
 	props: TransitionProps & {
@@ -22,18 +26,13 @@ const Transition = React.forwardRef(function Transition(
 export default function AdminDialog(props: {
 	adminClose: any;
 	showAdmin: any;
-	title: any;
+	eventData: InterfaceData;
 	href: string;
 	showSuccessPopup: Function;
 	showFailurePopup: Function;
 	isOrganizer: boolean;
-	participant: InterfaceParticipant[];
-	fcfs: boolean;
-	eventId: number;
-	history: TimeLineHistory[] | undefined;
 	sPopUp: {show: Function; message: Function};
 	fPopUp: {show: Function; message: Function};
-	report_link: string | undefined;
 }) {
 	const handleClose = () => {
 		props.adminClose();
@@ -71,22 +70,17 @@ export default function AdminDialog(props: {
 						sx={{ml: 2, flex: 1}}
 						variant="h6"
 						component="div">
-						Event Admin Panel - {props.title}
+						Event Admin Panel - {props.eventData.title}
 					</Typography>
 				</Toolbar>
 			</AppBar>
 			<List>
 				<AdminTabs
-					report_link={props.report_link}
+					eventData={props.eventData}
 					showSuccessPopup={() => props.showSuccessPopup()}
 					showFailurePopup={() => props.showFailurePopup()}
 					isOrganizer={props.isOrganizer}
-					participant={props.participant}
-					fcfs={props.fcfs}
-					eventId={props.eventId}
 					href={props.href}
-					title={props.title}
-					history={props.history}
 					sPopUp={props.sPopUp}
 					fPopUp={props.fPopUp}></AdminTabs>
 			</List>
