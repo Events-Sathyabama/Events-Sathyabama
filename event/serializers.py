@@ -39,13 +39,12 @@ class BaseEventDetailSerializer(serializers.ModelSerializer):
     long_description = serializers.SerializerMethodField()
 
     organizer = user_serializer.OrganizerSerializer(many=True)
-    owner = user_serializer.OrganizerSerializer()
+    owner = user_serializer.OwnerSerializer()
 
     applied_count = serializers.SerializerMethodField()
     accepted_count = serializers.SerializerMethodField()
-    
-    certificate = serializers.SerializerMethodField()
 
+    certificate = serializers.SerializerMethodField()
 
     branch = user_serializer.BranchSerializer(many=True)
     total_strength = serializers.SerializerMethodField()
@@ -176,7 +175,8 @@ class EventDetailSerializerStudent(BaseEventDetailSerializer):
             'is_accepted',
             'is_declined',
         ]
-        
+
+
 class EventDetailSerializerHodDeanVC(EventDetailSerializerStudent):
     class Meta:
         fields = [
@@ -190,12 +190,13 @@ class EventDetailSerializerHodDeanVC(EventDetailSerializerStudent):
             'report',
         ]
 
+
 class EventDetailSerializerOrganizer(EventDetailSerializerStudent):
     participant = serializers.SerializerMethodField()
     accepted_role = serializers.SerializerMethodField()
     declined_count = serializers.SerializerMethodField()
     certified_quantity = serializers.SerializerMethodField()
-    
+
     def get_certified_quantity(self, obj):
         count = 0
         for participant in obj.accepted_participant:
@@ -270,7 +271,6 @@ class EventCreateSerializer(serializers.ModelSerializer):
             'total_strength',
         ]
 
-
     def to_representation(self, instance):
         # Override to_representation method to customize serialized output
         representation = super().to_representation(instance)
@@ -278,15 +278,17 @@ class EventCreateSerializer(serializers.ModelSerializer):
         #     instance.organizer.all(), many=True).data
         return representation
 
-
     def save(self, *args, **kwargs):
         event = super().save(*args, **kwargs)
         organizer_list = self.context['request'].data.getlist('organizer[]')
-        existing_participants = EventParticipant.objects.filter(event=event).exclude(user__pk__in=organizer_list).exclude(owner=True)
+        existing_participants = EventParticipant.objects.filter(
+            event=event).exclude(user__pk__in=organizer_list).exclude(owner=True)
         existing_participants.delete()
-        new_participants = [EventParticipant(event=event, user_id=user_pk, organizer=True, status='0') for user_pk in organizer_list]
+        new_participants = [EventParticipant(
+            event=event, user_id=user_pk, organizer=True, status='0') for user_pk in organizer_list]
         with transaction.atomic():
-            EventParticipant.objects.bulk_create(new_participants, ignore_conflicts=True)
+            EventParticipant.objects.bulk_create(
+                new_participants, ignore_conflicts=True)
         return event
 
     def validate_title(self, value):
@@ -305,11 +307,7 @@ class EventUpdateSerializer(EventCreateSerializer):
         instance.status = 1
         instance.save()
 
-        
-
         return instance
-    
-
 
 
 class EventProgressSerializer(serializers.ModelSerializer):
@@ -337,7 +335,6 @@ class EventProgressSerializer(serializers.ModelSerializer):
             progress = 7
         if obj.status == 8:  # Certified
             progress = 8
-
 
 
 class EventRegisterdCompletedPending(serializers.ModelSerializer):
@@ -376,6 +373,7 @@ class EventRegisterdCompletedPending(serializers.ModelSerializer):
         else:
             return ""
 
+
 class EventOrganizer(EventRegisterdCompletedPending):
 
     class Meta:
@@ -389,6 +387,7 @@ class EventOrganizer(EventRegisterdCompletedPending):
             'history'
         ]
 
+
 class ClubSerializer(serializers.ModelSerializer):
     class Meta:
         model = Club
@@ -397,12 +396,11 @@ class ClubSerializer(serializers.ModelSerializer):
 
 class EventParticipantList(serializers.ModelSerializer):
     name = serializers.CharField(source='user.full_name', read_only=True)
-    register_number = serializers.CharField(source='user.college_id', read_only=True)
+    register_number = serializers.CharField(
+        source='user.college_id', read_only=True)
     batch = serializers.CharField(source='user.batch', read_only=True)
     branch = serializers.CharField(source='user.branch.name', read_only=True)
     event_name = serializers.CharField(source='event.title', read_only=True)
-
-
 
     class Meta:
         model = EventParticipant

@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 from django.db.models import Q
 from user.models import Branch
 from .fakequeryset import FakeQuerySet
-from user.serializers import UserDetail
+
 from django.utils import timezone
 import os
 from .utils import compress
@@ -21,10 +21,12 @@ def confirm_organizer(value):
     if user.role == 0:
         raise ValidationError(event.non_organizer_forbidden)
 
+
 def event_certificate_upload_path(instance, filename):
     # Construct the file path based on the event ID
     event_id = str(instance.event_id)
     return os.path.join('certs', event_id, filename)
+
 
 CLUB_LENGTH = 70
 
@@ -32,11 +34,13 @@ CLUB_LENGTH = 70
 def default_accepted_role():
     return [0]
 
+
 def FileToLarge(value):
     size_in_mb = 10
     limit = size_in_mb * 1024 * 1024
     if value.size > limit:
         raise ValidationError(event.report_file_limit.format(size_in_mb))
+
 
 class EventParticipant(models.Model):
     STATUS_CHOICES = (
@@ -48,12 +52,12 @@ class EventParticipant(models.Model):
 
     event = models.ForeignKey('Event', on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    status = models.CharField(max_length=1, choices=STATUS_CHOICES, default='2')
+    status = models.CharField(
+        max_length=1, choices=STATUS_CHOICES, default='2')
     owner = models.BooleanField(default=False)
     organizer = models.BooleanField(default=False)
-    certificate = models.ImageField(upload_to=event_certificate_upload_path, null=True, blank=True)
-    
-    
+    certificate = models.ImageField(
+        upload_to=event_certificate_upload_path, null=True, blank=True)
 
     def save(self, *args, **kwargs):
         if self.certificate:
@@ -68,80 +72,83 @@ class EventParticipant(models.Model):
     class Meta:
         unique_together = ('event', 'user')
 
+
 def default_history(user):
     title = event.Timeline()
+    from user.serializers import UserDetail
     return [
-            {
-                'user': UserDetail(user).data,
-                'title': title.title_created,
-                'message': '',
-                'date': timezone.now().isoformat(),
-                'status':1
-            },
-            {
-                'user': None,
-                'title': title.title_hod,
-                'message': '',
-                'date': None,
-                'status': -1,
-            },
-            {
-                'user': None,
-                'title': title.title_dean,
-                'message': '',
-                'date': None,
-                'status': -1,
-            },
-            {
-                'user': None,
-                'title': title.title_vc,
-                'message': '',
-                'date': None,
-                'status': -1,
-            },
-            {
-                'user': None,
-                'title': title.title_display,
-                'message': '',
-                'date': None,
-                'status': -1,
-            },
-            {
-                'user': None,
-                'title': title.title_ongoing,
-                'message': '',
-                'date': None,
-                'status': -1,
-            },
-            {
-                'user': None,
-                'title': title.title_completed,
-                'message': '',
-                'date': None,
-                'status': -1,
-            },
-            {
-                'user': None,
-                'title': title.title_report_uploaded,
-                'message': '',
-                'date': None,
-                'status': -1,
-            },
-            {
-                'user': None,
-                'title': title.title_report_approved,
-                'message': '',
-                'date': None,
-                'status': -1,
-            },
-            {
-                'user': None,
-                'title': title.title_certified,
-                'message': '',
-                'date': None,
-                'status': -1,
-            },
-        ] 
+        {
+            'user': UserDetail(user).data,
+            'title': title.title_created,
+            'message': '',
+            'date': timezone.now().isoformat(),
+            'status': 1
+        },
+        {
+            'user': None,
+            'title': title.title_hod,
+            'message': '',
+            'date': None,
+            'status': -1,
+        },
+        {
+            'user': None,
+            'title': title.title_dean,
+            'message': '',
+            'date': None,
+            'status': -1,
+        },
+        {
+            'user': None,
+            'title': title.title_vc,
+            'message': '',
+            'date': None,
+            'status': -1,
+        },
+        {
+            'user': None,
+            'title': title.title_display,
+            'message': '',
+            'date': None,
+            'status': -1,
+        },
+        {
+            'user': None,
+            'title': title.title_ongoing,
+            'message': '',
+            'date': None,
+            'status': -1,
+        },
+        {
+            'user': None,
+            'title': title.title_completed,
+            'message': '',
+            'date': None,
+            'status': -1,
+        },
+        {
+            'user': None,
+            'title': title.title_report_uploaded,
+            'message': '',
+            'date': None,
+            'status': -1,
+        },
+        {
+            'user': None,
+            'title': title.title_report_approved,
+            'message': '',
+            'date': None,
+            'status': -1,
+        },
+        {
+            'user': None,
+            'title': title.title_certified,
+            'message': '',
+            'date': None,
+            'status': -1,
+        },
+    ]
+
 
 class Event(models.Model):
     STATUS_CHOICES = (
@@ -178,11 +185,10 @@ class Event(models.Model):
     time = models.TextField(blank=True, null=True)
 
     report = models.FileField(null=True, blank=True, validators=[FileToLarge])
-    
+
     branch = models.ManyToManyField(Branch, blank=True)
 
     history = models.JSONField(blank=True, null=True)
-
 
     hod_verified = models.BooleanField(default=False)
     dean_verified = models.BooleanField(default=False)
@@ -208,18 +214,20 @@ class Event(models.Model):
         self.history[level]['message'] = msg
         self.history[level]['status'] = status
         return True
-    
+
     def clear_timeline(self):
         for history in self.history:
             if history['status'] == 0:
                 history['status'] = -1
+
     @property
     def no_of_certificate(self):
         self.get_participant_data()
 
     def get_participant_data(self):
         if not hasattr(self, '_participants_dict'):
-            all_participant = EventParticipant.objects.filter(event=self.pk).select_related('user')
+            all_participant = EventParticipant.objects.filter(
+                event=self.pk).select_related('user')
             data = {
                 'accepted': all_participant.filter(status='3'),
                 'applied': all_participant.filter(status='2'),
@@ -227,7 +235,7 @@ class Event(models.Model):
                 'owner': all_participant.filter(owner=True).first().user,
                 'organizer': all_participant.filter(organizer=True),
                 'involved_user': all_participant,
-                
+
             }
             self._participants_dict = data
 
@@ -276,7 +284,7 @@ class Event(models.Model):
         self.image = image
         if self.pk is None or self.history is None:
             self.history = default_history(self.owner)
-        
+
         super().save(*args, **kwargs)
 
     def register_participant(self, user):
