@@ -269,9 +269,9 @@ class ParticipantList(generics.ListAPIView, PermissionAllowOrganizerMixin):
         return EventParticipant.objects.filter(event_id=self.kwargs['event_id'], owner=False, organizer=False, status='3')
 
 
+@api_view(['POST'])
 @is_authenticated
 @is_event_organizer
-@api_view(['POST'])
 def application_approval(request, event_id):
 
     data_dict = {data.get('pk'): '3' if data.get(
@@ -300,9 +300,9 @@ def application_approval(request, event_id):
     return Response({'detail': message.applicaition_approval.success, 'status': 200})
 
 
+@api_view(['POST'])
 @is_authenticated
 @required_roles([2, 3, 4])
-@api_view(['POST'])
 def approve_event(request, event_id):
     msg = message.event_approval
     user_role = request.user.role
@@ -360,9 +360,9 @@ def approve_event(request, event_id):
     return Response(data={'detail': msg.success})
 
 
+@api_view(['POST'])
 @is_authenticated
 @required_roles([2, 3, 4])
-@api_view(['POST'])
 def deny_event(request, event_id):
     msg = message.event_deny
     user_role = request.user.role
@@ -411,9 +411,9 @@ def deny_event(request, event_id):
     return Response(data={'detail': msg.server_error}, status=500)
 
 
+@api_view(['POST'])
 @is_authenticated
 @is_event_organizer
-@api_view(['POST'])
 def upload_report(request, event_id):
     msg = message.report_upload
     event = Event.objects.get(id=event_id)
@@ -432,9 +432,9 @@ def upload_report(request, event_id):
         return Response(data={'detail': msg.error})
 
 
+@api_view(['POST'])
 @is_authenticated
 @is_event_organizer
-@api_view(['POST'])
 def upload_certs(request, event_id):
     msg = message.cert_upload
 
@@ -492,9 +492,9 @@ def upload_certs(request, event_id):
         return Response(data={'detail': msg.no_certificates_found, 'invalid_files': invalid_files}, status=400)
 
 
+@api_view(['GET'])
 @is_authenticated
 @is_event_organizer
-@api_view(['GET'])
 def delete_certs(request, event_id):
     msg = message.delete_cert
     event_participants = EventParticipant.objects.filter(
@@ -511,8 +511,8 @@ def delete_certs(request, event_id):
     return Response({'detail': msg.success}, status=200)
 
 
-@is_authenticated
 @api_view(['GET'])
+@is_authenticated
 def apply_event(request, event_id):
     msg = message.apply_event
     response = Response({'detail': msg.success})
@@ -534,17 +534,17 @@ def apply_event(request, event_id):
     return response
 
 
-@is_authenticated
 @api_view(['GET'])
+@is_authenticated
 def club_branch(request):
     club = serializers.ClubSerializer(Club.objects.all(), many=True)
     branch = BranchSerializer(Branch.objects.all(), many=True)
     return Response({'club': club.data, 'branch': branch.data})
 
 
+@api_view(['GET'])
 @is_authenticated
 @is_event_owner
-@api_view(['GET'])
 def delete_event(reuqest, event_id):
     msg = message.delete_event
     event = get_object_or_404(Event, pk=event_id)
@@ -555,9 +555,9 @@ def delete_event(reuqest, event_id):
     return Response({'detail': msg.success, 'status': 200})
 
 
+@api_view(['GET'])
 @is_authenticated
 @is_event_organizer
-@api_view(['GET'])
 def delete_report(request, event_id):
     msg = message.delete_report
     event = get_object_or_404(Event, pk=event_id)

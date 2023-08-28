@@ -2,6 +2,8 @@ from rest_framework import permissions
 from functools import wraps
 from rest_framework.response import Response
 from rest_framework import status
+from django.db.models import Q
+from .models import Event, EventParticipant
 
 
 class IsStudent(permissions.BasePermission):
@@ -45,7 +47,7 @@ def is_authenticated(view_func):
         if request.user.is_authenticated:
             return view_func(request, *args, **kwargs)
         else:
-            return Response({'detail': 'You must be authenticated to perform this action.'}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response(data={'detail': 'You must be authenticated to perform this action.'}, status=401)
     return _wrapped_view
 
 
@@ -57,7 +59,7 @@ def required_roles(role_values=[]):
             if user.is_authenticated and user.role in role_value:
                 return view_func(request, *args, **kwargs)
             else:
-                return Response({'detail': 'You do not have permission to perform this action.'}, status=status.HTTP_403_FORBIDDEN)
+                return Response(data={'detail': 'You do not have permission to perform this action.'}, status=403)
         return _wrapped_view
     return decorator
 
@@ -68,12 +70,10 @@ def is_event_organizer(view_func):
         event_id = kwargs['event_id']
         q = Q(event_id=event_id) & Q(user=request.user) & (
             Q(owner=True) | Q(organizer=True))
-        organizer = event.owner == request.user or EventParticipant.objects.filter(
-            q).exists()
-        if user.is_authenticated and organizer:
+        if EventParticipant.objects.filter(q).exists():
             return view_func(request, *args, **kwargs)
         else:
-            return Response({'detail': 'You do not have permission to perform this action.'}, status=status.HTTP_403_FORBIDDEN)
+            return Response(data={'detail': 'You do not have permission to perform this action.'}, status=403)
     return _wrapped_view
 
 
@@ -82,10 +82,8 @@ def is_event_owner(view_func):
     def _wrapped_view(request, *args, **kwargs):
         event_id = kwargs['event_id']
         q = Q(event_id=event_id) & Q(user=request.user) & Q(owner=True)
-        organizer = event.owner == request.user or EventParticipant.objects.filter(
-            q).exists()
-        if user.is_authenticated and organizer:
+        if EventParticipant.objects.filter(q).exists():
             return view_func(request, *args, **kwargs)
         else:
-            return Response({'detail': 'You do not have permission to perform this action.'}, status=status.HTTP_403_FORBIDDEN)
+            return Response(data={'detail': 'You do not have permission to perform this action.'}, status=403)
     return _wrapped_view
