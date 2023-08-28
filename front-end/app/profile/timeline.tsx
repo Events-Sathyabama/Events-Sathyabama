@@ -34,6 +34,11 @@ const errorLabel = [
 
 export default function Timeline(props: {history: TimeLineHistory[] | undefined}) {
 	let currentStep = 0;
+	// not_visited = 0;
+	// ongoing = 1;
+	// completed = 2;
+	// rejected = -1;
+	console.log('Timeline History: ', props.history);
 	if (props.history) {
 		for (let i = 0; i < props.history.length; i++) {
 			if (props.history[i].status === -1) {
@@ -44,7 +49,14 @@ export default function Timeline(props: {history: TimeLineHistory[] | undefined}
 	}
 
 	function isStepFailed(idx: number) {
-		return props.history && props.history[idx].status === 0;
+		return props.history && props.history[idx].status === -1;
+	}
+
+	function isStepOnGoing(idx: number) {
+		return props.history && props.history[idx].status == 1;
+	}
+	function isStepCompleted(idx: number) {
+		return props.history && props.history[idx].status == 2;
 	}
 
 	return (
@@ -66,9 +78,9 @@ export default function Timeline(props: {history: TimeLineHistory[] | undefined}
 					}
 
 					return (
-						<Step key={history.title}>
+						<Step key={history.success_title}>
 							<StepLabel {...labelProps}>
-								<p className="text-lg">{history.title}</p>
+								<p className="text-lg">{history.success_title}</p>
 							</StepLabel>
 						</Step>
 					);

@@ -2,6 +2,7 @@ import React, {useState, useRef} from 'react';
 import Popup from '../popup';
 import API from '../API';
 import LoadingButton from '@mui/lab/LoadingButton';
+import {AxiosError} from 'axios';
 
 interface FileUploaderProps {
 	accepted_files: string;
@@ -112,8 +113,12 @@ const FileUploader: React.FC<FileUploaderProps> = (props: FileUploaderProps) => 
 			setShowSuccessPopup(true);
 			setUploading(false);
 			// console.log('File uploaded successfully:', response.data);
-		} catch (error) {
-			setPopupMessage('Error Uploading File!!');
+		} catch (error: any) {
+			if (error.response.data?.detail) {
+				setPopupMessage(error.response.data.detail);
+			} else {
+				setPopupMessage('Error Uploading File!!');
+			}
 			setShowErrorPopup(true);
 			setUploading(false);
 			console.error(error);

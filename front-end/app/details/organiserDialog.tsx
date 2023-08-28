@@ -38,19 +38,16 @@ export default function OrganiserDialog(props: {
 		} else if (accept === '0') {
 			url += 'reject';
 		}
-		// debugger;
 		const response = await axios.post(API.get_url(url, props.id), {
-			message: messageRef.current?.value,
+			message: messageRef.current?.querySelector('textarea')?.value,
 		});
 		if (response.status === 200) {
 			setOpen(false);
-			// TODO make a success popup with respose.data;
 			setSpopup(true);
 			setTimeout(() => props.setApproved(true), 5000);
 		} else {
 			setOpen(false);
 			setFpopup(true);
-			// TODO make a failed popup with response.data
 		}
 		console.log(response);
 	};

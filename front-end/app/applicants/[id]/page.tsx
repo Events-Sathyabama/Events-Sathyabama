@@ -15,7 +15,7 @@ import CircularLoader from '@/app/circularLoader';
 const axios = new API.Axios();
 
 interface Column {
-	id: 'name' | 'register_number' | 'branch' | 'batch';
+	id: 'name' | 'register_number' | 'branch' | 'batch' | 'certificate';
 	label: string;
 	minWidth?: number;
 	align?: 'right';
@@ -37,6 +37,7 @@ const columns: readonly Column[] = [
 		format: (value: number) => value.toLocaleString('en-US'),
 	},
 	{id: 'branch', label: 'Branch', minWidth: 80},
+	{id: 'certificate', label: 'Certificate', minWidth: 80},
 ];
 
 interface Data {
@@ -45,11 +46,11 @@ interface Data {
 	register_number: number;
 	batch: string;
 	event_name: string;
+	certificate: string | undefined;
 }
 
 const exportToCsv = function (data: string[][], file_name: string) {
 	var CsvString = '';
-
 	data.forEach(function (RowItem, RowIndex) {
 		RowItem.forEach(function (ColItem, ColIndex) {
 			CsvString += ColItem + ',';
@@ -82,13 +83,16 @@ export default function Applicants(props: {params: {id: number}}) {
 		if (rows.length === 0) {
 			return;
 		}
-		const exportData = [['Register Number', 'Name', 'Batch', 'Branch']];
+		const exportData = [
+			['Register Number', 'Name', 'Batch', 'Branch', 'certificate'],
+		];
 		rows.forEach((val) => {
 			exportData.push([
 				String(val.register_number),
 				val.name,
 				val.batch,
 				val.branch,
+				val.certificate || '',
 			]);
 		});
 		const file_name = rows[0].event_name.split(' ').join('_') + '(Participant_List)';
@@ -111,6 +115,9 @@ export default function Applicants(props: {params: {id: number}}) {
 				API.get_url('event:participant_list', props.params.id)
 			);
 			console.log(response.data);
+			if (response.data.length > 0) {
+				document.title = 'Applicants | ' + response.data[0].event_name;
+			}
 			setRows(response.data);
 		},
 		[],
@@ -202,7 +209,22 @@ export default function Applicants(props: {params: {id: number}}) {
 													const value = row[column.id];
 													return (
 														<TableCell key={column.id} align={column.align}>
-															{value}
+															{column.id === 'certificate' ? (
+																<>
+																	{value !== null ? (
+																		<a
+																			href={String(value)}
+																			target="__blank"
+																			className="!text-blue-800 underline">
+																			View Certificate
+																		</a>
+																	) : (
+																		'-'
+																	)}
+																</>
+															) : (
+																value
+															)}
 														</TableCell>
 													);
 												})}

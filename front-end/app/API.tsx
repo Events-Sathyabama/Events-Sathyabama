@@ -395,6 +395,18 @@ const url: {[key: string]: (...args: any[]) => string} = {
 		return 'user/reset_password/';
 	},
 } as const;
+
+const check_role = (role: string) => {
+	const user_details = user_detail();
+	if (
+		user_details &&
+		user_details.role &&
+		user_details.role.toLowerCase() === role.toLowerCase()
+	) {
+		return true;
+	}
+	return false;
+};
 const API: {[key: string]: any} = {
 	Axios: AxiosInstance,
 	jwt: parseJwt,
@@ -402,5 +414,6 @@ const API: {[key: string]: any} = {
 	is_logged_in: is_logged_in,
 	get_user_detail: user_detail,
 	extract_error: extractError,
+	check_role: check_role,
 };
 export default API;

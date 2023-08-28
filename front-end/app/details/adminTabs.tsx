@@ -205,50 +205,56 @@ export default function AdminTabs(props: {
 						</div>
 					}
 				/>
-				<Tab
-					label={
-						<div className="flex flex-col md:flex-row md:gap-2 justify-center items-center">
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								fill="none"
-								viewBox="0 0 24 24"
-								strokeWidth={1.5}
-								stroke="currentColor"
-								className="w-6 h-6">
-								<path
-									strokeLinecap="round"
-									strokeLinejoin="round"
-									d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
-								/>
-							</svg>
-							<h1 className="text-lg sm:text-xl" style={{textTransform: 'none'}}>
-								Upload Report
-							</h1>
-						</div>
-					}
-				/>
-				<Tab
-					label={
-						<div className="flex flex-col md:flex-row md:gap-2 justify-center items-center">
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								fill="none"
-								viewBox="0 0 24 24"
-								strokeWidth={1.5}
-								stroke="currentColor"
-								className="w-6 h-6">
-								<path
-									strokeLinecap="round"
-									strokeLinejoin="round"
-									d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
-								/>
-							</svg>
-							<h1 className="text-lg sm:text-xl" style={{textTransform: 'none'}}>
-								Upload Certificates
-							</h1>
-						</div>
-					}
-				/>
+				{(props.eventData.status.toLowerCase() === 'completed' ||
+					props.eventData.status.toLowerCase() === 'report submitted') && (
+					<Tab
+						label={
+							<div className="flex flex-col md:flex-row md:gap-2 justify-center items-center">
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									fill="none"
+									viewBox="0 0 24 24"
+									strokeWidth={1.5}
+									stroke="currentColor"
+									className="w-6 h-6">
+									<path
+										strokeLinecap="round"
+										strokeLinejoin="round"
+										d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
+									/>
+								</svg>
+								<h1 className="text-lg sm:text-xl" style={{textTransform: 'none'}}>
+									Upload Report
+								</h1>
+							</div>
+						}
+					/>
+				)}
+				{(props.eventData.status.toLowerCase() === 'report approved' ||
+					props.eventData.status.toLowerCase() === 'certified') && (
+					<Tab
+						label={
+							<div className="flex flex-col md:flex-row md:gap-2 justify-center items-center">
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									fill="none"
+									viewBox="0 0 24 24"
+									strokeWidth={1.5}
+									stroke="currentColor"
+									className="w-6 h-6">
+									<path
+										strokeLinecap="round"
+										strokeLinejoin="round"
+										d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
+									/>
+								</svg>
+								<h1 className="text-lg sm:text-xl" style={{textTransform: 'none'}}>
+									Upload Certificates
+								</h1>
+							</div>
+						}
+					/>
+				)}
 			</TabsContainer>
 			<div className="w-full pt-3 border-t border-gray-300">
 				<TabPanel value={value} index={0} className="px-5 pt-8 w-full pb-5">
@@ -362,23 +368,29 @@ export default function AdminTabs(props: {
 						)}
 					</div>
 				</TabPanel>
-				<TabPanel value={value} index={3}>
-					<div className="w-full h-full flex justify-center items-center">
-						<FileUpload
-							fileSizeBytes={10 * 1024 * 1024}
-							accepted_files="application/pdf"
-							handleUpload={handleReportUpload}
-							handleDelete={handleReportDelete}
-							path={reportPath}
-							setPath={setReportPath}></FileUpload>
-					</div>
-				</TabPanel>
-				<TabPanel value={value} index={4}>
-					{!certDeleted &&
-						(certifiedQuantity ||
-							(props.eventData.certified_quantity != undefined &&
-								props.eventData.certified_quantity > 0)) && (
-							<div className="flex flex-col sm:flex-row sm:justify-between items-center sm:items-start gap-3 w-full p-4 rounded-md">
+
+				{(props.eventData.status.toLowerCase() === 'completed' ||
+					props.eventData.status.toLowerCase() === 'report submitted') && (
+					<TabPanel value={value} index={3}>
+						<div className="w-full h-full flex justify-center items-center">
+							<FileUpload
+								fileSizeBytes={10 * 1024 * 1024}
+								accepted_files="application/pdf"
+								handleUpload={handleReportUpload}
+								handleDelete={handleReportDelete}
+								path={reportPath}
+								setPath={setReportPath}></FileUpload>
+						</div>
+					</TabPanel>
+				)}
+				{(props.eventData.status.toLowerCase() === 'report approved' ||
+					props.eventData.status.toLowerCase() === 'certified') && (
+					<TabPanel value={value} index={4}>
+						{!certDeleted &&
+							(certifiedQuantity ||
+								(props.eventData.certified_quantity != undefined &&
+									props.eventData.certified_quantity > 0)) && (
+								<div className="flex flex-col sm:flex-row sm:justify-between items-center sm:items-start gap-3 w-full p-4 rounded-md">
 								<p className="text-lg text-[#014361]">
 									Number of students successfully certified :{' '}
 									<span className="font-semibold">
@@ -394,16 +406,18 @@ export default function AdminTabs(props: {
 									Delete Existing Certificates
 								</Button>
 							</div>
-						)}
-					<div className="w-full h-full flex justify-center items-center">
-						<FileUpload
-							fileSizeBytes={50 * 1024 * 1024}
-							accepted_files="application/x-compressed,application/zip,application/x-zip-compressed"
-							handleUpload={handleCertUpload}
-							text={certUploadText}
-							handleDelete={handleCertDelete}></FileUpload>
-					</div>
-				</TabPanel>
+							)}
+						<div className="w-full h-full flex justify-center items-center">
+							<FileUpload
+								fileSizeBytes={50 * 1024 * 1024}
+								accepted_files="application/x-compressed,application/zip,application/x-zip-compressed"
+								handleUpload={handleCertUpload}
+								text={certUploadText}
+								handleDelete={handleCertDelete}></FileUpload>
+						</div>
+					</TabPanel>
+				)}
+
 			</div>
 		</div>
 	);

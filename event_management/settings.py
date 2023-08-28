@@ -26,7 +26,8 @@ SECRET_KEY = 'django-insecure-7!7*qbl(#kv!#e6!7n=&(56a-5wa2k!v-nz=f)5ush0+f4)b==
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', cast=bool, default=True)
-SESSION_EXP_TIME = config('SESSION_EXP_TIME', cast=eval, default="1 * 24 * 60 * 60")
+SESSION_EXP_TIME = config('SESSION_EXP_TIME', cast=eval,
+                          default="1 * 24 * 60 * 60")
 
 ALLOWED_HOSTS = ["*"]
 INTERNAL_IPS = ['127.0.0.1']
@@ -56,7 +57,7 @@ INSTALLED_APPS = [
     'event',
     'mail',
     'django_cleanup.apps.CleanupConfig',
-    
+
 ]
 
 SHELL_PLUS_PRE_IMPORTS = [('event_management.query_count', '*')]
@@ -80,8 +81,7 @@ AUTH_USER_MODEL = 'user.User'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates']
-        ,
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -187,7 +187,6 @@ REST_FRAMEWORK = {
 }
 
 
-
 SIMPLE_JWT = {
     "TOKEN_OBTAIN_SERIALIZER": "event_management.serializers.TokenObtain",
     "ACCESS_TOKEN_LIFETIME": timedelta(seconds=config('ACCESS_TOKEN_EXP_TIME', cast=int)),
@@ -208,6 +207,4 @@ EMAIL_PORT = config('EMAIL_PORT')
 EMAIL_HOST_USER = config('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 
-OTP_VALIDITY_DURATION = 5 * 60 # in seconds
-
-
+OTP_VALIDITY_DURATION = 5 * 60  # in seconds

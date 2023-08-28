@@ -6,6 +6,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import {AcceptDeny} from './organiserDialog';
 import {LoadingButton} from '@mui/lab';
+import API from '../API';
 
 const ViewReport = (props: {
 	reportLink: string | undefined;
@@ -14,6 +15,7 @@ const ViewReport = (props: {
 	const [open, setOpen] = React.useState(false);
 	const [accept, setAccept] = React.useState('1');
 	const [loading, setLoading] = React.useState(false);
+
 	return (
 		<div className="flex flex-col w-full justify-between p-3 gap-2 border border-blue-300 bg-blue-50 rounded-md text-lg">
 			<div className="flex flex-col xl:flex-row w-full justify-between p-3 gap-2 items-center text-lg">
@@ -33,7 +35,7 @@ const ViewReport = (props: {
 							{props.view === 'cert' && 'View Certificate'}
 						</Button>
 					</a>
-					{props.view === 'report' && (
+					{(props.view === 'report' && API.check_role('vice-chancellor')) && (
 						<Button
 							variant="outlined"
 							className="w-56"

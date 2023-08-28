@@ -174,10 +174,11 @@ export interface InterfacePaginatedData {
 
 export interface TimeLineHistory {
 	user: {pk: number; full_name: string; branch: string};
-	title: string;
+	success_title: string;
+	failure_title: string;
 	message: string;
 	date: string;
-	status: number;
+	status: 0 | 1 | 2 | -1;
 }
 
 export default {};

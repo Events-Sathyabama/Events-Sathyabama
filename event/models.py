@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 from django.db.models import Q
 from user.models import Branch
 from .fakequeryset import FakeQuerySet
-from user.serializers import UserDetail
+
 from django.utils import timezone
 import os
 from .utils import compress
@@ -21,10 +21,12 @@ def confirm_organizer(value):
     if user.role == 0:
         raise ValidationError(event.non_organizer_forbidden)
 
+
 def event_certificate_upload_path(instance, filename):
     # Construct the file path based on the event ID
     event_id = str(instance.event_id)
     return os.path.join('certs', event_id, filename)
+
 
 CLUB_LENGTH = 70
 
@@ -32,11 +34,13 @@ CLUB_LENGTH = 70
 def default_accepted_role():
     return [0]
 
+
 def FileToLarge(value):
     size_in_mb = 10
     limit = size_in_mb * 1024 * 1024
     if value.size > limit:
         raise ValidationError(event.report_file_limit.format(size_in_mb))
+
 
 class EventParticipant(models.Model):
     STATUS_CHOICES = (
@@ -48,12 +52,12 @@ class EventParticipant(models.Model):
 
     event = models.ForeignKey('Event', on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    status = models.CharField(max_length=1, choices=STATUS_CHOICES, default='2')
+    status = models.CharField(
+        max_length=1, choices=STATUS_CHOICES, default='2')
     owner = models.BooleanField(default=False)
     organizer = models.BooleanField(default=False)
-    certificate = models.ImageField(upload_to=event_certificate_upload_path, null=True, blank=True)
-    
-    
+    certificate = models.ImageField(
+        upload_to=event_certificate_upload_path, null=True, blank=True)
 
     def save(self, *args, **kwargs):
         if self.certificate:
@@ -68,92 +72,111 @@ class EventParticipant(models.Model):
     class Meta:
         unique_together = ('event', 'user')
 
+
+class TimeLineStatus:
+    not_visited = 0
+    ongoing = 1
+    completed = 2
+    rejected = -1
+
+
 def default_history(user):
     title = event.Timeline()
+    from user.serializers import UserDetail
+
     return [
-            {
-                'user': UserDetail(user).data,
-                'title': title.title_created,
-                'message': '',
-                'date': timezone.now().isoformat(),
-                'status':1
-            },
-            {
-                'user': None,
-                'title': title.title_hod,
-                'message': '',
-                'date': None,
-                'status': -1,
-            },
-            {
-                'user': None,
-                'title': title.title_dean,
-                'message': '',
-                'date': None,
-                'status': -1,
-            },
-            {
-                'user': None,
-                'title': title.title_vc,
-                'message': '',
-                'date': None,
-                'status': -1,
-            },
-            {
-                'user': None,
-                'title': title.title_display,
-                'message': '',
-                'date': None,
-                'status': -1,
-            },
-            {
-                'user': None,
-                'title': title.title_ongoing,
-                'message': '',
-                'date': None,
-                'status': -1,
-            },
-            {
-                'user': None,
-                'title': title.title_completed,
-                'message': '',
-                'date': None,
-                'status': -1,
-            },
-            {
-                'user': None,
-                'title': title.title_report_uploaded,
-                'message': '',
-                'date': None,
-                'status': -1,
-            },
-            {
-                'user': None,
-                'title': title.title_report_approved,
-                'message': '',
-                'date': None,
-                'status': -1,
-            },
-            {
-                'user': None,
-                'title': title.title_certified,
-                'message': '',
-                'date': None,
-                'status': -1,
-            },
-        ] 
+        {
+            'user': UserDetail(user).data,
+            'success_title': title.title_created,
+            'failure_title': title.failed_title_created,
+            'message': '',
+            'date': timezone.now().isoformat(),
+            'status': TimeLineStatus.completed
+        },
+        {
+            'user': None,
+            'success_title': title.title_hod,
+            'failure_title': title.failed_title_hod,
+            'message': '',
+            'date': None,
+            'status': TimeLineStatus.not_visited,
+        },
+        {
+            'user': None,
+            'success_title': title.title_dean,
+            'failure_title': title.failed_title_dean,
+            'message': '',
+            'date': None,
+            'status': TimeLineStatus.not_visited,
+        },
+        {
+            'user': None,
+            'success_title': title.title_vc,
+            'failure_title': title.failed_title_vc,
+            'message': '',
+            'date': None,
+            'status': TimeLineStatus.not_visited,
+        },
+        {
+            'user': None,
+            'success_title': title.title_display,
+            'failure_title': title.failed_title_display,
+            'message': '',
+            'date': None,
+            'status': TimeLineStatus.not_visited,
+        },
+        {
+            'user': None,
+            'success_title': title.title_ongoing,
+            'failure_title': title.failed_title_ongoing,
+            'message': '',
+            'date': None,
+            'status': TimeLineStatus.not_visited,
+        },
+        {
+            'user': None,
+            'success_title': title.title_completed,
+            'failure_title': title.failed_title_completed,
+            'message': '',
+            'date': None,
+            'status': TimeLineStatus.not_visited,
+        },
+        {
+            'user': None,
+            'success_title': title.title_report_uploaded,
+            'failure_title': title.failed_title_report_uploaded,
+            'message': '',
+            'date': None,
+            'status': TimeLineStatus.not_visited,
+        },
+        {
+            'user': None,
+            'success_title': title.title_report_approved,
+            'failure_title': title.failed_title_report_approved,
+            'message': '',
+            'date': None,
+            'status': TimeLineStatus.not_visited,
+        },
+        {
+            'user': None,
+            'success_title': title.title_certified,
+            'failure_title': title.failed_title_certified,
+            'message': '',
+            'date': None,
+            'status': TimeLineStatus.not_visited,
+        },
+    ]
+
 
 class Event(models.Model):
+    from user.serializers import UserDetail
     STATUS_CHOICES = (
         (1, 'Pending'),
-        (2, 'Approved'),
-        (3, 'Rejected'),
-        (4, 'Displayed'),
-        (5, 'Completed'),
-        (6, 'Report Submitted'),
-        (7, 'Report Approved'),
-        (8, 'Certified'),
-        (9, 'Canceled'),
+        (2, 'Displayed'),
+        (3, 'Completed'),
+        (4, 'Report Submitted'),
+        (5, 'Report Approved'),
+        (6, 'Certified'),
     )
     ROLE_CHOICES = User.ROLE_CHOICE
 
@@ -181,11 +204,10 @@ class Event(models.Model):
     time = models.TextField(blank=True, null=True)
 
     report = models.FileField(null=True, blank=True, validators=[FileToLarge])
-    
+
     branch = models.ManyToManyField(Branch, blank=True)
 
     history = models.JSONField(blank=True, null=True)
-
 
     hod_verified = models.BooleanField(default=False)
     dean_verified = models.BooleanField(default=False)
@@ -204,61 +226,45 @@ class Event(models.Model):
     }
     '''
 
-    def create_timeline(self, level, user, msg, status):
+    def create_timeline(self, level, user, msg=None, status=0):
         if level < 0 or level > 9:
             return False
-        self.history[level]['user'] = UserDetail(user).data
+        self.history[level]['user'] = self.UserDetail(user).data
         self.history[level]['message'] = msg
         self.history[level]['status'] = status
+        if status == TimeLineStatus.completed and level + 1 < 10:
+            self.history[level+1]['status'] = TimeLineStatus.ongoing
         return True
-    
+
     def clear_timeline(self):
         for history in self.history:
-            if history['status'] == 0:
-                history['status'] = -1
+            if history['status'] == TimeLineStatus.rejected:
+                history['status'] = TimeLineStatus.ongoing
+                history['message'] = None
+                history['user'] = None
+
     @property
     def no_of_certificate(self):
         self.get_participant_data()
 
     def get_participant_data(self):
         if not hasattr(self, '_participants_dict'):
+            all_participant = EventParticipant.objects.filter(
+                event=self.pk).select_related('user')
             data = {
-                'accepted': FakeQuerySet(),
-                'applied': FakeQuerySet(),
-                'declined': FakeQuerySet(),
-                'owner': None,
-                'organizer': FakeQuerySet(),
-                'involved_user': FakeQuerySet(),
-                'owner_detail': FakeQuerySet(),
-                'organizer_detail': FakeQuerySet(),
-                'accepted_detail': FakeQuerySet(),
-                'applied_detail': FakeQuerySet(),
-                'declined_detail': FakeQuerySet(),
+                'accepted': all_participant.filter(status='3'),
+                'applied': all_participant.filter(status='2'),
+                'declined': all_participant.filter(status='1'),
+                'owner': all_participant.filter(owner=True).first(),
+                'organizer': all_participant.filter(organizer=True),
+                'involved_user': all_participant,
+
             }
-            for participant in EventParticipant.objects.filter(event=self.pk):
-                if participant.owner:
-                    data['owner_detail'].add(participant)
-                    data['owner'] = participant.user
-                elif participant.organizer:
-                    data['organizer_detail'].add(participant)
-                    data['organizer'].add(participant.user)
-                elif participant.status == '3':
-                    data['accepted_detail'].add(participant)
-                    data['accepted'].add(participant.user)
-                elif participant.status == '2':
-                    data['applied_detail'].add(participant)
-                    data['applied'].add(participant.user)
-                elif participant.status == '1':
-                    data['declined_detail'].add(participant)
-                    data['declined'].add(participant.user)
-                data['involved_user'].add(participant)
+            if data['owner'] is not None:
+                data['owner'] = data['owner'].user
             self._participants_dict = data
 
         return self._participants_dict
-
-    @property
-    def participant_data(self):
-        return self.get_participant_data()
 
     @property
     def involved_user(self):
@@ -285,7 +291,7 @@ class Event(models.Model):
         return self.get_participant_data()['organizer']
 
     def is_organizer(self, user):
-        return self.organizer.filter(user.pk).exists()
+        return self.organizer.filter(user_id=user.pk).exists()
 
     def is_owner(self, user):
         if self.owner is None:
@@ -303,8 +309,7 @@ class Event(models.Model):
         self.image = image
         if self.pk is None or self.history is None:
             self.history = default_history(self.owner)
-        if self.hod_verified and self.dean_verified and self.vc_verified and self.status < 4:
-            self.status = 4
+
         super().save(*args, **kwargs)
 
     def register_participant(self, user):
