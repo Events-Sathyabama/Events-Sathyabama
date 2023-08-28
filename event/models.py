@@ -73,84 +73,103 @@ class EventParticipant(models.Model):
         unique_together = ('event', 'user')
 
 
+class TimeLineStatus:
+    not_visited = 0
+    ongoing = 1
+    completed = 2
+    rejected = -1
+
+
 def default_history(user):
     title = event.Timeline()
     from user.serializers import UserDetail
+
     return [
         {
             'user': UserDetail(user).data,
-            'title': title.title_created,
+            'success_title': title.title_created,
+            'failure_title': title.failed_title_created,
             'message': '',
             'date': timezone.now().isoformat(),
-            'status': 1
+            'status': TimeLineStatus.completed
         },
         {
             'user': None,
-            'title': title.title_hod,
+            'success_title': title.title_hod,
+            'failure_title': title.failed_title_hod,
             'message': '',
             'date': None,
-            'status': -1,
+            'status': TimeLineStatus.not_visited,
         },
         {
             'user': None,
-            'title': title.title_dean,
+            'success_title': title.title_dean,
+            'failure_title': title.failed_title_dean,
             'message': '',
             'date': None,
-            'status': -1,
+            'status': TimeLineStatus.not_visited,
         },
         {
             'user': None,
-            'title': title.title_vc,
+            'success_title': title.title_vc,
+            'failure_title': title.failed_title_vc,
             'message': '',
             'date': None,
-            'status': -1,
+            'status': TimeLineStatus.not_visited,
         },
         {
             'user': None,
-            'title': title.title_display,
+            'success_title': title.title_display,
+            'failure_title': title.failed_title_display,
             'message': '',
             'date': None,
-            'status': -1,
+            'status': TimeLineStatus.not_visited,
         },
         {
             'user': None,
-            'title': title.title_ongoing,
+            'success_title': title.title_ongoing,
+            'failure_title': title.failed_title_ongoing,
             'message': '',
             'date': None,
-            'status': -1,
+            'status': TimeLineStatus.not_visited,
         },
         {
             'user': None,
-            'title': title.title_completed,
+            'success_title': title.title_completed,
+            'failure_title': title.failed_title_completed,
             'message': '',
             'date': None,
-            'status': -1,
+            'status': TimeLineStatus.not_visited,
         },
         {
             'user': None,
-            'title': title.title_report_uploaded,
+            'success_title': title.title_report_uploaded,
+            'failure_title': title.failed_title_report_uploaded,
             'message': '',
             'date': None,
-            'status': -1,
+            'status': TimeLineStatus.not_visited,
         },
         {
             'user': None,
-            'title': title.title_report_approved,
+            'success_title': title.title_report_approved,
+            'failure_title': title.failed_title_report_approved,
             'message': '',
             'date': None,
-            'status': -1,
+            'status': TimeLineStatus.not_visited,
         },
         {
             'user': None,
-            'title': title.title_certified,
+            'success_title': title.title_certified,
+            'failure_title': title.failed_title_certified,
             'message': '',
             'date': None,
-            'status': -1,
+            'status': TimeLineStatus.not_visited,
         },
     ]
 
 
 class Event(models.Model):
+    from user.serializers import UserDetail
     STATUS_CHOICES = (
         (1, 'Pending'),
         (2, 'Displayed'),
@@ -207,18 +226,22 @@ class Event(models.Model):
     }
     '''
 
-    def create_timeline(self, level, user, msg, status):
+    def create_timeline(self, level, user, msg=None, status=0):
         if level < 0 or level > 9:
             return False
-        self.history[level]['user'] = UserDetail(user).data
+        self.history[level]['user'] = self.UserDetail(user).data
         self.history[level]['message'] = msg
         self.history[level]['status'] = status
+        if status == TimeLineStatus.completed and level + 1 < 10:
+            self.history[level+1]['status'] = TimeLineStatus.ongoing
         return True
 
     def clear_timeline(self):
         for history in self.history:
-            if history['status'] == 0:
-                history['status'] = -1
+            if history['status'] == TimeLineStatus.rejected:
+                history['status'] = TimeLineStatus.ongoing
+                history['message'] = None
+                history['user'] = None
 
     @property
     def no_of_certificate(self):
@@ -232,11 +255,13 @@ class Event(models.Model):
                 'accepted': all_participant.filter(status='3'),
                 'applied': all_participant.filter(status='2'),
                 'declined': all_participant.filter(status='1'),
-                'owner': all_participant.filter(owner=True).first().user,
+                'owner': all_participant.filter(owner=True).first(),
                 'organizer': all_participant.filter(organizer=True),
                 'involved_user': all_participant,
 
             }
+            if data['owner'] is not None:
+                data['owner'] = data['owner'].user
             self._participants_dict = data
 
         return self._participants_dict

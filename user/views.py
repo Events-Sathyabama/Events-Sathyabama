@@ -29,7 +29,7 @@ class UserListView(generics.RetrieveAPIView):
 
 
 class GetOrganizer(generics.ListAPIView):
-    serializer_class = serializers.OrganizerSerializer
+    serializer_class = serializers.UserDetail
 
     def get_active_user_query(self):
         return (Q(is_active=True) &

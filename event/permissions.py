@@ -56,7 +56,7 @@ def required_roles(role_values=[]):
         @wraps(view_func)
         def _wrapped_view(request, *args, **kwargs):
             user = request.user
-            if user.is_authenticated and user.role in role_value:
+            if user.is_authenticated and user.role in role_values:
                 return view_func(request, *args, **kwargs)
             else:
                 return Response(data={'detail': 'You do not have permission to perform this action.'}, status=403)

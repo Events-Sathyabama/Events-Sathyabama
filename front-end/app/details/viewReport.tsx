@@ -6,11 +6,13 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import {AcceptDeny} from './organiserDialog';
 import {LoadingButton} from '@mui/lab';
+import API from '../API';
 
 const ViewReport = (props: {reportLink: string | undefined}) => {
 	const [open, setOpen] = React.useState(false);
 	const [accept, setAccept] = React.useState('1');
 	const [loading, setLoading] = React.useState(false);
+
 	return (
 		<div className="flex flex-col w-full justify-between p-3 gap-2 border border-blue-300 bg-blue-50 rounded-md text-lg">
 			<div className="flex flex-col xl:flex-row w-full justify-between p-3 gap-2 items-center text-lg">
@@ -26,14 +28,16 @@ const ViewReport = (props: {reportLink: string | undefined}) => {
 							View Event Report
 						</Button>
 					</a>
-					<Button
-						variant="outlined"
-						className="w-56"
-						onClick={() => {
-							setOpen(true);
-						}}>
-						Open Action Panel
-					</Button>
+					{API.check_role('vice-chancellor') && (
+						<Button
+							variant="outlined"
+							className="w-56"
+							onClick={() => {
+								setOpen(true);
+							}}>
+							Open Action Panel
+						</Button>
+					)}
 				</div>
 			</div>
 			<div className="">

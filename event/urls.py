@@ -32,5 +32,8 @@ urlpatterns = [
     path('cert/upload/<int:event_id>/', views.upload_certs),
     path('cert/<int:event_id>/', views.delete_certs),
 
+    path('report/approve/<int:event_id>/', views.approve_report),
+    path('report/deny/<int:event_id>/', views.deny_report),
+
 
 ]

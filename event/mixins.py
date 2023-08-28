@@ -48,5 +48,7 @@ class PermissionDenyStudentMixin():
 
 
 class PermissionAllowAllRoleMixin():
-    permission_classes = [IsAdminUser & (
-        IsStudent | IsTeacher | IsHOD | IsDean | IsVC)]
+    # permission_classes = [IsAuthenticated & (
+    #     IsStudent | IsTeacher | IsHOD | IsDean | IsVC)]
+    permission_classes = [IsAuthenticated]
+    pass

@@ -18,6 +18,8 @@ class UserProfile(serializers.ModelSerializer):
 
 class UserDetail(serializers.ModelSerializer):
     branch = serializers.SerializerMethodField()
+    name = serializers.CharField(source='full_name')
+    role = serializers.CharField(source='get_role_display')
 
     class Meta:
         model = User

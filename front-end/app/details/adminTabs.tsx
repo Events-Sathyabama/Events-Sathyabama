@@ -205,7 +205,8 @@ export default function AdminTabs(props: {
 						</div>
 					}
 				/>
-				{props.eventData.status.toLowerCase() === 'completed' && (
+				{(props.eventData.status.toLowerCase() === 'completed' ||
+					props.eventData.status.toLowerCase() === 'report submitted') && (
 					<Tab
 						label={
 							<div className="flex flex-col md:flex-row md:gap-2 justify-center items-center">
@@ -229,7 +230,8 @@ export default function AdminTabs(props: {
 						}
 					/>
 				)}
-				{props.eventData.status.toLowerCase() === 'report approved' && (
+				{(props.eventData.status.toLowerCase() === 'report approved' ||
+					props.eventData.status.toLowerCase() === 'certified') && (
 					<Tab
 						label={
 							<div className="flex flex-col md:flex-row md:gap-2 justify-center items-center">
@@ -366,7 +368,8 @@ export default function AdminTabs(props: {
 						)}
 					</div>
 				</TabPanel>
-				{props.eventData.status.toLowerCase() === 'completed' && (
+				{(props.eventData.status.toLowerCase() === 'completed' ||
+					props.eventData.status.toLowerCase() === 'report submitted') && (
 					<TabPanel value={value} index={3}>
 						<div className="w-full h-full flex justify-center items-center">
 							<FileUpload
@@ -379,7 +382,8 @@ export default function AdminTabs(props: {
 						</div>
 					</TabPanel>
 				)}
-				{props.eventData.status.toLowerCase() === 'report approved' && (
+				{(props.eventData.status.toLowerCase() === 'report approved' ||
+					props.eventData.status.toLowerCase() === 'certified') && (
 					<TabPanel value={value} index={4}>
 						{!certDeleted &&
 							(certifiedQuantity ||

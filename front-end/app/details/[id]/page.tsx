@@ -57,7 +57,6 @@ const isAuthority = () => {
 	}
 	return false;
 };
-
 export default function details(props: {params: {id: number}}) {
 	const [Spopup, setSpopup] = useState(false);
 	const [Fpopup, setFpopup] = useState(false);
@@ -199,7 +198,7 @@ export default function details(props: {params: {id: number}}) {
 								)}
 							</div>
 							<div className="flex flex-col w-full justify-center items-center mt-2 gap-3">
-								{data?.report && isAuthority() ? (
+								{data?.report && (isAuthority() || isOrganizer) ? (
 									<ViewReport reportLink={data?.report}></ViewReport>
 								) : null}
 								{!isOrganizer && data?.vc_verified ? (
