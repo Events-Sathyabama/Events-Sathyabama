@@ -193,7 +193,7 @@ export default function PasswordPage(props: {
 					style={{
 						backgroundColor: '#007efc',
 						textTransform: 'none',
-						fontSize: '1.5rem',
+						fontSize: '1.45rem',
 					}}
 					color="primary"
 					className="font-roboto shadow-md">
