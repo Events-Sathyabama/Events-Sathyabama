@@ -73,6 +73,7 @@ export interface InterfaceData {
 	applied_count: number;
 	accepted_count: number;
 	total_strength: string;
+	certificate: string | undefined;
 	image: File | string | undefined;
 	title: string | undefined;
 	short_description: string | undefined;
@@ -106,7 +107,7 @@ export interface InterfaceData {
 	rejected?: boolean;
 	report_verified?: boolean;
 	report?: string;
-	certified_quantity?:number;
+	certified_quantity?: number;
 }
 
 export interface InterfaceError {

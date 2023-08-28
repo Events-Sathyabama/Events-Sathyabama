@@ -115,7 +115,7 @@ export default function details(props: {params: {id: number}}) {
 			console.log(API.get_url('event:apply', props.params.id));
 			const response = await axios.get(API.get_url('event:apply', props.params.id));
 			console.log(response);
-			setPopupMessage(response.data.message);
+			setPopupMessage(response.data.detail);
 			setSpopup(true);
 			if (data?.fcfs) {
 				setAppliedCount((prev) => prev + 1);
@@ -199,7 +199,10 @@ export default function details(props: {params: {id: number}}) {
 							</div>
 							<div className="flex flex-col w-full justify-center items-center mt-2 gap-3">
 								{data?.report && (isAuthority() || isOrganizer) ? (
-									<ViewReport reportLink={data?.report}></ViewReport>
+									<ViewReport view="report" reportLink={data?.report}></ViewReport>
+								) : null}
+								{data?.certificate != null ? (
+									<ViewReport view="cert" reportLink={data?.certificate}></ViewReport>
 								) : null}
 								{!isOrganizer && data?.vc_verified ? (
 									<>

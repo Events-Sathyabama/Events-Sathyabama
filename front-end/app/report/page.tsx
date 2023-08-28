@@ -201,7 +201,7 @@ export default function Report() {
 							<div className="flex flex-col justify-center p-8 items-center w-full min-h-[60vh] shadow-md rounded-xl border border-gray-300">
 								<blockquote className="relative">
 									<svg
-										className="absolute left-2 transform -translate-x-6 -translate-y-8 h-16 w-16 text-blue-100"
+										className="absolute left-2 transform -translate-x-6 -translate-y-8 h-16 w-16 text-blue-50"
 										width="16"
 										height="16"
 										viewBox="0 0 16 16"
@@ -214,7 +214,7 @@ export default function Report() {
 										/>
 									</svg>
 
-									<div className="relative -z-10">
+									<div className="relative z-10">
 										<p className="text-gray-800 -mt-1 text-xl text-center">
 											Thanks for contributing to{' '}
 											<span className="font-semibold">Events@Sathyabama</span>.{' '}
