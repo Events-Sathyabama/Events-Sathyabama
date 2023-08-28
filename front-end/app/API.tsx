@@ -376,6 +376,9 @@ const url: {[key: string]: (...args: any[]) => string} = {
 	'event:delete': (id: number) => {
 		return `event/delete/${id}/`;
 	},
+	'event:report_approve': (id: number) => {
+		return `event/report/approve/${id}/`;
+	},
 	'event:delete_report': (id: number) => {
 		return `event/report/${id}/`;
 	},

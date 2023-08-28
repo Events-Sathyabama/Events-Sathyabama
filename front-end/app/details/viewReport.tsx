@@ -8,13 +8,29 @@ import {AcceptDeny} from './organiserDialog';
 import {LoadingButton} from '@mui/lab';
 import API from '../API';
 
+const axios = new API.Axios();
 const ViewReport = (props: {
+	reportId: number;
 	reportLink: string | undefined;
 	view: 'report' | 'cert';
 }) => {
 	const [open, setOpen] = React.useState(false);
 	const [accept, setAccept] = React.useState('1');
 	const [loading, setLoading] = React.useState(false);
+
+	const approve_report = async () => {
+		try {
+			const response = await axios.get(
+				API.get_url('event:report_approve', props.reportId)
+			);
+			// TODO print response.data.detail as success popup
+			console.log(response);
+		} catch (error: any) {
+			console.error(error);
+			// TODO print the error message in a popup
+			console.log(error.response.data.detail);
+		}
+	};
 
 	return (
 		<div className="flex flex-col w-full justify-between p-3 gap-2 border border-blue-300 bg-blue-50 rounded-md text-lg">
@@ -35,7 +51,7 @@ const ViewReport = (props: {
 							{props.view === 'cert' && 'View Certificate'}
 						</Button>
 					</a>
-					{(props.view === 'report' && API.check_role('vice-chancellor')) && (
+					{props.view === 'report' && API.check_role('vice-chancellor') && (
 						<Button
 							variant="outlined"
 							className="w-56"
@@ -74,7 +90,8 @@ const ViewReport = (props: {
 							loadingIndicator="Submitting..."
 							onClick={async (e) => {
 								setLoading(true);
-								//TODO Approve Report Here
+								approve_report();
+								setLoading(false);
 							}}
 							loading={loading}
 							className="w-32"

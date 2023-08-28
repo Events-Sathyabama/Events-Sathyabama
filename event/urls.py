@@ -33,7 +33,6 @@ urlpatterns = [
     path('cert/<int:event_id>/', views.delete_certs),
 
     path('report/approve/<int:event_id>/', views.approve_report),
-    path('report/deny/<int:event_id>/', views.deny_report),
 
 
 ]

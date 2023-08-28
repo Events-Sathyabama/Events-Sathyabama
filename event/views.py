@@ -8,7 +8,8 @@ from django.utils import timezone
 from user.serializers import BranchSerializer
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
-from .mixins import SearchQueryMixins, PermissionAllowAllRoleMixin, PermissionAllowOrganizerMixin, PermissionDenyStudentMixin
+from .mixins import SearchQueryMixins, PermissionAllowAllRoleMixin, PermissionAllowOrganizerMixin, \
+    PermissionDenyStudentMixin
 from django.db.models import Q
 from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
@@ -72,6 +73,7 @@ class EventDetail(generics.RetrieveAPIView, PermissionAllowAllRoleMixin):
         'organizer': serializers.EventDetailSerializerOrganizer,
         'HOD_DEAN_VC': serializers.EventDetailSerializerHodDeanVC,
     }
+
     # TODO return null of the event is not in displayed state for role 0
     # 3 SQL queries
 
@@ -131,6 +133,7 @@ class EventUpdate(generics.UpdateAPIView, PermissionAllowOrganizerMixin):
     queryset = Event.objects.all()
     serializer_class = serializers.EventUpdateSerializer
     lookup_field = 'pk'
+
     # TODO not allowd if the user is not Organizer
 
     def patch(self, request, *args, **kwargs):
@@ -189,15 +192,14 @@ class CompletedEvent(generics.ListAPIView, PermissionAllowAllRoleMixin):
     serializer_class = serializers.EventRegisterdCompletedPending
 
     def get_queryset(self):
-
         q = (Q(participants__id=self.request.user.pk)
              & Q(status__gte=3)
              & (
-            (Q(eventparticipant__status='3') & Q(eventparticipant__owner=False) & Q(
-                eventparticipant__organizer=False))
-            | (Q(eventparticipant__owner=True) | Q(eventparticipant__organizer=True))
-        )
-        )
+                     (Q(eventparticipant__status='3') & Q(eventparticipant__owner=False) & Q(
+                         eventparticipant__organizer=False))
+                     | (Q(eventparticipant__owner=True) | Q(eventparticipant__organizer=True))
+             )
+             )
         event = Event.objects.filter(q)
         return event
 
@@ -223,11 +225,13 @@ class OrganizingEvent(generics.ListAPIView, PermissionAllowAllRoleMixin):
         context['request'] = self.request
         return context
 
+
 # pending for approval
 
 
 class PendingEvent(generics.ListAPIView, PermissionAllowAllRoleMixin):
     serializer_class = serializers.EventRegisterdCompletedPending
+
     # TODO not allowed for role 0
 
     def get_queryset(self):
@@ -266,14 +270,14 @@ class ParticipantList(generics.ListAPIView, PermissionAllowOrganizerMixin):
     lookup_field = 'event_id'
 
     def get_queryset(self):
-        return EventParticipant.objects.filter(event_id=self.kwargs['event_id'], owner=False, organizer=False, status='3')
+        return EventParticipant.objects.filter(event_id=self.kwargs['event_id'], owner=False, organizer=False,
+                                               status='3')
 
 
 @api_view(['POST'])
 @is_authenticated
 @is_event_organizer
 def application_approval(request, event_id):
-
     data_dict = {data.get('pk'): '3' if data.get(
         'status') == 1 else '1' for data in request.data}
     participants_to_update = []
@@ -351,7 +355,8 @@ def approve_event(request, event_id):
             event.status = 2
             if not event.create_timeline(level=3, user=user, msg=approve_message, status=TimeLineStatus.completed):
                 raise Exception
-            if not event.create_timeline(level=4, user=user, msg=msg.approval_process_done, status=TimeLineStatus.completed):
+            if not event.create_timeline(level=4, user=user, msg=msg.approval_process_done,
+                                         status=TimeLineStatus.completed):
                 raise Exception
             event.save()
     except:
@@ -488,11 +493,13 @@ def upload_certs(request, event_id):
             EventParticipant.objects.bulk_update(
                 participants_to_update, ['certificate'])
         if not event.create_timeline(level=9, user=request.user,
-                                     msg=deny_message, status=TimeLineStatus.completed):
+                                     msg=msg.certified_by.format(request.user.first_name, request.user.college_id),
+                                     status=TimeLineStatus.completed):
             raise Exception
         event.status = 6
         event.save()
-        return Response(data={'detail': msg.success, 'certified_quantity': len(participants_to_update), 'invalid_files': invalid_files}, status=200)
+        return Response(data={'detail': msg.success, 'certified_quantity': len(participants_to_update),
+                              'invalid_files': invalid_files}, status=200)
     else:
         return Response(data={'detail': msg.no_certificates_found, 'invalid_files': invalid_files}, status=400)
 
@@ -576,7 +583,7 @@ def delete_report(request, event_id):
         return Response({'detail': msg.already_approved}, status=400)
     file_name = event.report
     event.clear_timeline()
-    if not event.create_timeline(level=7, user=user,
+    if not event.create_timeline(level=7, user=request.user,
                                  status=TimeLineStatus.not_visited):
         raise Exception
     event.report = None
@@ -596,25 +603,11 @@ def approve_report(request, event_id):
     if event.status == 5:
         return Response(data={'detail': msg.report_already_approved}, status=400)
     if not event.create_timeline(
-            level=8, user=user, msg=msg.report_approved_message.format(request.user.first_name, request.user.college_id), status=TimeLineStatus.completed):
+            level=8, user=request.user,
+            msg=msg.report_approved_message.format(request.user.first_name, request.user.college_id),
+            status=TimeLineStatus.completed):
         raise Exception
 
     event.status = 6
-    event.save()
-    return Response(data={'detail': msg.success})
-
-
-@api_view(['GET'])
-@required_roles([4])
-def deny_report(request, event_id):
-    msg = message.deny_report
-    event = get_object_or_404(Event, pk=event_id)
-    if not event.report:
-        return Response(data={'detail': msg.report_not_submitted}, status=400)
-    event.report = None
-    if not event.create_timeline(
-            level=8, user=user, msg=msg.report_approved_message.format(request.user.first_name, request.user.college_id), status=TimeLineStatus.rejected):
-        raise Exception
-    event.status = 4
     event.save()
     return Response(data={'detail': msg.success})

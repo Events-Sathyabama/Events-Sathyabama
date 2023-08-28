@@ -1,5 +1,4 @@
 class Message:
-
     class detail:
         not_found = 'No Event Found!!!'
 
@@ -57,8 +56,11 @@ class Message:
         invalid_file_type = 'Invalid zip file format'
         # if the zip is uploaded but the file names are incorrect or there is not registered students
         no_certificates_found = 'No Certificates to update'
-        errro = 'Upload Failed'
+        error = 'Upload Failed'
         report_approval_required = 'First Get the report Approved'
+
+        # certified by 'first_name' 'college_id'
+        certified_by = 'Certified by {0} ({1})'
 
     class apply_event:
         success = 'Event application successfull'
