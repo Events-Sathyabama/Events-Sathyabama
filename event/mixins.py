@@ -1,5 +1,13 @@
 from .models import Event
 from django.db.models import Q
+from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
+from .permissions import (IsStudent,
+                          IsTeacher,
+                          IsHOD,
+                          IsDean,
+                          IsVC,
+                          IsOrganizer,
+                          IsOwner)
 
 
 class SearchQueryMixins:
@@ -10,18 +18,35 @@ class SearchQueryMixins:
 
         q = Q(start_date__isnull=False)
         q = q | Q(end_date__isnull=False)
-        q = q & Q(status__gte=2, hod_verified=1, dean_verified=1, vc_verified=1)
+        q = q & Q(status__gte=2, hod_verified=1,
+                  dean_verified=1, vc_verified=1)
         if search is None:
             return Event.objects.filter(q)
         search = search.split(" ")
         search_q = Q()
         for s in search:
-            if s == '': continue
-            search_q = search_q | (Q(title__icontains=s) | 
-                Q(short_description__icontains=s) | 
-                Q(long_description__icontains=s) | 
-                Q(club__icontains=s) | 
-                Q(branch__name__icontains=s)
-                )
+            if s == '':
+                continue
+            search_q = search_q | (Q(title__icontains=s) |
+                                   Q(short_description__icontains=s) |
+                                   Q(long_description__icontains=s) |
+                                   Q(club__icontains=s) |
+                                   Q(branch__name__icontains=s)
+                                   )
         inputs = Event.objects.filter(q & search_q).distinct()
         return inputs
+
+
+class PermissionAllowOrganizerMixin():
+    permission_classes = [IsAdminUser | (
+        IsAuthenticated & (IsOrganizer | IsOwner))]
+
+
+class PermissionDenyStudentMixin():
+    permission_classes = [IsAdminUser | (
+        IsAuthenticated & (IsTeacher | IsHOD | IsDean | IsVC))]
+
+
+class PermissionAllowAllRoleMixin():
+    permission_classes = [IsAdminUser & (
+        IsStudent | IsTeacher | IsHOD | IsDean | IsVC)]
