@@ -157,7 +157,7 @@ class EventDetailSerializerStudent(BaseEventDetailSerializer):
     def get_is_applied(self, obj):
         request = self.context.get('request')
         if (obj.applied_participant.filter(user_id=request.user.pk).exists() or
-            obj.accepted_participant.filter(user_id=request.user.pk).exists() or
+                obj.accepted_participant.filter(user_id=request.user.pk).exists() or
                 obj.declined_participant.filter(user_id=request.user.pk).exists()):
             return True
         return False
@@ -295,7 +295,7 @@ class EventCreateSerializer(serializers.ModelSerializer):
         value = value.strip()
         value = value.title()
         if value == '':
-            raise serializers.ValidationError(msg.title)
+            raise serializers.ValidationError(self.msg.title)
         return value
 
 
@@ -340,6 +340,7 @@ class EventProgressSerializer(serializers.ModelSerializer):
 class EventRegisterdCompletedPending(serializers.ModelSerializer):
     applicationStatus = serializers.SerializerMethodField()
     eventStatus = serializers.SerializerMethodField()
+
     # def to_representation(self, instance):
 
     class Meta:
@@ -375,7 +376,6 @@ class EventRegisterdCompletedPending(serializers.ModelSerializer):
 
 
 class EventOrganizer(EventRegisterdCompletedPending):
-
     class Meta:
         model = Event
         fields = [

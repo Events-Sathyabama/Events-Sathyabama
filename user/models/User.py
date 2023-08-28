@@ -14,11 +14,12 @@ from mail import Mail
 from django.conf import settings
 from event_management.utils import JWT
 
-
 otp_jwt = JWT(exp_time=settings.OTP_VALIDITY_DURATION)
+
 
 def current_year():
     return timezone.now().year
+
 
 class UserManager(BaseUserManager):
     def create_user(self, college_id, email=None, password=None, role=0):
@@ -70,6 +71,7 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
+
 # hook in the New Manager to our Model
 
 
@@ -106,12 +108,11 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     EMAIL_FIELD = "email"
     USERNAME_FIELD = 'college_id'
-    REQUIRED_FIELDS = ['email', 'role'] # Email & Password are required by default.
+    REQUIRED_FIELDS = ['email', 'role']  # Email & Password are required by default.
 
     class Meta(AbstractUser.Meta):
         swappable = "AUTH_USER_MODEL"
 
-    
     def __str__(self):
         return f"{self.first_name} {self.last_name} ({self.email})"
 
@@ -126,10 +127,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     def clean(self, *args, **kwargs):
         if self.leaving_year is not None and self.leaving_year < self.joining_year:
             raise ValidationError('Leaving Year cannot be before joining year')
-    
+
     def has_email(self):
         return True
-    
+
     def new_password(self, password):
         self.set_password(password)
         self.save()
@@ -138,14 +139,14 @@ class User(AbstractBaseUser, PermissionsMixin):
             mail.send_email({
                 'recipients': self.email,
                 'context': {'name': self.full_name}
-                })
+            })
             return True
         except:
             return False
 
     def send_otp(self):
         otp = str(random.randint(1000, 9999))
-        
+
         token = otp_jwt.generate_jwt_token(make_password(otp))
         self.forgot_otp = token
         self.save()
@@ -157,11 +158,11 @@ class User(AbstractBaseUser, PermissionsMixin):
                 'context': {
                     'otp': otp,
                     'otp_validTime': settings.OTP_VALIDITY_DURATION,
-                    }
+                }
             })
             return True
-        except err:
-            raise err
+        except:
+            raise Exception
             return False
 
     def verify_otp(self, otp):
