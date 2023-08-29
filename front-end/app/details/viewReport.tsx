@@ -10,7 +10,7 @@ import API from '../API';
 
 const axios = new API.Axios();
 const ViewReport = (props: {
-	reportId: number;
+	eventId: number;
 	reportLink: string | undefined;
 	view: 'report' | 'cert';
 }) => {
@@ -21,7 +21,7 @@ const ViewReport = (props: {
 	const approve_report = async () => {
 		try {
 			const response = await axios.get(
-				API.get_url('event:report_approve', props.reportId)
+				API.get_url('event:report_approve', props.eventId)
 			);
 			// TODO print response.data.detail as success popup
 			console.log(response);
@@ -74,7 +74,7 @@ const ViewReport = (props: {
 						<span className="text-[#007efd] ml-1">report</span>?
 					</DialogTitle>
 					<DialogContent>
-						<AcceptDeny value={accept} setValue={setAccept}></AcceptDeny>
+						<AcceptDeny value={accept} setValue={setAccept} />
 					</DialogContent>
 					<DialogActions>
 						<Button
@@ -90,7 +90,7 @@ const ViewReport = (props: {
 							loadingIndicator="Submitting..."
 							onClick={async (e) => {
 								setLoading(true);
-								approve_report();
+								await approve_report();
 								setLoading(false);
 							}}
 							loading={loading}

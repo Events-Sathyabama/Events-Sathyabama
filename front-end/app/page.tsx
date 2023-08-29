@@ -1,3 +1,5 @@
+// noinspection PointlessBooleanExpressionJS
+
 'use client';
 import {useState} from 'react';
 import LoginForm from './loginForm';
@@ -39,6 +41,7 @@ export default function LoginPage(): JSX.Element {
 	}
 
 	const [forgot, setForgot] = useState(false);
+
 	function handleForgot() {
 		setForgot(true);
 	}
@@ -92,7 +95,7 @@ export default function LoginPage(): JSX.Element {
 
 	return (
 		<div className="flex flex-col w-full min-h-screen">
-			<LandingNav></LandingNav>
+			<LandingNav />
 			<div className="flex flex-col flex-grow w-full h-full justify-center items-center relative">
 				{fPopUp ? (
 					<div className="right-5 absolute z-50 top-0">
@@ -106,7 +109,8 @@ export default function LoginPage(): JSX.Element {
 					style={{
 						backgroundImage: "url('/college.svg')",
 						filter: 'blur(5px)',
-					}}></div>
+					}}
+				/>
 				<div
 					className="flex flex-col w-11/12 sm:w-10/12 md:w-5/12 bg-white
       opacity-95 rounded-xl px-8 py-12 shadow-xl z-10 relative">
@@ -116,14 +120,14 @@ export default function LoginPage(): JSX.Element {
 								<div className="flex-1 space-y-6 py-1">
 									<div className="space-y-3">
 										<div className="grid grid-cols-3 gap-4">
-											<div className="h-8 bg-slate-400 rounded col-span-2"></div>
-											<div className="h-8 bg-slate-400 rounded col-span-1"></div>
+											<div className="h-8 bg-slate-400 rounded col-span-2" />
+											<div className="h-8 bg-slate-400 rounded col-span-1" />
 										</div>
-										<div className="h-8 bg-slate-400 rounded"></div>
+										<div className="h-8 bg-slate-400 rounded" />
 									</div>
 									<div className="grid grid-cols-3 gap-4">
-										<div className="h-8 bg-slate-400 rounded col-span-2"></div>
-										<div className="h-8 bg-slate-400 rounded col-span-1"></div>
+										<div className="h-8 bg-slate-400 rounded col-span-2" />
+										<div className="h-8 bg-slate-400 rounded col-span-1" />
 									</div>
 								</div>
 							</div>
@@ -140,7 +144,8 @@ export default function LoginPage(): JSX.Element {
 											: forgot
 											? 'Sending E-mail...'
 											: 'Verifying Credentials...'
-									}></WebBackdrop>
+									}
+								/>
 							) : null}
 							<div className="flex flex-row w-full items-center gap-3">
 								{forgot && !otp ? (
@@ -177,7 +182,8 @@ export default function LoginPage(): JSX.Element {
 							{passwordPage === true && (
 								<PasswordPage
 									setBackdrop={(state: boolean) => setValidBackdrop(state)}
-									showPopUp={handleChange}></PasswordPage>
+									showPopUp={handleChange}
+								/>
 							)}
 							{otp && !passwordPage ? (
 								<div className="flex flex-col mt-1 gap-3">
@@ -188,7 +194,8 @@ export default function LoginPage(): JSX.Element {
 									<OtpField
 										setBackdrop={(state: boolean) => setValidBackdrop(state)}
 										showPopUp={handleChange}
-										changetoPassword={changetoPassword}></OtpField>
+										changetoPassword={changetoPassword}
+									/>
 									<button
 										onClick={handleResend}
 										disabled={timer > 0}
@@ -208,7 +215,8 @@ export default function LoginPage(): JSX.Element {
 									showPopUp={handleChange}
 									userMail={setUserMail}
 									changetoOtp={changetoOtp}
-									variant={forgot ? 'forgot' : 'login'}></LoginForm>
+									variant={forgot ? 'forgot' : 'login'}
+								/>
 							) : (
 								<></>
 							)}
@@ -225,7 +233,7 @@ export default function LoginPage(): JSX.Element {
 					)}
 				</div>
 			</div>
-			<Footer></Footer>
+			<Footer />
 		</div>
 	);
 }

@@ -82,7 +82,8 @@ export default function AdminDialog(props: {
 					isOrganizer={props.isOrganizer}
 					href={props.href}
 					sPopUp={props.sPopUp}
-					fPopUp={props.fPopUp}></AdminTabs>
+					fPopUp={props.fPopUp}
+				/>
 			</List>
 		</Dialog>
 	);

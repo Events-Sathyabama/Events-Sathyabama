@@ -123,7 +123,7 @@ export default function ProfileCards(props: {
 						</CardActions>
 						<Collapse in={expanded} timeout="auto" unmountOnExit>
 							<CardContent>
-								<Timeline history={props.history}></Timeline>
+								<Timeline history={props.history} />
 							</CardContent>
 						</Collapse>
 					</>

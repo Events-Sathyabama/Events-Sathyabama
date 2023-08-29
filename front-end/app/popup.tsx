@@ -1,3 +1,5 @@
+// noinspection PointlessBooleanExpressionJS
+
 import * as React from 'react';
 import MuiAlert, {AlertProps} from '@mui/material/Alert';
 import Snackbar, {SnackbarOrigin} from '@mui/material/Snackbar';

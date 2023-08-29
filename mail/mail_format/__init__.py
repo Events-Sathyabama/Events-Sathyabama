@@ -4,17 +4,17 @@ from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 
+
 class Mail:
 
     def __init__(self, template_name):
         if template_name[0] != '.':
             template_name = '.' + template_name
         self.template = importlib.import_module(template_name, package=__package__)
-    
+
     def get_rendered_html(self, context={}):
         html_content = render_to_string(self.template.html, context)
         return html_content
-
 
     def prepare_attr(self, module_text, incoming_text):
         if incoming_text:
@@ -30,7 +30,7 @@ class Mail:
         pass
 
         if isinstance(message, list):
-        # Bulk email
+            # Bulk email
             message_list = []
             for msg in message:
                 subject = self.prepare_attr(self.template.subject, msg.get('subject'))
@@ -41,8 +41,8 @@ class Mail:
 
                 if not isinstance(recipients, list):
                     recipients = [recipients]
-                
-                email_message = EmailMultiAlternatives(subject, text_message, from_email, recipient)
+
+                email_message = EmailMultiAlternatives(subject, text_message, from_email, recipients)
                 email_message.attach_alternative(html_content, 'text/html')
                 message_list.append(email_message)
 
@@ -60,10 +60,3 @@ class Mail:
                 recipients = [recipients]
 
             send_mail(subject, text_message, from_email, recipients, html_message=html_content)
-
-
-
-
-    
-        
-    

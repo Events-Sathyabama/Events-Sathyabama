@@ -61,33 +61,35 @@ export default function AdminPanel() {
 	return (
 		<div className="flex flex-col w-full justify-center items-center">
 			{syncing && (
-				<WebBackdrop message="Syncing Users, this may take a while, please be patient..."></WebBackdrop>
+				<WebBackdrop message="Syncing Users, this may take a while, please be patient..." />
 			)}
-			{sPopup && (
-				<Popup.Success message={sPopupMessage} showpopup={setSPopup}></Popup.Success>
-			)}
+			{sPopup && <Popup.Success message={sPopupMessage} showpopup={setSPopup} />}
 			<div className="flex flex-col w-11/12 items-center my-5 gap-5">
 				<h1 className="text-2xl text-center animateFadeIn">EMS Admin Panel</h1>
 				<div className="h-96 w-full sm:p-3 sm:border sm:border-gray-300 sm:rounded-md">
-					<LineChart data={dummyData}></LineChart>
+					<LineChart data={dummyData} />
 				</div>
 				<div className="flex flex-row w-full flex-grow justify-center items-center gap-4 flex-wrap sm:bg-blue-50 sm:border sm:border-blue-300 sm:py-6 sm:rounded-md">
 					<StatsCard
 						statCount={42}
 						statDescription={'Organised Events'}
-						statPeriod={"Sept'22 - Aug '23"}></StatsCard>
+						statPeriod={"Sept'22 - Aug '23"}
+					/>
 					<StatsCard
 						statCount={1}
 						statDescription={'Pending Events'}
-						statPeriod={"Sept'22 - Aug '23"}></StatsCard>
+						statPeriod={"Sept'22 - Aug '23"}
+					/>
 					<StatsCard
 						statCount={12}
 						statDescription={'Rejected Events'}
-						statPeriod={"Sept'22 - Aug '23"}></StatsCard>
+						statPeriod={"Sept'22 - Aug '23"}
+					/>
 					<StatsCard
 						statCount={5}
 						statDescription={'Cancelled Events'}
-						statPeriod={"Sept'22 - Aug '23"}></StatsCard>
+						statPeriod={"Sept'22 - Aug '23"}
+					/>
 				</div>
 				<div className="flex flex-col w-full p-5 border border-gray-300 rounded-md">
 					<p className="text-2xl">Django Admin Panel</p>
@@ -111,7 +113,7 @@ export default function AdminPanel() {
 					</Link>
 				</div>
 				<div className="flex flex-col w-full items-center">
-					<ExcelUploader eventId="1"></ExcelUploader>
+					<ExcelUploader eventId="1" />
 					<p className="mt-2">(or)</p>
 					<Button
 						size="medium"

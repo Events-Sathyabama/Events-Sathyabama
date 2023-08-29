@@ -1,13 +1,13 @@
 from .models import Event
 from django.db.models import Q
-from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
-from .permissions import (IsStudent,
-                          IsTeacher,
-                          IsHOD,
-                          IsDean,
-                          IsVC,
-                          IsOrganizer,
-                          IsOwner)
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from .permissions import (
+    IsTeacher,
+    IsHOD,
+    IsDean,
+    IsVC,
+    IsOrganizer,
+    IsOwner)
 
 
 class SearchQueryMixins:
@@ -37,17 +37,17 @@ class SearchQueryMixins:
         return inputs
 
 
-class PermissionAllowOrganizerMixin():
+class PermissionAllowOrganizerMixin:
     permission_classes = [IsAdminUser | (
-        IsAuthenticated & (IsOrganizer | IsOwner))]
+            IsAuthenticated & (IsOrganizer | IsOwner))]
 
 
-class PermissionDenyStudentMixin():
+class PermissionDenyStudentMixin:
     permission_classes = [IsAdminUser | (
-        IsAuthenticated & (IsTeacher | IsHOD | IsDean | IsVC))]
+            IsAuthenticated & (IsTeacher | IsHOD | IsDean | IsVC))]
 
 
-class PermissionAllowAllRoleMixin():
+class PermissionAllowAllRoleMixin:
     # permission_classes = [IsAuthenticated & (
     #     IsStudent | IsTeacher | IsHOD | IsDean | IsVC)]
     permission_classes = [IsAuthenticated]

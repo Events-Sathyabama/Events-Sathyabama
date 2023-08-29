@@ -19,6 +19,7 @@ const getFileNameFromUrl = (url: string): string => {
 	const path = url.split('/');
 	return path[path.length - 1];
 };
+
 function convertKBToWords(kilobytes: number) {
 	const units = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
 	let index = 0;
@@ -31,6 +32,7 @@ function convertKBToWords(kilobytes: number) {
 
 	return `${size.toFixed(2)} ${units[index]}`;
 }
+
 const FileUploader: React.FC<FileUploaderProps> = (props: FileUploaderProps) => {
 	const fileSize = props.fileSizeBytes;
 	const accepted_files = props.accepted_files;
@@ -45,7 +47,7 @@ const FileUploader: React.FC<FileUploaderProps> = (props: FileUploaderProps) => 
 	const [dragText, setDragText] = useState(
 		props.text || 'Drag and drop (or) click here to upload file'
 	);
-	const [fileUploaded, setFileUploaded] = useState(path ? true : false);
+	const [fileUploaded, setFileUploaded] = useState(!!path);
 	const [uploading, setUploading] = useState(false);
 	const [deleting, setDeleting] = useState(false);
 	const [uploadedFileName, setUploadedFileName] = useState(

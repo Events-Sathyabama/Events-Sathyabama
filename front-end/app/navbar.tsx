@@ -15,6 +15,7 @@ function classNames(...classes: any) {
 
 export default function Navbar() {
 	const router = useRouter();
+
 	function signOut() {
 		if (typeof window === 'undefined') {
 			return;
@@ -22,6 +23,7 @@ export default function Navbar() {
 		window.localStorage.clear();
 		router.push('/');
 	}
+
 	const [currentPage, setCurrentPage] = useState(0); //initially to Upcoming
 	const navigator = usePathname();
 	useEffect(() => {
@@ -73,7 +75,7 @@ export default function Navbar() {
 								<Link
 									href="/home/upcoming"
 									className="flex flex-row items-center gap-3">
-									<img src="/logo.svg" className="h-12 w-12"></img>
+									<img src="/logo.svg" className="h-12 w-12" />
 									<h1 className="text-3xl font-roboto text-black font-semibold hidden lg:block">
 										Events@Sathyabama
 									</h1>
@@ -125,7 +127,7 @@ export default function Navbar() {
 										leaveFrom="transform opacity-100 scale-100"
 										leaveTo="transform opacity-0 scale-95">
 										<Menu.Items>
-											<Notifications></Notifications>
+											<Notifications />
 										</Menu.Items>
 									</Transition>
 								</Menu>
@@ -133,10 +135,7 @@ export default function Navbar() {
 									<div>
 										<Menu.Button className="flex rounded-full text-sm">
 											<span className="sr-only">Open user menu</span>
-											<LetterAvatar
-												width="2.5rem"
-												height="2.5rem"
-												fontSize="1rem"></LetterAvatar>
+											<LetterAvatar width="2.5rem" height="2.5rem" fontSize="1rem" />
 										</Menu.Button>
 									</div>
 									<Transition

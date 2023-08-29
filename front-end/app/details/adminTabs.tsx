@@ -62,6 +62,7 @@ export default function AdminTabs(props: {
 			? 'Drag and drop (or) click here to upload certificates'
 			: 'Drag and drop (or) click here to upload certificates'
 	);
+
 	async function deleteEvent() {
 		setIsDeleting(true);
 		//BUG Popup is not showing.
@@ -83,6 +84,7 @@ export default function AdminTabs(props: {
 		}
 		setIsDeleting(false);
 	}
+
 	const deleteAllCertificate = async () => {
 		const response = await axios.get(
 			API.get_url('event:delete_cert', props.eventData.pk.toString())
@@ -258,7 +260,7 @@ export default function AdminTabs(props: {
 			</TabsContainer>
 			<div className="w-full pt-3 border-t border-gray-300">
 				<TabPanel value={value} index={0} className="px-5 pt-8 w-full pb-5">
-					<Timeline history={props.eventData.history}></Timeline>
+					<Timeline history={props.eventData.history} />
 				</TabPanel>
 				<TabPanel value={value} index={2} className="px-5 pt-2 w-full pb-5">
 					<div className="flex flex-col p-4 w-full rounded-md border border-blue-300">
@@ -379,7 +381,8 @@ export default function AdminTabs(props: {
 								handleUpload={handleReportUpload}
 								handleDelete={handleReportDelete}
 								path={reportPath}
-								setPath={setReportPath}></FileUpload>
+								setPath={setReportPath}
+							/>
 						</div>
 					</TabPanel>
 				)}
@@ -391,21 +394,21 @@ export default function AdminTabs(props: {
 								(props.eventData.certified_quantity != undefined &&
 									props.eventData.certified_quantity > 0)) && (
 								<div className="flex flex-col sm:flex-row sm:justify-between items-center sm:items-start gap-3 w-full p-4 rounded-md">
-								<p className="text-lg text-[#014361]">
-									Number of students successfully certified :{' '}
-									<span className="font-semibold">
-										{certifiedQuantity || props.eventData.certified_quantity}
-									</span>
-								</p>
-								<Button
-									onClick={deleteAllCertificate}
-									variant="outlined"
-									color="error"
-									style={{backgroundColor: 'white'}}
-									className="w-72">
-									Delete Existing Certificates
-								</Button>
-							</div>
+									<p className="text-lg text-[#014361]">
+										Number of students successfully certified :{' '}
+										<span className="font-semibold">
+											{certifiedQuantity || props.eventData.certified_quantity}
+										</span>
+									</p>
+									<Button
+										onClick={deleteAllCertificate}
+										variant="outlined"
+										color="error"
+										style={{backgroundColor: 'white'}}
+										className="w-72">
+										Delete Existing Certificates
+									</Button>
+								</div>
 							)}
 						<div className="w-full h-full flex justify-center items-center">
 							<FileUpload
@@ -413,11 +416,11 @@ export default function AdminTabs(props: {
 								accepted_files="application/x-compressed,application/zip,application/x-zip-compressed"
 								handleUpload={handleCertUpload}
 								text={certUploadText}
-								handleDelete={handleCertDelete}></FileUpload>
+								handleDelete={handleCertDelete}
+							/>
 						</div>
 					</TabPanel>
 				)}
-
 			</div>
 		</div>
 	);

@@ -7,6 +7,7 @@ import {useState} from 'react';
 import CircularProgress from '@mui/material/CircularProgress';
 import API from '@/app/API';
 import useEffect from '../useEffect';
+
 const axios = new API.Axios();
 
 export default function ProfilePage(): JSX.Element {
@@ -60,29 +61,25 @@ export default function ProfilePage(): JSX.Element {
 								batch={batch}
 								role="Student"
 							/>
-							<TabsProfile.Student></TabsProfile.Student>
+							<TabsProfile.Student />
 						</div>
 					)}
 					{role === 'Teacher' && (
 						<div className="flex w-full flex-col md:flex-row gap-3 justify-center items-center md:items-start">
-							<Profile
-								id={id}
-								branch={branch}
-								name={fullName}
-								role="Teacher"></Profile>
-							<TabsProfile.TeacherHODVC></TabsProfile.TeacherHODVC>
+							<Profile id={id} branch={branch} name={fullName} role="Teacher" />
+							<TabsProfile.TeacherHODVC />
 						</div>
 					)}
 					{role === 'HOD' && (
 						<div className="flex w-full flex-col md:flex-row gap-3 justify-center items-center md:items-start">
-							<Profile id={id} branch={branch} name={fullName} role="HOD"></Profile>
-							<TabsProfile.TeacherHODVC></TabsProfile.TeacherHODVC>
+							<Profile id={id} branch={branch} name={fullName} role="HOD" />
+							<TabsProfile.TeacherHODVC />
 						</div>
 					)}
 					{role === 'Dean' && (
 						<div className="flex w-full flex-col md:flex-row gap-3 justify-center items-center md:items-start">
-							<Profile id={id} branch={branch} name={fullName} role="Dean"></Profile>
-							<TabsProfile.TeacherHODVC></TabsProfile.TeacherHODVC>
+							<Profile id={id} branch={branch} name={fullName} role="Dean" />
+							<TabsProfile.TeacherHODVC />
 						</div>
 					)}
 					{role === 'Vice-Chancellor' && (
@@ -91,13 +88,14 @@ export default function ProfilePage(): JSX.Element {
 								id={id}
 								branch={branch}
 								name={fullName}
-								role="Vice-Chancellor"></Profile>
-							<TabsProfile.TeacherHODVC></TabsProfile.TeacherHODVC>
+								role="Vice-Chancellor"
+							/>
+							<TabsProfile.TeacherHODVC />
 						</div>
 					)}
 				</div>
 			</div>
-			<Footer></Footer>
+			<Footer />
 		</div>
 	);
 }

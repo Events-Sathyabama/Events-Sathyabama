@@ -6,9 +6,9 @@ import Footer from '../footer';
 export default function HomeLayout({children}: {children: React.ReactNode}) {
 	return (
 		<section>
-			<Navbar></Navbar>
+			<Navbar />
 			{children}
-			<Footer></Footer>
+			<Footer />
 		</section>
 	);
 }

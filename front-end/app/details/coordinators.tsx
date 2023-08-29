@@ -25,7 +25,8 @@ export default function Coordinators(props: CoordinatorProps) {
 							width="2.5rem"
 							height="2.5rem"
 							fontSize="1rem"
-							name={coordinator.name}></LetterAvatar>
+							name={coordinator.name}
+						/>
 					</ListItemAvatar>
 					<div key={index} className="-mt-1 -ml-1">
 						<h1 className="text-xl">{coordinator.name}</h1>

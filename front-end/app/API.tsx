@@ -80,6 +80,7 @@ class AxiosInstance {
 			setLoadingCode
 		);
 	}
+
 	async put(
 		pathname: string,
 		data: {[key: string]: string},
@@ -92,6 +93,7 @@ class AxiosInstance {
 			setLoadingCode
 		);
 	}
+
 	async patch(
 		pathname: string,
 		data: {[key: string]: string},
@@ -104,6 +106,7 @@ class AxiosInstance {
 			setLoadingCode
 		);
 	}
+
 	async get(
 		pathname: string,
 		data?: {[key: string]: string},
@@ -122,6 +125,7 @@ class AxiosInstance {
 			setLoadingCode
 		);
 	}
+
 	async login(username: string, password: string) {
 		if (typeof window === 'undefined') {
 			return false;
@@ -305,6 +309,7 @@ const extractError = (err: any) => {
 			}
 		}
 	}
+
 	rec(err);
 	return rv;
 };
@@ -401,14 +406,11 @@ const url: {[key: string]: (...args: any[]) => string} = {
 
 const check_role = (role: string) => {
 	const user_details = user_detail();
-	if (
+	return !!(
 		user_details &&
 		user_details.role &&
 		user_details.role.toLowerCase() === role.toLowerCase()
-	) {
-		return true;
-	}
-	return false;
+	);
 };
 const API: {[key: string]: any} = {
 	Axios: AxiosInstance,

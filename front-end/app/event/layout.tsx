@@ -10,9 +10,9 @@ export const metadata = {
 export default function CreateLayout({children}: {children: React.ReactNode}) {
 	return (
 		<section>
-			<Navbar></Navbar>
+			<Navbar />
 			{children}
-			<Footer></Footer>
+			<Footer />
 		</section>
 	);
 }

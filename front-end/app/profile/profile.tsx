@@ -15,7 +15,7 @@ export default function Profile(props: ProfileProps): JSX.Element {
 		<div className="flex flex-col w-72 md:w-96">
 			<div className="bg-white p-3 border border-blue-400 rounded shadow-lg">
 				<div className="flex flex-col items-center">
-					<LetterAvatar width="8rem" height="8rem" fontSize="3rem"></LetterAvatar>
+					<LetterAvatar width="8rem" height="8rem" fontSize="3rem" />
 					<p className="text-gray-900 text-center truncate w-64 font-bold text-2xl my-2">
 						{name}
 					</p>

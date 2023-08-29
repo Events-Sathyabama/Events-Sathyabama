@@ -429,7 +429,7 @@ def upload_report(request, event_id):
     report_file = request.FILES.get('file')
     if report_file:
         event.report = report_file
-        if not event.create_timeline(level=7, user=request.user, msg=msg.report_submited_message.format(
+        if not event.create_timeline(level=7, user=request.user, msg=msg.report_submitted_message.format(
                 request.user.first_name, request.user.college_id), status=TimeLineStatus.completed):
             raise Exception
         event.status = 4

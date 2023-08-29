@@ -29,7 +29,7 @@ export default function HomeCard(props: HomeCardProps) {
 		<Link href={learnMoreLink}>
 			<div
 				className={
-					(hover === true
+					(hover
 						? 'sm:hover:shadow-lg hover:border-blue-500 border border-gray-400'
 						: '') +
 					'border border-gray-400 rounded-md bg-white transition-all duration-300 w-80 animateFadeIn'

@@ -58,14 +58,13 @@ export default function OrganiserDialog(props: {
 	return (
 		<div className="mt-2">
 			{sPopup && (
-				<Popup.Success
-					message="Action Successful!"
-					showpopup={setSpopup}></Popup.Success>
+				<Popup.Success message="Action Successful!" showpopup={setSpopup} />
 			)}
 			{fPopup && (
 				<Popup.Error
 					message="Action Unsuccessful, try again!"
-					showpopup={setSpopup}></Popup.Error>
+					showpopup={setSpopup}
+				/>
 			)}
 			<Button
 				variant="contained"
@@ -79,7 +78,7 @@ export default function OrganiserDialog(props: {
 					<span className="text-[#007efd] ml-1">{props.title}</span>?
 				</DialogTitle>
 				<DialogContent>
-					<AcceptDeny value={accept} setValue={setAccept}></AcceptDeny>
+					<AcceptDeny value={accept} setValue={setAccept} />
 					<TextField
 						autoFocus
 						margin="dense"

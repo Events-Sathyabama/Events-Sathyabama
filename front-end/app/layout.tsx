@@ -15,8 +15,8 @@ export default function RootLayout({children}: {children: React.ReactNode}) {
 		<html lang="en">
 			<body>
 				{/* <WebBackdrop message={'Verifying Login Status...'} id="global-backdrop" /> */}
-				<ScrollToTop></ScrollToTop>
-				<script src="/login.js"></script>
+				<ScrollToTop />
+				<script src="/login.js" />
 				<div className="flex flex-col">{children}</div>
 			</body>
 		</html>

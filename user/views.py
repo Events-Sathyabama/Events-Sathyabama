@@ -19,8 +19,6 @@ import re
 
 User = get_user_model()
 
-User = get_user_model()
-
 
 class UserListView(generics.RetrieveAPIView):
     queryset = get_user_model().objects.all()
@@ -37,7 +35,7 @@ class GetOrganizer(generics.ListAPIView):
                 ~Q(pk=self.request.user.pk) &
                 (Q(leaving_year__isnull=True) | Q(leaving_year__gte=timezone.now().year)))
 
-    def get_queryset(self, *args,  **kwargs):
+    def get_queryset(self, *args, **kwargs):
         search = self.request.GET.get('q')
         search = search.strip() if search is not None else search
         query = User.objects.all()
@@ -67,7 +65,7 @@ def send_otp(request):
             return Response({'detail': 'OTP Sent', 'email': modified_username, 'status': 200})
     except:
         return Response({'detail': "Something Went Wrong", 'status': 200}, status=500)
-    return Response({'detail': "Couldn't send OTP try again later", 'status': 200},  status=400)
+    return Response({'detail': "Couldn't send OTP try again later", 'status': 200}, status=400)
 
 
 @api_view(['POST'])
@@ -82,7 +80,7 @@ def verify_otp(request):
             return Response({'detail': 'OTP Verified', 'status': 200})
     except:
         return Response({'detail': "Something Went Wrong", 'status': 200}, status=500)
-    return Response({'detail': 'Invalid OTP', 'status': 200},  status=400)
+    return Response({'detail': 'Invalid OTP', 'status': 200}, status=400)
 
 
 @api_view(['POST'])

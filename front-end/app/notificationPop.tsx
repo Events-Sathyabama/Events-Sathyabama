@@ -67,12 +67,12 @@ function Loading() {
 		<div
 			role="status"
 			className="relative gap-3 bg-white p-2 flex flex-col h-96 overflow-auto">
-			<div className="h-12 bg-gray-200 rounded-md animate-pulse"></div>
-			<div className="h-12 bg-gray-200 rounded-md animate-pulse"></div>
-			<div className="h-12 bg-gray-200 rounded-md animate-pulse"></div>
-			<div className="h-12 bg-gray-200 rounded-md animate-pulse"></div>
-			<div className="h-12 bg-gray-200 rounded-md animate-pulse"></div>
-			<div className="h-12 bg-gray-200 rounded-md animate-pulse"></div>
+			<div className="h-12 bg-gray-200 rounded-md animate-pulse" />
+			<div className="h-12 bg-gray-200 rounded-md animate-pulse" />
+			<div className="h-12 bg-gray-200 rounded-md animate-pulse" />
+			<div className="h-12 bg-gray-200 rounded-md animate-pulse" />
+			<div className="h-12 bg-gray-200 rounded-md animate-pulse" />
+			<div className="h-12 bg-gray-200 rounded-md animate-pulse" />
 		</div>
 	);
 }
@@ -89,7 +89,7 @@ export default function Notifications() {
 						</span>
 					</div>
 					{loading ? (
-						<Loading></Loading>
+						<Loading />
 					) : (
 						<div className="relative gap-3 bg-white p-2 flex flex-col h-96 overflow-auto notification">
 							{notifications.length === 0 ? (

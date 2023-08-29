@@ -98,6 +98,7 @@ export default function Applicants(props: {params: {id: number}}) {
 		const file_name = rows[0].event_name.split(' ').join('_') + '(Participant_List)';
 		exportToCsv(exportData, file_name);
 	}
+
 	const [loader, setLoader] = React.useState(0);
 
 	const [backUrl, setBackUrl] = React.useState('');
@@ -238,7 +239,7 @@ export default function Applicants(props: {params: {id: number}}) {
 					<div className="text-center text-xl mt-4">No accepted applicants!</div>
 				)
 			) : (
-				<CircularLoader remainingHeight="70vh" remainingWidth=""></CircularLoader>
+				<CircularLoader remainingHeight="70vh" remainingWidth="" />
 			)}
 			<TablePagination
 				rowsPerPageOptions={[10, 25, 100]}

@@ -92,17 +92,18 @@ export default function Report() {
 
 	return (
 		<>
-			{initialLoader === false ? (
-				<CircularLoader remainingHeight="85vh" remainingWidth=""></CircularLoader>
+			{initialLoader ? (
+				<CircularLoader remainingHeight="85vh" remainingWidth="" />
 			) : (
 				<div className="flex flex-col w-full justify-center items-center">
 					{showFailure && (
 						<Popup.Error
 							message="Something went wrong, try again!"
-							showpopup={setShowFailure}></Popup.Error>
+							showpopup={setShowFailure}
+						/>
 					)}
 					{loading && (
-						<WebBackdrop message="Posting your Bug Reports & Enhancement Suggestions!"></WebBackdrop>
+						<WebBackdrop message="Posting your Bug Reports & Enhancement Suggestions!" />
 					)}
 
 					<div className="flex flex-col w-11/12 items-center my-5 gap-5 min-h-[80vh] justify-center">
@@ -218,8 +219,8 @@ export default function Report() {
 										<p className="text-gray-800 -mt-1 text-xl text-center">
 											Thanks for contributing to{' '}
 											<span className="font-semibold">Events@Sathyabama</span>.{' '}
-											<br></br> You can track the status of your issue (or)
-											enhancement at:
+											<br /> You can track the status of your issue (or) enhancement
+											at:
 										</p>
 									</div>
 								</blockquote>

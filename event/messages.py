@@ -48,7 +48,7 @@ class Message:
         report_approved = 'Report is already Approved you cannot change it'
 
         # inside Timeline Report submitted by 'first_name' 'college_id'
-        report_submited_message = 'Report Submitted by {0} ({1})'
+        report_submitted_message = 'Report Submitted by {0} ({1})'
 
     class cert_upload:
         success = 'Certificates Uploaded!!'
@@ -63,7 +63,7 @@ class Message:
         certified_by = 'Certified by {0} ({1})'
 
     class apply_event:
-        success = 'Event application successfull'
+        success = 'Event application successful'
         not_found = 'No Event Found!!'
         pending_event = 'The event is still pending for approval'
         completed_event = 'Event is already Completed'

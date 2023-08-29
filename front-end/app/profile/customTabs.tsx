@@ -87,14 +87,10 @@ function RegisteredEventPanel(props: InterfacePanelProps) {
 					);
 				})
 			) : event?.data === undefined ? (
-				<CardsLoader></CardsLoader>
+				<CardsLoader />
 			) : (
 				<div className="flex flex-col w-full py-4 sm:py-0 sm:min-h-[68vh] items-center justify-center">
-					<Image
-						src="/profileFallback.svg"
-						width={250}
-						height={250}
-						alt="No Data"></Image>
+					<Image src="/profileFallback.svg" width={250} height={250} alt="No Data" />
 					<p className="text-lg font-normal text-[#1976d2] mt-4">
 						No registered events.
 					</p>
@@ -164,14 +160,10 @@ function PendingEventPanel(props: InterfacePanelProps) {
 					);
 				})
 			) : event?.data === undefined ? (
-				<CardsLoader></CardsLoader>
+				<CardsLoader />
 			) : (
 				<div className="flex flex-col w-full py-4 sm:py-0 sm:min-h-[68vh] items-center justify-center">
-					<Image
-						src="/profileFallback.svg"
-						width={250}
-						height={250}
-						alt="No Data"></Image>
+					<Image src="/profileFallback.svg" width={250} height={250} alt="No Data" />
 					<p className="text-lg font-normal text-[#1976d2] mt-4">
 						No events pending for approval.
 					</p>
@@ -234,14 +226,10 @@ function CompletedEventPanel(props: InterfacePanelProps) {
 					);
 				})
 			) : event?.data === undefined ? (
-				<CardsLoader></CardsLoader>
+				<CardsLoader />
 			) : (
 				<div className="flex flex-col w-full py-4 sm:py-0 sm:min-h-[68vh] items-center justify-center">
-					<Image
-						src="/profileFallback.svg"
-						width={250}
-						height={250}
-						alt="No Data"></Image>
+					<Image src="/profileFallback.svg" width={250} height={250} alt="No Data" />
 					<p className="text-lg font-normal text-[#1976d2] mt-4">
 						No completed events.
 					</p>
@@ -310,14 +298,10 @@ function OrganisingEventPanel(props: InterfacePanelProps) {
 					);
 				})
 			) : event?.data === undefined ? (
-				<CardsLoader></CardsLoader>
+				<CardsLoader />
 			) : (
 				<div className="flex flex-col w-full py-4 sm:py-0 sm:min-h-[68vh] items-center justify-center">
-					<Image
-						src="/profileFallback.svg"
-						width={250}
-						height={250}
-						alt="No Data"></Image>
+					<Image src="/profileFallback.svg" width={250} height={250} alt="No Data" />
 					<p className="text-lg font-normal text-[#1976d2] mt-4">
 						No organising events.
 					</p>

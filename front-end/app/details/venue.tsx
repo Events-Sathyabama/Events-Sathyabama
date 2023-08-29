@@ -5,7 +5,7 @@ export default function EventTime(props: {
 }) {
 	return (
 		<div className="relative w-full p-3 border border-gray-300 rounded-md">
-			<div className="absolute -z-10 top-0 left-0 w-full h-full filter blur-md"></div>
+			<div className="absolute -z-10 top-0 left-0 w-full h-full filter blur-md" />
 			<div className="flex flex-col ml-10 pt-4 border border-y-0 border-r-0 border-gray-700">
 				<ol className="flex flex-col -ml-11 gap-3 w-full">
 					<li className="flex flex-col w-full ml-6 gap-1">

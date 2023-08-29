@@ -1,3 +1,5 @@
+// noinspection PointlessBooleanExpressionJS
+
 'use client';
 import Header from '../header';
 import Poster from '../poster';
@@ -38,7 +40,7 @@ const DisplayApprovalTab = (Data: InterfaceData | undefined) => {
 	const user_detail = API.get_user_detail();
 	if (user_detail.role.toLowerCase() === 'hod' && hod === false) {
 		return true;
-	} else if (user_detail.role.toLowerCase() === 'dean' && dean === false) {
+	} else if (user_detail.role.toLowerCase() === 'dean' && !dean) {
 		return true;
 	} else if (user_detail.role.toLowerCase() === 'vice-chancellor' && vc === false) {
 		return true;
@@ -136,11 +138,13 @@ export default function details(props: {params: {id: number}}) {
 	}
 
 	const [showDialog, setDialog] = useState(false);
+
 	function closeDialog() {
 		setDialog(false);
 	}
 
 	const [showAdmin, setShowAdmin] = useState(false);
+
 	function closeAdmin() {
 		setShowAdmin(false);
 	}
@@ -167,16 +171,14 @@ export default function details(props: {params: {id: number}}) {
 			<div className="flex flex-col w-full h-auto items-center justify-center min-h-[85vh]">
 				<div className="flex flex-col w-full items-end">
 					{Spopup ? (
-						<Popup.Success
-							showpopup={setSpopup}
-							message={popupMessage}></Popup.Success>
+						<Popup.Success showpopup={setSpopup} message={popupMessage} />
 					) : null}
 					{Fpopup ? (
-						<Popup.Error showpopup={setFpopup} message={popupMessage}></Popup.Error>
+						<Popup.Error showpopup={setFpopup} message={popupMessage} />
 					) : null}
 				</div>
 				{Loader !== 200 ? (
-					<CircularLoader remainingHeight="" remainingWidth=""></CircularLoader>
+					<CircularLoader remainingHeight="" remainingWidth="" />
 				) : (
 					<div className="flex flex-col w-11/12 h-auto animateFadeIn">
 						<Header
@@ -194,7 +196,8 @@ export default function details(props: {params: {id: number}}) {
 								) : (
 									<ProgressBar
 										registeredStudents={appliedCount}
-										totalCapacity={totalStrenth || 1}></ProgressBar>
+										totalCapacity={totalStrenth || 1}
+									/>
 								)}
 							</div>
 							<div className="flex flex-col w-full justify-center items-center mt-2 gap-3">
@@ -202,12 +205,15 @@ export default function details(props: {params: {id: number}}) {
 									<ViewReport
 										view="report"
 										reportLink={data?.report}
-										reportId={props.params.id}></ViewReport>
+										eventId={props.params.id}
+									/>
 								) : null}
 								{data?.certificate != null ? (
 									<ViewReport
 										view="cert"
-										reportLink={data?.certificate}></ViewReport>
+										reportLink={data?.certificate}
+										eventId={props.params.id}
+									/>
 								) : null}
 								{!isOrganizer && data?.vc_verified ? (
 									<>
@@ -237,7 +243,8 @@ export default function details(props: {params: {id: number}}) {
 											<div className="flex flex-col lg:flex-row bg-slate-50 border border-slate-300 py-2 justify-between items-center lg:items-start rounded-md w-full">
 												<BatchesComponent
 													batches={data?.branch}
-													fcfs={data?.fcfs || false}></BatchesComponent>
+													fcfs={data?.fcfs || false}
+												/>
 												<Button
 													variant="contained"
 													className="w-10/12 lg:w-5/12 h-10"
@@ -255,13 +262,14 @@ export default function details(props: {params: {id: number}}) {
 									<></>
 								)}
 								{DisplayApprovalTab(data) === true && (
-									<Acceptance title={data?.title} id={props.params.id}></Acceptance>
+									<Acceptance title={data?.title} id={props.params.id} />
 								)}
 								<EventTime
 									dates={data?.date}
 									venue={data?.venue}
-									time={data?.time}></EventTime>
-								<Description long_desc={data?.long_description}></Description>
+									time={data?.time}
+								/>
+								<Description long_desc={data?.long_description} />
 								<Coordinators
 									coordinators={(() => {
 										const rv = [];
@@ -270,7 +278,8 @@ export default function details(props: {params: {id: number}}) {
 											if (data.owner) rv.push(data.owner);
 										}
 										return rv;
-									})()}></Coordinators>
+									})()}
+								/>
 							</div>
 							{isOrganizer ? (
 								<Fab
@@ -312,7 +321,8 @@ export default function details(props: {params: {id: number}}) {
 									showFailurePopup={() => setFpopup(true)}
 									isOrganizer={isOrganizer}
 									sPopUp={{show: setSpopup, message: setPopupMessage}}
-									fPopUp={{show: setFpopup, message: setPopupMessage}}></AdminDialog>
+									fPopUp={{show: setFpopup, message: setPopupMessage}}
+								/>
 							)}
 						</div>
 					</div>
