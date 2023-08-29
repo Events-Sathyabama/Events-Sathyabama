@@ -33,6 +33,7 @@ const filter = createFilterOptions<InterfaceClub>();
 
 const organizerSelected = new Set<string>([]);
 export default function Create(props: {
+	errorState: boolean;
 	setData: {[x: string]: Function};
 	getData: InterfaceCreateEvent;
 	getError: InterfaceError;
@@ -107,8 +108,11 @@ export default function Create(props: {
 	};
 	const handleSubmit = async (event: any) => {
 		event.preventDefault();
+		setSubmitDisabled(true);
 		await props.submitForm();
 	};
+
+	const [submitDisabled, setSubmitDisabled] = useState(false);
 
 	return (
 		<>
@@ -478,8 +482,14 @@ export default function Create(props: {
 							Please review the preview of your event's homepage card below and click
 							submit.
 						</p>
-						<Button type="submit" variant="contained" className="bg-blue-500">
-							{props.buttonText || 'Submit'}
+						<Button
+							type="submit"
+							variant="contained"
+							className="bg-blue-500"
+							disabled={submitDisabled && !props.errorState}>
+							{!props.errorState && submitDisabled 
+								? 'Loading...'
+								: props.buttonText || 'Submit'}
 						</Button>
 					</form>
 					<div className="block max-w-sm md:max-w-fit">

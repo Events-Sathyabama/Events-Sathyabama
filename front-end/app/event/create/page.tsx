@@ -129,7 +129,7 @@ export default function Page() {
 		const [durationError, setDurationError] = useState<null | string>(null);
 		const [venueError, setVenueError] = useState<null | string>(null);
 		const [coordinatorError, setCoordinatorError] = useState<null | string>(null);
-
+		
 		const getError: InterfaceError = {
 			title: titleError,
 			club: clubNameError,
@@ -164,26 +164,24 @@ export default function Page() {
 		};
 		return [setData, getData, getError, setError, sendData];
 	})();
-
+	
+	const [errorSubmit, setErrorSubmit] = useState<boolean>(false);
 	const submitForm = async () => {
 		try {
+			setErrorSubmit(false);
 			console.log(sendData());
 			const request = await axios.post(API.get_url('event:create'), sendData(), {
 				'Content-Type': 'multipart/form-data',
 			});
 			router.push(`/details/${request.data.pk}`);
 		} catch (error: any) {
+			setErrorSubmit(true);
 			for (let field in setError) {
 				setError[field](null);
 			}
 			for (let field in error.response.data) {
 				setError[field](API.extract_error(error.response.data[field]));
 			}
-			window.scroll({
-				top: 0,
-				left: 0,
-				behavior: 'smooth',
-			});
 		}
 	};
 	const [Loader, setLoader] = useState(0);
@@ -217,6 +215,7 @@ export default function Page() {
 	return (
 		<>
 			<Create
+				errorState={errorSubmit}
 				getData={getData}
 				setData={setData}
 				getError={getError}

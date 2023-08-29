@@ -216,6 +216,8 @@ export default function Page(props: {params: {id: string}}) {
 		setLoader,
 		runOnce
 	);
+
+	const [errorSubmit, setErrorSubmit] = useState<boolean>(false);
 	const submitForm = async () => {
 		try {
 			const request = await axios.patch(
@@ -225,12 +227,14 @@ export default function Page(props: {params: {id: string}}) {
 					'Content-Type': 'multipart/form-data',
 				}
 			);
+			setErrorSubmit(false);
 			setMessage('Event Updation Successful, Redirecting...');
 			setErrorPopUp(false);
 			setSuccessPopUp(true);
 			setTimeout(() => router.push(`details/${request.data.pk}`), 2000);
 		} catch (error: any) {
 			console.error(error);
+			setErrorSubmit(true);
 			if (error.message === 'Network Error') {
 				setMessage('Check your Internet Connection!!');
 				setSuccessPopUp(false);
@@ -249,11 +253,6 @@ export default function Page(props: {params: {id: string}}) {
 						setError[field](API.extract_error(error.response.data[field]));
 					}
 				}
-				window.scroll({
-					top: 0,
-					left: 0,
-					behavior: 'smooth',
-				});
 			}
 		}
 	};
@@ -276,6 +275,7 @@ export default function Page(props: {params: {id: string}}) {
 				<></>
 			)}
 			<Create
+				errorState={errorSubmit}
 				getData={getData}
 				setData={setData}
 				getError={getError}
