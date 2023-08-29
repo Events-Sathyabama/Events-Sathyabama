@@ -104,6 +104,7 @@ class EventDetail(generics.RetrieveAPIView, PermissionAllowAllRoleMixin):
 
 
 class EventCreate(generics.CreateAPIView, PermissionDenyStudentMixin):
+    msg = message.event_creat
     queryset = Event.objects.all()
     serializer_class = serializers.EventCreateSerializer
 
@@ -125,8 +126,26 @@ class EventCreate(generics.CreateAPIView, PermissionDenyStudentMixin):
 
     def perform_create(self, serializer):
         event = serializer.save()
+        user = self.request.user
+        user_data = user_serializer.UserDetail(user).data
+        event.create_timeline(level=0, user=user_data, msg=self.msg.event_created,
+                              status=TimeLineStatus.completed)
+        if user.role == 2:  # HOD
+            event.create_timeline(level=1, user=user_data, msg=message.event_approval.hod_verified,
+                                  status=TimeLineStatus.completed)
+            event.hod_verified = True
+        if user.role == 3:  # Dean
+            event.create_timeline(level=2, user=user_data, msg=message.event_approval.dean_verified,
+                                  status=TimeLineStatus.completed)
+            event.dean_verified = True
 
-        event.set_owner(self.request.user)
+        if user.role == 4:  # VC
+            event.create_timeline(level=3, user=user_data, msg=message.event_approval.vc_verified,
+                                  status=TimeLineStatus.completed)
+            event.vc_verified = True
+            
+        event.save()
+        event.set_owner(user)
 
 
 class EventUpdate(generics.UpdateAPIView, PermissionAllowOrganizerMixin):
@@ -325,11 +344,12 @@ def approve_event(request, event_id):
     if event.status >= 2:
         return response_already_approved
     try:
+        user_data = user_serializer.UserDetail(user).data
         if user_role == 2:  # hod
             if event.hod_verified:
                 return response_already_approved
             event.hod_verified = True
-            if not event.create_timeline(level=1, user=user, msg=approve_message, status=TimeLineStatus.completed):
+            if not event.create_timeline(level=1, user=user_data, msg=approve_message, status=TimeLineStatus.completed):
                 raise Exception
             event.save()
 
@@ -338,7 +358,8 @@ def approve_event(request, event_id):
                 return response_already_approved
             if event.hod_verified is True:
                 event.dean_verified = True
-                if not event.create_timeline(level=2, user=user, msg=approve_message, status=TimeLineStatus.completed):
+                if not event.create_timeline(level=2, user=user_data, msg=approve_message,
+                                             status=TimeLineStatus.completed):
                     raise Exception
                 event.save()
             else:
@@ -353,9 +374,9 @@ def approve_event(request, event_id):
                 return Response(data={'detail': msg.verify_dean_first})
             event.vc_verified = True
             event.status = 2
-            if not event.create_timeline(level=3, user=user, msg=approve_message, status=TimeLineStatus.completed):
+            if not event.create_timeline(level=3, user=user_data, msg=approve_message, status=TimeLineStatus.completed):
                 raise Exception
-            if not event.create_timeline(level=4, user=user, msg=msg.approval_process_done,
+            if not event.create_timeline(level=4, user=user_data, msg=msg.approval_process_done,
                                          status=TimeLineStatus.completed):
                 raise Exception
             event.save()
@@ -388,32 +409,34 @@ def deny_event(request, event_id):
         return response_already_approved
     if event.rejected:
         return response_already_deny
-    if user_role == 2:  # hod
-        event.hod_verified = False
-        event.rejected = True
-        if not event.create_timeline(level=1, user=user, msg=deny_message, status=TimeLineStatus.rejected):
-            raise Exception
-        event.save()
+    try:
+        user_data = user_serializer.UserDetail(user).data
+        if user_role == 2:  # hod
+            event.hod_verified = False
+            event.rejected = True
+            if not event.create_timeline(level=1, user=user_data, msg=deny_message, status=TimeLineStatus.rejected):
+                raise Exception
+            event.save()
 
-        return Response(data={'detail': msg.success})
+            return Response(data={'detail': msg.success})
 
-    if user_role == 3:  # Dean
-        event.dean_verified = False
-        event.rejected = True
-        if not event.create_timeline(level=2, user=user, msg=deny_message, status=TimeLineStatus.rejected):
-            raise Exception
-        event.save()
-        return Response(data={'detail': msg.success})
+        if user_role == 3:  # Dean
+            event.dean_verified = False
+            event.rejected = True
+            if not event.create_timeline(level=2, user=user_data, msg=deny_message, status=TimeLineStatus.rejected):
+                raise Exception
+            event.save()
+            return Response(data={'detail': msg.success})
 
-    if user_role == 4:  # VC
-        event.vc_verified = False
-        event.rejected = True
-        if not event.create_timeline(level=3, user=user, msg=deny_message, status=TimeLineStatus.rejected):
-            raise Exception
-        event.save()
-        return Response(data={'detail': msg.success})
-
-    return Response(data={'detail': msg.server_error}, status=500)
+        if user_role == 4:  # VC
+            event.vc_verified = False
+            event.rejected = True
+            if not event.create_timeline(level=3, user=user_data, msg=deny_message, status=TimeLineStatus.rejected):
+                raise Exception
+            event.save()
+            return Response(data={'detail': msg.success})
+    except:
+        return Response(data={'detail': msg.server_error}, status=500)
 
 
 @api_view(['POST'])
@@ -427,15 +450,17 @@ def upload_report(request, event_id):
     if event.status >= 5:
         return Response(data={'detail': msg.report_approved}, status=400)
     report_file = request.FILES.get('file')
-    if report_file:
+    try:
+        user_data = user_serializer.UserDetail(request.user).data
         event.report = report_file
-        if not event.create_timeline(level=7, user=request.user, msg=msg.report_submitted_message.format(
-                request.user.first_name, request.user.college_id), status=TimeLineStatus.completed):
+        timeline_message = msg.report_submitted_message.format(
+            request.user.first_name, request.user.college_id)
+        if not event.create_timeline(level=7, user=user_data, msg=timeline_message, status=TimeLineStatus.completed):
             raise Exception
         event.status = 4
         event.save()
         return Response(data={'detail': msg.success, 'link': request.build_absolute_uri(event.report.url)})
-    else:
+    except:
         return Response(data={'detail': msg.error})
 
 
@@ -492,8 +517,9 @@ def upload_certs(request, event_id):
         with transaction.atomic():
             EventParticipant.objects.bulk_update(
                 participants_to_update, ['certificate'])
-        if not event.create_timeline(level=9, user=request.user,
-                                     msg=msg.certified_by.format(request.user.first_name, request.user.college_id),
+        if not event.create_timeline(level=9, user=user_serializer.UserDetail(request.user).data,
+                                     msg=msg.certified_by.format(
+                                         request.user.first_name, request.user.college_id),
                                      status=TimeLineStatus.completed):
             raise Exception
         event.status = 6
@@ -522,7 +548,8 @@ def delete_certs(request, event_id):
         with transaction.atomic():
             EventParticipant.objects.bulk_update(
                 participants_to_update, ['certificate'])
-        if not event.create_timeline(level=9, user=request.user, status=TimeLineStatus.not_visited):
+        if not event.create_timeline(level=9, user=user_serializer.UserDetail(request.user).data,
+                                     status=TimeLineStatus.not_visited):
             raise Exception
         event.save()
 
@@ -583,7 +610,7 @@ def delete_report(request, event_id):
         return Response({'detail': msg.already_approved}, status=400)
     file_name = event.report
     event.clear_timeline()
-    if not event.create_timeline(level=7, user=request.user,
+    if not event.create_timeline(level=7, user=user_serializer.UserDetail(request.user).data,
                                  status=TimeLineStatus.not_visited):
         raise Exception
     event.report = None
@@ -603,8 +630,9 @@ def approve_report(request, event_id):
     if event.status == 5:
         return Response(data={'detail': msg.report_already_approved}, status=400)
     if not event.create_timeline(
-            level=8, user=request.user,
-            msg=msg.report_approved_message.format(request.user.first_name, request.user.college_id),
+            level=8, user=user_serializer.UserDetail(request.user).data,
+            msg=msg.report_approved_message.format(
+                request.user.first_name, request.user.college_id),
             status=TimeLineStatus.completed):
         raise Exception
 
