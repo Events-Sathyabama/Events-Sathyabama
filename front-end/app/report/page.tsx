@@ -8,11 +8,12 @@ import WebBackdrop from '../backdrop';
 import Popup from '../popup';
 import CircularLoader from '../circularLoader';
 import useEffect from '../useEffect';
+import API from '../API';
 
 interface LabelOption {
 	name: string;
 }
-
+const axios = new API.Axios();
 export default function Report() {
 	const [subject, setSubject] = useState('');
 	const [longDescription, setLongDescription] = useState('');
@@ -37,7 +38,7 @@ export default function Report() {
 	const [initialLoader, setInitialLoader] = useState(false);
 
 	useEffect(() => {
-		setInitialLoader(true);
+		// setInitialLoader(true);
 	}, []);
 
 	const [url, setUrl] = useState('');
@@ -70,12 +71,11 @@ export default function Report() {
 
 			setLoading(true);
 			console.log(data);
+			const response = await axios.post(API.get_url('user:report_bug'), data);
+			console.log(response);
 
-			//TODO post request here bro
-			// Get the github issue url in the response and setUrl to it bro
-			// setUrl()
 			setTimeout(() => {
-				setUrl('https://github.com/Surya-Kumar-03/Event-Management');
+				setUrl(response.data.data.html_url);
 				setLoading(false);
 			}, 5000);
 
@@ -88,6 +88,7 @@ export default function Report() {
 			console.error('Error:', error);
 			setShowFailure(true);
 		}
+		setLoading(false);
 	};
 
 	return (

@@ -82,16 +82,15 @@ class TimeLineStatus:
 
 def default_history(user):
     title = event.Timeline()
-    from user.serializers import UserDetail
 
     return [
         {
-            'user': UserDetail(user).data,
+            'user': None,
             'success_title': title.title_created,
             'failure_title': title.failed_title_created,
             'message': '',
-            'date': timezone.now().isoformat(),
-            'status': TimeLineStatus.completed
+            'date': None,
+            'status': TimeLineStatus.not_visited
         },
         {
             'user': None,
@@ -169,7 +168,6 @@ def default_history(user):
 
 
 class Event(models.Model):
-    from user.serializers import UserDetail
     STATUS_CHOICES = (
         (1, 'Pending'),
         (2, 'Displayed'),
@@ -229,11 +227,12 @@ class Event(models.Model):
     def create_timeline(self, level, user, msg=None, status=0):
         if level < 0 or level > 9:
             return False
-        self.history[level]['user'] = self.UserDetail(user).data
+        self.history[level]['user'] = user
         self.history[level]['message'] = msg
         self.history[level]['status'] = status
+        self.history[level]['date'] = timezone.now().isoformat()
         if status == TimeLineStatus.completed and level + 1 < 10:
-            self.history[level+1]['status'] = TimeLineStatus.ongoing
+            self.history[level + 1]['status'] = TimeLineStatus.ongoing
         return True
 
     def clear_timeline(self):

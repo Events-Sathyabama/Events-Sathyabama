@@ -16,6 +16,7 @@ from rest_framework.response import Response
 import http.client
 import json
 import re
+from django.conf import settings
 
 User = get_user_model()
 
@@ -105,21 +106,38 @@ def reset_password(request):
 @api_view(['POST'])
 def bug_report(request):
     conn = http.client.HTTPSConnection("api.github.com")
-    title = request.data.get('title')
-    body = request.data.get('body')
-    labels = request.data.get('labels[]')
-    payload = json.dumps({
-        "title": title,
-        "body": body,
-        "labels": labels
-    })
-    headers = {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer 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'
-    }
-    conn.request(
-        "POST", "/repos/Surya-Kumar-03/Event-Management/issues", payload, headers)
-    res = conn.getresponse()
-    data = res.read()
 
-    print(data.decode("utf-8"))
+    def get_card(key, value):
+        value = str(value).replace('-', '_')
+        return f'<img src="https://img.shields.io/badge/{key}-{value}-blue"/>\n'
+
+    personal_info = {
+        'Name': request.user.full_name,
+        'College_Id': request.user.college_id,
+        'Branch': request.user.branch,
+    }
+    info_str = '\n\n ' + \
+        f'<div style="width: 40%; border-style: solid; border-color: grey; margin: 0 auto;"><div style="padding: 2px 16px;"><h4 style="margin: 0;"><b>{request.user.full_name}</b></h4><p style="margin: 4px 0;">{request.user.branch}</p></div></div>'
+    # for key in personal_info:
+    #     info_str += get_card(key, personal_info[key])
+    try:
+
+        payload = json.dumps({
+            "title": request.data.get('title'),
+            "body": request.data.get('body') + info_str + '\n',
+            "labels": request.data.get('labels')
+        })
+        headers = {
+            'Content-Type': 'application/json',
+            'User-Agent': 'Aryan-Django-Backend',
+            'Authorization': f'Bearer {settings.GIT_BUG_REPORT_API_KEY}'
+        }
+        conn.request(
+            "POST", "/repos/Surya-Kumar-03/Event-Management/issues", payload, headers)
+        res = conn.getresponse()
+        data = res.read()
+        data = json.loads(data)
+    except:
+        return Response(data={'detail': 'Something Went Wrong'}, status=400)
+    # print(data)
+    return Response(data={'detail': 'Bug reported', 'data': data}, status=200)

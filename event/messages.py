@@ -1,4 +1,7 @@
 class Message:
+    class event_creat:
+        event_created = "Event Created Successfully"
+
     class detail:
         not_found = 'No Event Found!!!'
 
