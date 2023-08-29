@@ -402,6 +402,9 @@ const url: {[key: string]: (...args: any[]) => string} = {
 	'user:reset_password': () => {
 		return 'user/reset_password/';
 	},
+	'user:report_bug': () => {
+		return 'user/bug_report/';
+	},
 } as const;
 
 const check_role = (role: string) => {
