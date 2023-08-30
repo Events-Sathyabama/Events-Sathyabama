@@ -1,18 +1,14 @@
-import * as React from 'react';
-import Dialog from '@mui/material/Dialog';
-import List from '@mui/material/List';
 import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
+import Dialog from '@mui/material/Dialog';
 import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
+import List from '@mui/material/List';
 import Slide from '@mui/material/Slide';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
 import {TransitionProps} from '@mui/material/transitions';
+import * as React from 'react';
+import {InterfaceData} from '../datainterface';
 import AdminTabs from './adminTabs';
-import {
-	InterfaceParticipant,
-	TimeLineHistory,
-	InterfaceData,
-} from '../datainterface';
 
 const Transition = React.forwardRef(function Transition(
 	props: TransitionProps & {

@@ -1,7 +1,5 @@
-import * as React from 'react';
 import Avatar from '@mui/material/Avatar';
-import Badge, {BadgeProps} from '@mui/material/Badge';
-import {styled} from '@mui/material/styles';
+import * as React from 'react';
 
 function stringAvatar(
 	width: string,

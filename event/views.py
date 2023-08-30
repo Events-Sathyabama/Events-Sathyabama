@@ -39,7 +39,7 @@ from .throttle import RequestEvery10Seconds
 message = Message()
 
 User = get_user_model()
-Portal_User = {'name': 'Event@Sathyabama', 'college_id': -1, 'branch': 'Miscellaneous'}
+Portal_User = {'name': 'Events@Sathyabama Team', 'college_id': -1, 'branch': 'Miscellaneous'}
 
 
 class CompletedEventList(SearchQueryMixins, generics.ListAPIView):

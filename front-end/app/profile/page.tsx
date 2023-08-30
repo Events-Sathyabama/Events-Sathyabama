@@ -1,12 +1,12 @@
 'use client';
+import API from '@/app/API';
+import CircularProgress from '@mui/material/CircularProgress';
+import {useState} from 'react';
 import Footer from '../footer';
 import Navbar from '../navbar';
+import useEffect from '../useEffect';
 import Profile from './profile';
 import TabsProfile from './tabsProfile';
-import {useState} from 'react';
-import CircularProgress from '@mui/material/CircularProgress';
-import API from '@/app/API';
-import useEffect from '../useEffect';
 
 const axios = new API.Axios();
 

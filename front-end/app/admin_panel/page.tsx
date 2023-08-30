@@ -1,12 +1,12 @@
 'use client';
-import Link from 'next/link';
-import LineChart from './chart';
-import StatsCard from './statsCard';
 import Button from '@mui/material/Button';
-import ExcelUploader from './excelUploader';
+import Link from 'next/link';
 import React from 'react';
 import WebBackdrop from '../backdrop';
 import Popup from '../popup';
+import LineChart from './chart';
+import ExcelUploader from './excelUploader';
+import StatsCard from './statsCard';
 
 interface DataPoint {
 	x: string;

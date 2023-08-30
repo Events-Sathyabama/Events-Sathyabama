@@ -1,7 +1,7 @@
 // noinspection PointlessBooleanExpressionJS
 
-import React from 'react';
 import {MuiOtpInput} from 'mui-one-time-password-input';
+import React from 'react';
 import API from './API';
 import Popup from './popup';
 

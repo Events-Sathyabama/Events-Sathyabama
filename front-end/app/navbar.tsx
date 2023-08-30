@@ -1,13 +1,13 @@
 'use client';
-import {Fragment, useState} from 'react';
 import {Disclosure, Menu, Transition} from '@headlessui/react';
 import {Bars3Icon, XMarkIcon} from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import {usePathname, useRouter} from 'next/navigation';
-import useEffect from './useEffect';
+import {Fragment, useState} from 'react';
 import LetterAvatar from './avatar';
-import NotificationIconButton from './notifications';
 import Notifications from './notificationPop';
+import NotificationIconButton from './notifications';
+import useEffect from './useEffect';
 
 function classNames(...classes: any) {
 	return classes.filter(Boolean).join(' ');

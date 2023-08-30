@@ -1,15 +1,15 @@
 'use client';
-import HomeCard from './card';
+import InputAdornment from '@mui/material/InputAdornment';
+import TextField from '@mui/material/TextField';
+import Image from 'next/image';
 import {useState} from 'react';
 import API from '../API';
+import handleError from '../handleError';
 import Paginator from '../pagination';
-import TextField from '@mui/material/TextField';
+import useEffect from '../useEffect';
+import HomeCard from './card';
 
 const axios = new API.Axios();
-import InputAdornment from '@mui/material/InputAdornment';
-import Image from 'next/image';
-import useEffect from '../useEffect';
-import handleError from '../handleError';
 
 function LoadingCard() {
 	return (

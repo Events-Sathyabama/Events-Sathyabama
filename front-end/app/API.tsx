@@ -1,6 +1,4 @@
 import axios from 'axios';
-import React from 'react';
-import handleError from './handleError';
 
 const instance = axios.create({
 	baseURL: (() => {

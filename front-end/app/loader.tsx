@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import {useState} from 'react';
 
 function ImageLoader(props: any) {
 	const [imgStatus, setImgStatus] = useState(false);

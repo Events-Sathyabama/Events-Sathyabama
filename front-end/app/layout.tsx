@@ -1,7 +1,3 @@
-import WebBackdrop from './backdrop';
-import {useState} from 'react';
-import API from './API';
-import {useRouter} from 'next/navigation';
 import './globals.css';
 import ScrollToTop from './scrollToTop';
 

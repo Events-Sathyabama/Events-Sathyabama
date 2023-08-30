@@ -1,12 +1,12 @@
-import React from 'react';
+import {LoadingButton} from '@mui/lab';
 import {Button} from '@mui/material';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import {AcceptDeny} from './organiserDialog';
-import {LoadingButton} from '@mui/lab';
+import React from 'react';
 import API from '../API';
+import {AcceptDeny} from './organiserDialog';
 
 const axios = new API.Axios();
 const ViewReport = (props: {

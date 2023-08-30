@@ -1,19 +1,17 @@
 'use client';
-import Create from '../create';
-import {useState} from 'react';
+import useEffect from '@/app/useEffect';
+import {Dayjs} from 'dayjs';
 import {useRouter} from 'next/navigation';
+import {useState} from 'react';
 import API from '../../API';
-import dayjs, {Dayjs} from 'dayjs';
 import {
-	InterfaceClub,
 	InterfaceBranch,
-	InterfaceData,
+	InterfaceClub,
+	InterfaceCreateEvent,
 	InterfaceError,
 	InterfaceOrganizer,
-	InterfaceCreateEvent,
-	InterfaceCreateUpdateSendData,
 } from '../../datainterface';
-import useEffect from '@/app/useEffect';
+import Create from '../create';
 
 const axios = new API.Axios();
 
@@ -129,7 +127,7 @@ export default function Page() {
 		const [durationError, setDurationError] = useState<null | string>(null);
 		const [venueError, setVenueError] = useState<null | string>(null);
 		const [coordinatorError, setCoordinatorError] = useState<null | string>(null);
-		
+
 		const getError: InterfaceError = {
 			title: titleError,
 			club: clubNameError,
@@ -164,7 +162,7 @@ export default function Page() {
 		};
 		return [setData, getData, getError, setError, sendData];
 	})();
-	
+
 	const [errorSubmit, setErrorSubmit] = useState<boolean>(false);
 	const submitForm = async () => {
 		try {

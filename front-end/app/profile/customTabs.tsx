@@ -1,15 +1,15 @@
+import Image from 'next/image';
 import React from 'react';
+import API from '../API';
 import {
 	InterfaceCompletedRegisteredEvent,
 	InterfaceEventProgress,
 	InterfacePaginatedData,
 } from '../datainterface';
-import useEffect from '../useEffect';
-import API from '../API';
-import ProfileCards from './profileCards';
-import Image from 'next/image';
 import Paginator from '../pagination';
+import useEffect from '../useEffect';
 import {CardsLoader} from './LoadingCards';
+import ProfileCards from './profileCards';
 
 const axios = new API.Axios();
 

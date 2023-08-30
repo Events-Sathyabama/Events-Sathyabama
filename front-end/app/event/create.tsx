@@ -1,26 +1,25 @@
 'use client';
-import Card from '../home/card';
-import * as React from 'react';
-import TextField from '@mui/material/TextField';
-import {useState} from 'react';
 import Autocomplete, {createFilterOptions} from '@mui/material/Autocomplete';
 import Button from '@mui/material/Button';
-import {MobileDatePicker} from '@mui/x-date-pickers/MobileDatePicker';
-import {LocalizationProvider} from '@mui/x-date-pickers/LocalizationProvider';
-import {AdapterDayjs} from '@mui/x-date-pickers/AdapterDayjs';
 import Chip from '@mui/material/Chip';
-import API from '../API';
+import TextField from '@mui/material/TextField';
+import {AdapterDayjs} from '@mui/x-date-pickers/AdapterDayjs';
+import {LocalizationProvider} from '@mui/x-date-pickers/LocalizationProvider';
+import {MobileDatePicker} from '@mui/x-date-pickers/MobileDatePicker';
 import {usePathname} from 'next/navigation';
+import * as React from 'react';
+import {useState} from 'react';
+import API from '../API';
+import Card from '../home/card';
 
 import {
-	InterfaceClub,
 	InterfaceBranch,
-	InterfaceError,
+	InterfaceClub,
 	InterfaceCreateEvent,
+	InterfaceError,
 } from '../datainterface';
 import useEffect from '../useEffect';
 
-import dayjs, {Dayjs} from 'dayjs';
 import {
 	FormControl,
 	FormHelperText,
@@ -28,6 +27,7 @@ import {
 	MenuItem,
 	Select,
 } from '@mui/material';
+import {Dayjs} from 'dayjs';
 const axios = new API.Axios();
 const filter = createFilterOptions<InterfaceClub>();
 
@@ -289,7 +289,7 @@ export default function Create(props: {
 							value={getData.short_description}
 							helperText={
 								getError.short_description ||
-								"This will be reflected on the homepage cards and your event's details page header."
+								"This will be reflected on the homepage cards and the header of your event's details page. (Maximum 98 characters)"
 							}
 							inputProps={{maxLength: 100}}
 						/>
@@ -475,7 +475,7 @@ export default function Create(props: {
 							}}
 							helperText={
 								getError.venue ||
-								'Please provide details regarding the venue of your event, including directions from the College Arch.'
+								'Please provide details regarding the venue of your event. (Maximum 98 characters)'
 							}
 						/>
 						<p className="bg-red-50 p-2 rounded-md border border-red-300 font-medium text-center md:hidden">
@@ -487,7 +487,7 @@ export default function Create(props: {
 							variant="contained"
 							className="bg-blue-500"
 							disabled={submitDisabled && !props.errorState}>
-							{!props.errorState && submitDisabled 
+							{!props.errorState && submitDisabled
 								? 'Loading...'
 								: props.buttonText || 'Submit'}
 						</Button>

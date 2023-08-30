@@ -1,5 +1,7 @@
 'use client';
-import * as React from 'react';
+import API from '@/app/API';
+import CircularLoader from '@/app/circularLoader';
+import useEffect from '@/app/useEffect';
 import {Button, IconButton} from '@mui/material';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -8,9 +10,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
-import useEffect from '@/app/useEffect';
-import API from '@/app/API';
-import CircularLoader from '@/app/circularLoader';
+import * as React from 'react';
 
 const axios = new API.Axios();
 
@@ -125,6 +125,7 @@ export default function Applicants(props: {params: {id: number}}) {
 		setLoader,
 		true
 	);
+	console.log(rows);
 	return (
 		<div className="flex flex-col w-full items-center">
 			<div className="flex flex-col gap-2 sm:flex-row sm:justify-between py-3 items-center w-full bg-[#1976d2]">

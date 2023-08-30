@@ -1,18 +1,18 @@
 // noinspection PointlessBooleanExpressionJS
 
 'use client';
-import {useState} from 'react';
-import LoginForm from './loginForm';
-import LandingNav from './landingNav';
-import Footer from './footer';
-import PopUp from './popup';
-import API from './API';
-import {useRouter} from 'next/navigation';
-import WebBackdrop from './backdrop';
-import useEffect from './useEffect';
 import {IconButton} from '@mui/material';
+import {useRouter} from 'next/navigation';
+import {useState} from 'react';
+import API from './API';
+import WebBackdrop from './backdrop';
+import Footer from './footer';
+import LandingNav from './landingNav';
+import LoginForm from './loginForm';
 import OtpField from './otp';
 import PasswordPage from './passwordUpdate';
+import PopUp from './popup';
+import useEffect from './useEffect';
 
 export default function LoginPage(): JSX.Element {
 	const [loading, setLoading] = useState(true);

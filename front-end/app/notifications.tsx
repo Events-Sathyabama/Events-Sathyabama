@@ -1,5 +1,3 @@
-import * as React from 'react';
-import IconButton from '@mui/material/IconButton';
 import Badge, {BadgeProps} from '@mui/material/Badge';
 import {styled} from '@mui/material/styles';
 

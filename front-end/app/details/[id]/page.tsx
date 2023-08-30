@@ -1,28 +1,26 @@
 // noinspection PointlessBooleanExpressionJS
 
 'use client';
-import Header from '../header';
-import Poster from '../poster';
+import CircularLoader from '@/app/circularLoader';
+import {InterfaceData} from '@/app/datainterface';
+import LoadingButton from '@mui/lab/LoadingButton';
+import {Button} from '@mui/material';
+import Alert from '@mui/material/Alert';
+import Fab from '@mui/material/Fab';
 import {useState} from 'react';
-import useEffect from '../../useEffect';
 import API from '../../API';
 import Popup from '../../popup';
-import {Button} from '@mui/material';
-import EventTime from '../venue';
-import Fab from '@mui/material/Fab';
-import LoadingButton from '@mui/lab/LoadingButton';
-import ProgressBar from '../progressBar';
-import {InterfaceData} from '@/app/datainterface';
-import handleError from '@/app/handleError';
-import Description from '../description';
-import Coordinators from '../coordinators';
-import Alert from '@mui/material/Alert';
-import BatchesComponent from '../batches';
-import ConfirmDialog from '../dialog';
-import Acceptance from '../organiserAccept';
+import useEffect from '../../useEffect';
 import AdminDialog from '../adminDialog';
-import CircularLoader from '@/app/circularLoader';
-import {useRouter} from 'next/router';
+import BatchesComponent from '../batches';
+import Coordinators from '../coordinators';
+import Description from '../description';
+import ConfirmDialog from '../dialog';
+import Header from '../header';
+import Acceptance from '../organiserAccept';
+import Poster from '../poster';
+import ProgressBar from '../progressBar';
+import EventTime from '../venue';
 import ViewReport from '../viewReport';
 
 const axios = new API.Axios();

@@ -173,7 +173,14 @@ export interface InterfacePaginatedData {
 }
 
 export interface TimeLineHistory {
-	user: {name: string; role: string; college_id: number; batch: string; pk: number; branch: string;};
+	user: {
+		name: string;
+		role: string;
+		college_id: number;
+		batch: string;
+		pk: number;
+		branch: string;
+	};
 	success_title: string;
 	failure_title: string;
 	message: string;

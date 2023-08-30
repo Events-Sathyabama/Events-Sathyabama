@@ -1,7 +1,7 @@
-import React, {useState, useRef} from 'react';
+import React, {useRef, useState} from 'react';
+import * as XLSX from 'xlsx';
 import API from '../API';
 import Popup from '../popup';
-import * as XLSX from 'xlsx';
 
 interface ExcelUploaderProps {
 	eventId: string;

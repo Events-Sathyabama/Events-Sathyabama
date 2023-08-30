@@ -1,7 +1,5 @@
-import * as React from 'react';
 import List from '@mui/material/List';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
-import Divider from '@mui/material/Divider';
 import LetterAvatar from '../avatar';
 
 interface Coordinator {

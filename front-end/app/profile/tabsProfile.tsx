@@ -1,16 +1,7 @@
-import * as React from 'react';
-import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
-import Image from 'next/image';
-import ProfileCards from './profileCards';
-import useEffect from '../useEffect';
+import Tabs from '@mui/material/Tabs';
+import * as React from 'react';
 import API from '../API';
-import Paginator from '../pagination';
-import {
-	InterfaceCompletedRegisteredEvent,
-	InterfaceEventProgress,
-	InterfacePaginatedData,
-} from '../datainterface';
 import CustomTabs from './customTabs';
 const axios = new API.Axios();
 const rows = [

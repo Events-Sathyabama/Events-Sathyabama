@@ -1,5 +1,4 @@
 import Chip from '@mui/material/Chip';
-import {useState} from 'react';
 import {InterfaceBranch} from '../datainterface';
 
 const BatchesComponent = (props: {

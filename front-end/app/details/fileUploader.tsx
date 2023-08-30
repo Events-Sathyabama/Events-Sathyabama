@@ -1,8 +1,7 @@
-import React, {useState, useRef} from 'react';
-import Popup from '../popup';
-import API from '../API';
 import LoadingButton from '@mui/lab/LoadingButton';
-import {AxiosError} from 'axios';
+import React, {useRef, useState} from 'react';
+import API from '../API';
+import Popup from '../popup';
 
 interface FileUploaderProps {
 	accepted_files: string;

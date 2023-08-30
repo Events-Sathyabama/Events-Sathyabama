@@ -1,8 +1,8 @@
 // noinspection PointlessBooleanExpressionJS
 
-import * as React from 'react';
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
+import * as React from 'react';
 import OrganiserDialog from './organiserDialog';
 
 export default function Acceptance(props: {title: any; id: number}) {

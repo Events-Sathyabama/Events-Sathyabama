@@ -1,10 +1,9 @@
-import * as React from 'react';
-import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
-import Typography from '@mui/material/Typography';
-import {TimeLineHistory} from '../datainterface';
+import Stepper from '@mui/material/Stepper';
+import * as React from 'react';
 import LetterAvatar from '../avatar';
+import {TimeLineHistory} from '../datainterface';
 
 // const steps = [
 // 	'Event Created',
@@ -113,7 +112,7 @@ export default function Timeline(props: {history: TimeLineHistory[] | undefined}
 
 					if (history.message != '') {
 						labelProps.optional = (
-							<pre className="mt-3 p-3 border rounded-md border-gray-300 text-sm whitespace-pre-line font-roboto">
+							<pre className="mt-3 p-3 border rounded-md border-gray-300 bg-[#fafcfe] text-sm whitespace-pre-line font-roboto">
 								<div>{history.message}</div>
 							</pre>
 						);
