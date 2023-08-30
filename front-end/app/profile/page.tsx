@@ -34,6 +34,7 @@ export default function ProfilePage(): JSX.Element {
 			setId(request.data.college_id);
 			setBranch(request.data.branch);
 			setFullName(request.data.full_name);
+			setBatch(request.data.batch);
 			document.getElementsByTagName('title')[0].innerHTML =
 				request.data.full_name + ' | Events@Sathyabama';
 		},

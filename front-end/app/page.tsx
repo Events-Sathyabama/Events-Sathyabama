@@ -14,6 +14,8 @@ import PasswordPage from './passwordUpdate';
 import PopUp from './popup';
 import useEffect from './useEffect';
 
+const axios = new API.Axios();
+
 export default function LoginPage(): JSX.Element {
 	const [loading, setLoading] = useState(true);
 	const [fPopUp, setFPopUp] = useState(false);
@@ -67,9 +69,22 @@ export default function LoginPage(): JSX.Element {
 		}
 	}, [timer]);
 
-	const handleResend = () => {
+	const [otpResend, setOTPResend] = useState('');
+
+	const handleResend = async () => {
 		// TODO axios call here bro
 		// Show Success Popup after sending otp
+		setOTPResend('Sending');
+		const url = API.get_url('user:send_otp');
+		const id = localStorage.getItem('user_id');
+		const response = await axios.send_otp(id);
+		console.log(response.status);
+
+		if (response.status === 200) {
+			setOTPResend('E-mail sent, ');
+		} else {
+			setOTPResend('Something went wrong, ');
+		}
 
 		if (retryCount === 0) {
 			setTimer(30);
@@ -198,12 +213,18 @@ export default function LoginPage(): JSX.Element {
 									/>
 									<button
 										onClick={handleResend}
-										disabled={timer > 0}
+										disabled={timer > 0 || otpResend === 'Sending'}
 										className={`text-blue-600 mt-2 w-max cursor-pointer font-roboto text-sm ${
-											timer > 0 ? 'opacity-50 cursor-not-allowed' : 'hover:underline'
+											timer > 0 || otpResend === 'Sending'
+												? 'opacity-50 cursor-wait'
+												: 'hover:underline'
 										}`}
 										id="resendButton">
-										{timer > 0 ? `Resend OTP in ${formatTime(timer)}` : 'Resend OTP'}
+										{timer > 0
+											? `${otpResend}Resend OTP in ${formatTime(timer)}`
+											: otpResend === 'Sending'
+											? 'Sending...'
+											: 'Resend OTP'}
 									</button>
 								</div>
 							) : (
