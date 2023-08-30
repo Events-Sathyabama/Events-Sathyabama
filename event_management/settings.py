@@ -17,7 +17,6 @@ from decouple import config
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
@@ -62,7 +61,6 @@ INSTALLED_APPS = [
 
 SHELL_PLUS_PRE_IMPORTS = [('event_management.query_count', '*')]
 
-
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -96,7 +94,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'event_management.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
@@ -121,7 +118,6 @@ else:
         }
     }
 
-
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
 
@@ -140,7 +136,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
@@ -151,7 +146,6 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
@@ -166,7 +160,6 @@ MEDIA_URL = '/media/'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
 
 # Django rest framework
 REST_FRAMEWORK = {
@@ -186,7 +179,6 @@ REST_FRAMEWORK = {
     ]
 }
 
-
 SIMPLE_JWT = {
     "TOKEN_OBTAIN_SERIALIZER": "event_management.serializers.TokenObtain",
     "ACCESS_TOKEN_LIFETIME": timedelta(seconds=config('ACCESS_TOKEN_EXP_TIME', cast=int)),
@@ -198,7 +190,6 @@ SIMPLE_JWT = {
     "LEEWAY": timedelta(seconds=10)
 }
 
-
 # Email settings
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = config('EMAIL_HOST')
@@ -209,5 +200,23 @@ EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 
 OTP_VALIDITY_DURATION = 5 * 60  # in seconds
 
-
 GIT_BUG_REPORT_API_KEY = config('GIT_BUG_REPORT_API_KEY', cast=str)
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',  # Set the desired logging level
+            'class': 'logging.FileHandler',
+            'filename': 'db_queries.log',  # Set the file path for logging
+        },
+    },
+    'loggers': {
+        'django.db.backends': {
+            'level': 'DEBUG',
+            'handlers': ['file'],
+            'propagate': False,
+        },
+    },
+}

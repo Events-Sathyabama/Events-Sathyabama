@@ -224,7 +224,7 @@ class Event(models.Model):
     }
     '''
 
-    def create_timeline(self, level, user, msg=None, status=0):
+    def create_timeline(self, level, user, msg='', status=0):
         if level < 0 or level > 9:
             return False
         self.history[level]['user'] = user
@@ -239,7 +239,8 @@ class Event(models.Model):
         for history in self.history:
             if history['status'] == TimeLineStatus.rejected:
                 history['status'] = TimeLineStatus.ongoing
-                history['message'] = None
+                history['date'] = None
+                history['message'] = ''
                 history['user'] = None
 
     @property
@@ -248,8 +249,7 @@ class Event(models.Model):
 
     def get_participant_data(self):
         if not hasattr(self, '_participants_dict'):
-            all_participant = EventParticipant.objects.filter(
-                event=self.pk).select_related('user')
+            all_participant = EventParticipant.objects.select_related('user').filter(event=self.pk)
             data = {
                 'accepted': all_participant.filter(status='3'),
                 'applied': all_participant.filter(status='2'),

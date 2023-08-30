@@ -5,3 +5,4 @@ settings.ini
 **/venv/**
 **/media/**
 **/settings.ini
+db_queries.log

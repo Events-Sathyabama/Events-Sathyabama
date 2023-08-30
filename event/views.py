@@ -38,6 +38,7 @@ from .permissions import (IsStudent,
 message = Message()
 
 User = get_user_model()
+Portal_User = {'name': 'Event@Sathyabama', 'college_id': -1, 'branch': 'Miscellaneous'}
 
 
 class CompletedEventList(SearchQueryMixins, generics.ListAPIView):
@@ -128,7 +129,7 @@ class EventCreate(generics.CreateAPIView, PermissionDenyStudentMixin):
         event = serializer.save()
         user = self.request.user
         user_data = user_serializer.UserDetail(user).data
-        event.create_timeline(level=0, user=user_data, msg=self.msg.event_created,
+        event.create_timeline(level=0, user=user_data,
                               status=TimeLineStatus.completed)
         if user.role == 2:  # HOD
             event.create_timeline(level=1, user=user_data, msg=message.event_approval.hod_verified,
@@ -142,8 +143,11 @@ class EventCreate(generics.CreateAPIView, PermissionDenyStudentMixin):
         if user.role == 4:  # VC
             event.create_timeline(level=3, user=user_data, msg=message.event_approval.vc_verified,
                                   status=TimeLineStatus.completed)
+            event.create_timeline(level=4,
+                                  user=Portal_User,
+                                  status=TimeLineStatus.completed)
             event.vc_verified = True
-            
+
         event.save()
         event.set_owner(user)
 
@@ -376,7 +380,9 @@ def approve_event(request, event_id):
             event.status = 2
             if not event.create_timeline(level=3, user=user_data, msg=approve_message, status=TimeLineStatus.completed):
                 raise Exception
-            if not event.create_timeline(level=4, user=user_data, msg=msg.approval_process_done,
+            if not event.create_timeline(level=4,
+                                         user=Portal_User,
+                                         msg='',
                                          status=TimeLineStatus.completed):
                 raise Exception
             event.save()
