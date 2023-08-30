@@ -321,7 +321,7 @@ class Event(models.Model):
 
     def is_eligible_to_apply(self, user):
         if user.role not in self.accepted_role:
-            return event.not_open_to_this_role(user.get_role_display())
+            return event.not_open_to_this_role.format(user.get_role_display())
         if self.accepted_participant.count() >= self.total_strength:
             return event.strength_full
         if self.is_organizer(user):

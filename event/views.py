@@ -34,6 +34,7 @@ from .permissions import (IsStudent,
                           is_event_organizer,
                           is_event_owner
                           )
+from .throttle import RequestEvery10Seconds
 
 message = Message()
 
@@ -108,8 +109,15 @@ class EventCreate(generics.CreateAPIView, PermissionDenyStudentMixin):
     msg = message.event_creat
     queryset = Event.objects.all()
     serializer_class = serializers.EventCreateSerializer
+    throttle_classes = [RequestEvery10Seconds]
 
-    # TODO Not allowed if the user role is 0
+    def throttle_failure(self, request, wait_time):
+        return Response(
+            {
+                'error': 'Rate limit exceeded. Please wait for {} seconds.'.format(wait_time)
+            },
+            status=429
+        )
 
     def post(self, request, *args, **kwargs):
         return super().post(request, *args, **kwargs)
