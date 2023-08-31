@@ -34,6 +34,7 @@ class EventCardSerializer(serializers.ModelSerializer):
 
 class BaseEventDetailSerializer(serializers.ModelSerializer):
     ROLE_CHOICES = dict(Event.ROLE_CHOICES)
+    accepted_role = serializers.SerializerMethodField()
 
     date = serializers.SerializerMethodField()
     long_description = serializers.SerializerMethodField()
@@ -50,6 +51,13 @@ class BaseEventDetailSerializer(serializers.ModelSerializer):
     total_strength = serializers.SerializerMethodField()
     club = serializers.SerializerMethodField()
     status = serializers.CharField(source="get_status_display")
+
+    def get_accepted_role(self, obj):
+        rv = []
+        for role in obj.accepted_role:
+            if role in self.ROLE_CHOICES:
+                rv.append(self.ROLE_CHOICES[role])
+        return rv
 
     def __new__(cls, *args, **kwargs):
 
@@ -77,6 +85,7 @@ class BaseEventDetailSerializer(serializers.ModelSerializer):
     class BaseMeta:
         model = Event
         fields = [
+            'accepted_role',
             'pk',
             "date",
             "long_description",
@@ -193,7 +202,6 @@ class EventDetailSerializerHodDeanVC(EventDetailSerializerStudent):
 
 class EventDetailSerializerOrganizer(EventDetailSerializerStudent):
     participant = serializers.SerializerMethodField()
-    accepted_role = serializers.SerializerMethodField()
     declined_count = serializers.SerializerMethodField()
     certified_quantity = serializers.SerializerMethodField()
 
@@ -203,13 +211,6 @@ class EventDetailSerializerOrganizer(EventDetailSerializerStudent):
             if participant.certificate:
                 count += 1
         return count
-
-    def get_accepted_role(self, obj):
-        rv = []
-        for role in obj.accepted_role:
-            if role in self.ROLE_CHOICES:
-                rv.append(self.ROLE_CHOICES[role])
-        return rv
 
     def get_declined_count(self, obj):
         return obj.declined_participant.count()
@@ -236,7 +237,6 @@ class EventDetailSerializerOrganizer(EventDetailSerializerStudent):
     class Meta:
         fields = [
             'participant',
-            'accepted_role',
             'declined_count',
             'rejected',
             'hod_verified',
