@@ -74,11 +74,8 @@ export default function Report() {
 			const response = await axios.post(API.get_url('user:report_bug'), data);
 			console.log(response);
 
-			setTimeout(() => {
-				setUrl(response.data.data.html_url);
-				setLoading(false);
-			}, 5000);
-
+			setUrl(response.data.data.html_url);
+			setLoading(false);
 			setSubject('');
 			setLongDescription('');
 			setSelected([]);
