@@ -1,4 +1,8 @@
 class Message:
+    class reject_report:
+        report_reject_message = 'The Report was rejected by {0} ({1})'
+        success = 'Report Rejected'
+
     class event_creat:
         event_created = "Event Created Successfully"
 
@@ -15,6 +19,7 @@ class Message:
     class event_approval:
         forbidden = 'Operation Not Allowed!!'
         already_approved = 'Event is already Approved'
+        event_rejected = "Event is already Rejected can't be approved right now"
         not_found = 'No Event Found'
 
         hod_verified = 'Verified By HOD'
@@ -89,6 +94,7 @@ class Message:
 
         # in timeline Report Approved 'first_name' 'college_id'
         report_approved_message = 'Report Approved By {0} ({1})'
+        success = 'Report Approved'
 
     class deny_report:
         report_not_submitted = 'No report was submitted for this event'
