@@ -39,7 +39,7 @@ from .throttle import RequestEvery10Seconds
 message = Message()
 
 User = get_user_model()
-Portal_User = {'name': 'Events@Sathyabama Team', 'college_id': -1, 'branch': 'Miscellaneous'}
+Portal_User = {"name": "Events@Sathyabama Team", "college_id": -1, "branch": "Miscellaneous"}
 
 
 class CompletedEventList(SearchQueryMixins, generics.ListAPIView):
@@ -349,10 +349,11 @@ def approve_event(request, event_id):
     event = Event.objects.filter(pk=event_id)
     response_already_approved = Response(
         data={'detail': msg.already_approved}, status=400)
-
     if not event.exists():
         return Response(data={'detail': msg.not_found}, status=404)
     event = event.first()
+    if event.rejected:
+        return Response(data={'detail': msg.event_rejected}, status=400)
     if event.status >= 2:
         return response_already_approved
     try:
@@ -636,12 +637,34 @@ def delete_report(request, event_id):
 
 @api_view(['GET'])
 @required_roles([4])
+def reject_report(request, event_id):
+    msg = message.reject_report
+    event = get_object_or_404(Event, pk=event_id)
+    if not event.report:
+        return Response(data={'detail': message.approve_report.report_not_submitted}, status=400)
+    if event.status >= 5:
+        return Response(data={'detail': message.approve_report.report_already_approved}, status=400)
+
+    if not event.create_timeline(
+            level=8, user=user_serializer.UserDetail(request.user).data,
+            msg=msg.report_reject_message.format(
+                request.user.first_name, request.user.college_id),
+            status=TimeLineStatus.rejected):
+        return Response(data={'detail': 'Something Went Wrong'}, status=200)
+    event.report = None
+    event.status = 3
+    event.save()
+    return Response(data={'detail': msg.success}, status=200)
+
+
+@api_view(['GET'])
+@required_roles([4])
 def approve_report(request, event_id):
     msg = message.approve_report
     event = get_object_or_404(Event, pk=event_id)
     if not event.report:
         return Response(data={'detail': msg.report_not_submitted}, status=400)
-    if event.status == 5:
+    if event.status >= 5:
         return Response(data={'detail': msg.report_already_approved}, status=400)
     if not event.create_timeline(
             level=8, user=user_serializer.UserDetail(request.user).data,
@@ -650,6 +673,6 @@ def approve_report(request, event_id):
             status=TimeLineStatus.completed):
         raise Exception
 
-    event.status = 6
+    event.status = 5
     event.save()
-    return Response(data={'detail': msg.success})
+    return Response(data={'detail': msg.success}, status=200)
