@@ -84,7 +84,7 @@ export default function Applicants(props: {params: {id: number}}) {
 			return;
 		}
 		const exportData = [
-			['Register Number', 'Name', 'Batch', 'Branch', 'certificate'],
+			['Register Number', 'Name', 'Batch', 'Branch', 'Certificate'],
 		];
 		rows.forEach((val) => {
 			exportData.push([
@@ -102,6 +102,7 @@ export default function Applicants(props: {params: {id: number}}) {
 	const [loader, setLoader] = React.useState(0);
 
 	const [backUrl, setBackUrl] = React.useState('');
+	const [eventName, setEventName] = React.useState('');
 
 	useEffect(() => {
 		const currentURL = window.location.href;
@@ -115,11 +116,14 @@ export default function Applicants(props: {params: {id: number}}) {
 			const response = await axios.get(
 				API.get_url('event:participant_list', props.params.id)
 			);
-			console.log(response.data);
-			if (response.data.length > 0) {
-				document.title = 'Applicants | ' + response.data[0].event_name;
+			// console.log(response.data);
+			if (response.data.count > 0) {
+				setEventName(response.data.results[0].event_name);
+				document.title =
+					response.data.results[0].event_name +
+					' - Accepted Applicants | Events@Sathyabama';
 			}
-			setRows(response.data);
+			setRows(response.data.results);
 		},
 		[],
 		setLoader,
@@ -146,7 +150,7 @@ export default function Applicants(props: {params: {id: number}}) {
 						</svg>
 					</IconButton>
 					<p className="text-2xl ml-1 text-white pr-10 sm:pr-0">
-						Accepted Applicants
+						Accepted Applicants {eventName !== '' ? `(${eventName})` : ''}
 					</p>
 				</div>
 				{rows.length > 0 && (
@@ -221,7 +225,7 @@ export default function Applicants(props: {params: {id: number}}) {
 																			View Certificate
 																		</a>
 																	) : (
-																		'-'
+																		'Not Issued'
 																	)}
 																</>
 															) : (
