@@ -259,7 +259,7 @@ export default function details(props: {params: {id: number}}) {
 								) : (
 									<></>
 								)}
-								{DisplayApprovalTab(data) === true && (
+								{DisplayApprovalTab(data) === true && data?.rejected !== true && (
 									<Acceptance title={data?.title} id={props.params.id} />
 								)}
 								<EventTime

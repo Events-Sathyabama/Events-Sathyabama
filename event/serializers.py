@@ -35,6 +35,7 @@ class EventCardSerializer(serializers.ModelSerializer):
 class BaseEventDetailSerializer(serializers.ModelSerializer):
     ROLE_CHOICES = dict(Event.ROLE_CHOICES)
     accepted_role = serializers.SerializerMethodField()
+    status_code = serializers.IntegerField(source='status')
     is_eligible = serializers.SerializerMethodField()
     date = serializers.SerializerMethodField()
     long_description = serializers.SerializerMethodField()
@@ -51,6 +52,7 @@ class BaseEventDetailSerializer(serializers.ModelSerializer):
     total_strength = serializers.SerializerMethodField()
     club = serializers.SerializerMethodField()
     status = serializers.CharField(source="get_status_display")
+
 
     def get_is_eligible(self, obj):
         user = self.context.get('request').user
@@ -91,6 +93,7 @@ class BaseEventDetailSerializer(serializers.ModelSerializer):
     class BaseMeta:
         model = Event
         fields = [
+            'status_code',
             'is_eligible',
             'accepted_role',
             'pk',
@@ -311,7 +314,6 @@ class EventUpdateSerializer(EventCreateSerializer):
         instance = super().save(**kwargs)
         instance.clear_timeline()  # Run create_timeline() function
         instance.rejected = False
-        instance.status = 1
         instance.save()
 
         return instance

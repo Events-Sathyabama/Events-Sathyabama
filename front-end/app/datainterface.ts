@@ -84,6 +84,8 @@ export interface InterfaceData {
 	time: string | undefined;
 	fcfs: boolean;
 	status: string;
+	status_code: number;
+	is_eligible: boolean;
 
 	// For students only
 	is_applied?: boolean;

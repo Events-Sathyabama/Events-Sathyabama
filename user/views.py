@@ -116,8 +116,9 @@ def bug_report(request):
         'College_Id': request.user.college_id,
         'Branch': request.user.branch,
     }
-    info_str = '\n\n ' + \
-        f'<div style="width: 40%; border-style: solid; border-color: grey; margin: 0 auto;"><div style="padding: 2px 16px;"><h4 style="margin: 0;"><b>{request.user.full_name}</b></h4><p style="margin: 4px 0;">{request.user.branch}</p></div></div>'
+    user = request.user
+    info_str = '\n\n' + f'## Issue (or) enhancement suggestion created on behalf of: \n{user.full_name} \n{user.college_id} \n{user.branch} \n{user.batch}'
+
     # for key in personal_info:
     #     info_str += get_card(key, personal_info[key])
     try:

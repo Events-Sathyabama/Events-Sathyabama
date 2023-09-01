@@ -163,7 +163,10 @@ export default function ProfileCards(props: {
 										Rejected
 									</span>
 								);
-							} else if (props.eventStatus === 'Certified') {
+							} else if (
+								props.eventStatus === 'Certified' ||
+								applicationStatus === 'Certified'
+							) {
 								return (
 									<span className="flex justify-center bg-purple-100 w-full text-purple-800 text-sm py-2 font-medium rounded-md">
 										Certified

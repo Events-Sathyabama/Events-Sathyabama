@@ -176,7 +176,7 @@ class EventUpdate(generics.UpdateAPIView, PermissionAllowOrganizerMixin):
                 {"detail": msg.event_is_completed},
                 status=400
             )
-        lock_fields = ['title', 'club', 'short_description']
+        lock_fields = {'title': event.title, 'club': event.club, 'short_description': event.short_description}
 
         data = {}
         data['branch'] = []
@@ -186,12 +186,12 @@ class EventUpdate(generics.UpdateAPIView, PermissionAllowOrganizerMixin):
                 data[i[:-2]] = request.data.getlist(i)
             else:
                 data[i] = request.data.get(i)
-        if event.status == 2:
-            for field in lock_fields:
-                if field in data:
-                    field = [x.capitalize() for x in field.split('-')]
-                    field = " ".join(field)
-                    return Response(data={'detail': msg.fields_not_changed_after_approved.format(field)}, status=400)
+        if event.status >= 2:
+            for key in lock_fields:
+                if lock_fields[key] != data.get(key):
+                    key = [x.capitalize() for x in key.split('-')]
+                    key = " ".join(key)
+                    return Response(data={'detail': msg.fields_not_changed_after_approved.format(key)}, status=400)
         request._data = data
         return super().patch(request, *args, **kwargs)
 
@@ -468,9 +468,8 @@ def upload_report(request, event_id):
     try:
         user_data = user_serializer.UserDetail(request.user).data
         event.report = report_file
-        timeline_message = msg.report_submitted_message.format(
-            request.user.first_name, request.user.college_id)
-        if not event.create_timeline(level=7, user=user_data, msg=timeline_message, status=TimeLineStatus.completed):
+
+        if not event.create_timeline(level=7, user=user_data, status=TimeLineStatus.completed):
             raise Exception
         event.status = 4
         event.save()
@@ -625,9 +624,11 @@ def delete_report(request, event_id):
         return Response({'detail': msg.already_approved}, status=400)
     file_name = event.report
     event.clear_timeline()
-    if not event.create_timeline(level=7, user=user_serializer.UserDetail(request.user).data,
+    if not event.create_timeline(level=7, user=None,
+                                 status=TimeLineStatus.ongoing) and event.create_timeline(level=8, user=None,
                                  status=TimeLineStatus.not_visited):
         raise Exception
+    
     event.report = None
     event.status = 3
 
@@ -668,8 +669,6 @@ def approve_report(request, event_id):
         return Response(data={'detail': msg.report_already_approved}, status=400)
     if not event.create_timeline(
             level=8, user=user_serializer.UserDetail(request.user).data,
-            msg=msg.report_approved_message.format(
-                request.user.first_name, request.user.college_id),
             status=TimeLineStatus.completed):
         raise Exception
 

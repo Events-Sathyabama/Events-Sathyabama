@@ -54,12 +54,14 @@ export default function Timeline(props: {history: TimeLineHistory[] | undefined}
 
 	if (props.history) {
 		for (let i = 0; i < props.history.length; i++) {
+			if (i == 9) currentStep = i;
 			if (props.history[i].status === -1 || props.history[i].status === 0) {
 				currentStep = i - 1;
 				break;
 			}
 		}
 	}
+	console.log(currentStep);
 
 	function isStepFailed(idx: number) {
 		return props.history && props.history[idx].status === -1;
@@ -110,7 +112,7 @@ export default function Timeline(props: {history: TimeLineHistory[] | undefined}
 						history.success_title = waitingLabel[index];
 					}
 
-					if (history.message != '') {
+					if (history.message !== '') {
 						labelProps.optional = (
 							<pre className="mt-3 p-3 border rounded-md border-gray-300 bg-[#fafcfe] text-sm whitespace-pre-line font-roboto">
 								<div>{history.message}</div>
@@ -120,7 +122,7 @@ export default function Timeline(props: {history: TimeLineHistory[] | undefined}
 
 					if (isStepFailed(index)) {
 						history.success_title = history.failure_title;
-						labelProps.optional = (
+						labelProps.optional = history.message !== '' && (
 							<pre
 								color="error"
 								className="mt-3 p-3 border rounded-md border-gray-300 text-sm whitespace-pre-line font-roboto">

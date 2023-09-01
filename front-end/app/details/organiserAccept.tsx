@@ -5,7 +5,7 @@ import AlertTitle from '@mui/material/AlertTitle';
 import * as React from 'react';
 import OrganiserDialog from './organiserDialog';
 
-export default function Acceptance(props: {title: any; id: number}) {
+export default function Acceptance(props: {title: any; id: number;}) {
 	const [approved, setApproved] = React.useState(false);
 	return (
 		<>

@@ -172,16 +172,17 @@ export default function AdminTabs(props: {
 								<path
 									strokeLinecap="round"
 									strokeLinejoin="round"
-									d="M8.25 7.5V6.108c0-1.135.845-2.098 1.976-2.192.373-.03.748-.057 1.123-.08M15.75 18H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08M15.75 18.75v-1.875a3.375 3.375 0 00-3.375-3.375h-1.5a1.125 1.125 0 01-1.125-1.125v-1.5A3.375 3.375 0 006.375 7.5H5.25m11.9-3.664A2.251 2.251 0 0015 2.25h-1.5a2.251 2.251 0 00-2.15 1.586m5.8 0c.065.21.1.433.1.664v.75h-6V4.5c0-.231.035-.454.1-.664M6.75 7.5H4.875c-.621 0-1.125.504-1.125 1.125v12c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V16.5a9 9 0 00-9-9z"
+									d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z"
 								/>
 							</svg>
 							<h1 className="text-lg sm:text-xl" style={{textTransform: 'none'}}>
-								Applications
+								Event Actions
 							</h1>
 						</div>
 					}
 				/>
 				<Tab
+					disabled={props.eventData.status_code < 2}
 					label={
 						<div className="flex flex-col md:flex-row md:gap-2 justify-center items-center">
 							<svg
@@ -194,71 +195,67 @@ export default function AdminTabs(props: {
 								<path
 									strokeLinecap="round"
 									strokeLinejoin="round"
-									d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z"
+									d="M8.25 7.5V6.108c0-1.135.845-2.098 1.976-2.192.373-.03.748-.057 1.123-.08M15.75 18H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08M15.75 18.75v-1.875a3.375 3.375 0 00-3.375-3.375h-1.5a1.125 1.125 0 01-1.125-1.125v-1.5A3.375 3.375 0 006.375 7.5H5.25m11.9-3.664A2.251 2.251 0 0015 2.25h-1.5a2.251 2.251 0 00-2.15 1.586m5.8 0c.065.21.1.433.1.664v.75h-6V4.5c0-.231.035-.454.1-.664M6.75 7.5H4.875c-.621 0-1.125.504-1.125 1.125v12c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V16.5a9 9 0 00-9-9z"
 								/>
 							</svg>
 							<h1 className="text-lg sm:text-xl" style={{textTransform: 'none'}}>
-								Event Actions
+								Applications
 							</h1>
 						</div>
 					}
 				/>
-				{(props.eventData.status.toLowerCase() === 'completed' ||
-					props.eventData.status.toLowerCase() === 'report submitted') && (
-					<Tab
-						label={
-							<div className="flex flex-col md:flex-row md:gap-2 justify-center items-center">
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									fill="none"
-									viewBox="0 0 24 24"
-									strokeWidth={1.5}
-									stroke="currentColor"
-									className="w-6 h-6">
-									<path
-										strokeLinecap="round"
-										strokeLinejoin="round"
-										d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
-									/>
-								</svg>
-								<h1 className="text-lg sm:text-xl" style={{textTransform: 'none'}}>
-									Upload Report
-								</h1>
-							</div>
-						}
-					/>
-				)}
-				{(props.eventData.status.toLowerCase() === 'report approved' ||
-					props.eventData.status.toLowerCase() === 'certified') && (
-					<Tab
-						label={
-							<div className="flex flex-col md:flex-row md:gap-2 justify-center items-center">
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									fill="none"
-									viewBox="0 0 24 24"
-									strokeWidth={1.5}
-									stroke="currentColor"
-									className="w-6 h-6">
-									<path
-										strokeLinecap="round"
-										strokeLinejoin="round"
-										d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
-									/>
-								</svg>
-								<h1 className="text-lg sm:text-xl" style={{textTransform: 'none'}}>
-									Upload Certificates
-								</h1>
-							</div>
-						}
-					/>
-				)}
+				<Tab
+					disabled={props.eventData.status_code < 3}
+					label={
+						<div className="flex flex-col md:flex-row md:gap-2 justify-center items-center">
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								fill="none"
+								viewBox="0 0 24 24"
+								strokeWidth={1.5}
+								stroke="currentColor"
+								className="w-6 h-6">
+								<path
+									strokeLinecap="round"
+									strokeLinejoin="round"
+									d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
+								/>
+							</svg>
+							<h1 className="text-lg sm:text-xl" style={{textTransform: 'none'}}>
+								Upload Report
+							</h1>
+						</div>
+					}
+				/>
+				<Tab
+					disabled={props.eventData.status_code < 3}
+					label={
+						<div className="flex flex-col md:flex-row md:gap-2 justify-center items-center">
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								fill="none"
+								viewBox="0 0 24 24"
+								strokeWidth={1.5}
+								stroke="currentColor"
+								className="w-6 h-6">
+								<path
+									strokeLinecap="round"
+									strokeLinejoin="round"
+									d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
+								/>
+							</svg>
+							<h1 className="text-lg sm:text-xl" style={{textTransform: 'none'}}>
+								Upload Certificates
+							</h1>
+						</div>
+					}
+				/>
 			</TabsContainer>
 			<div className="w-full pt-3 border-t border-gray-300">
 				<TabPanel value={value} index={0} className="px-5 pt-8 w-full pb-5">
 					<Timeline history={props.eventData.history} />
 				</TabPanel>
-				<TabPanel value={value} index={2} className="px-5 pt-2 w-full pb-5">
+				<TabPanel value={value} index={1} className="px-5 pt-2 w-full pb-5">
 					<div className="flex flex-col p-4 w-full rounded-md border border-blue-300">
 						<div className="flex w-full h-auto p-2 bg-white rounded-md my-4">
 							<ol className="space-y-1 text-gray-500 list-decimal list-inside">
@@ -341,7 +338,7 @@ export default function AdminTabs(props: {
 						</LoadingButton>
 					</div>
 				</TabPanel>
-				<TabPanel value={value} index={1}>
+				<TabPanel value={value} index={2}>
 					<div className="flex flex-col w-full gap-3 items-center">
 						<div className="flex flex-col sm:flex-row sm:justify-between items-center sm:items-start gap-3 w-11/12 bg-blue-50 p-4 rounded-md border">
 							<p className="text-lg text-[#014361]">
@@ -366,57 +363,50 @@ export default function AdminTabs(props: {
 						)}
 					</div>
 				</TabPanel>
-
-				{(props.eventData.status.toLowerCase() === 'completed' ||
-					props.eventData.status.toLowerCase() === 'report submitted') && (
-					<TabPanel value={value} index={3}>
-						<div className="w-full h-full flex justify-center items-center">
-							<FileUpload
-								fileSizeBytes={10 * 1024 * 1024}
-								accepted_files="application/pdf"
-								handleUpload={handleReportUpload}
-								handleDelete={handleReportDelete}
-								path={reportPath}
-								setPath={setReportPath}
-							/>
-						</div>
-					</TabPanel>
-				)}
-				{(props.eventData.status.toLowerCase() === 'report approved' ||
-					props.eventData.status.toLowerCase() === 'certified') && (
-					<TabPanel value={value} index={4}>
-						{!certDeleted &&
-							(certifiedQuantity ||
-								(props.eventData.certified_quantity != undefined &&
-									props.eventData.certified_quantity > 0)) && (
-								<div className="flex flex-col sm:flex-row sm:justify-between items-center sm:items-start gap-3 w-full p-4 rounded-md">
-									<p className="text-lg text-[#014361]">
-										Number of students successfully certified :{' '}
-										<span className="font-semibold">
-											{certifiedQuantity || props.eventData.certified_quantity}
-										</span>
-									</p>
-									<Button
-										onClick={deleteAllCertificate}
-										variant="outlined"
-										color="error"
-										style={{backgroundColor: 'white'}}
-										className="w-72">
-										Delete Existing Certificates
-									</Button>
-								</div>
-							)}
-						<div className="w-full h-full flex justify-center items-center">
-							<FileUpload
-								fileSizeBytes={50 * 1024 * 1024}
-								accepted_files="application/x-compressed,application/zip,application/x-zip-compressed"
-								handleUpload={handleCertUpload}
-								text={certUploadText}
-								handleDelete={handleCertDelete}
-							/>
-						</div>
-					</TabPanel>
-				)}
+				<TabPanel value={value} index={3}>
+					<div className="w-full h-full flex justify-center items-center">
+						<FileUpload
+							fileSizeBytes={10 * 1024 * 1024}
+							accepted_files="application/pdf"
+							handleUpload={handleReportUpload}
+							handleDelete={handleReportDelete}
+							path={reportPath}
+							setPath={setReportPath}
+						/>
+					</div>
+				</TabPanel>
+				<TabPanel value={value} index={4}>
+					{!certDeleted &&
+						(certifiedQuantity ||
+							(props.eventData.certified_quantity != undefined &&
+								props.eventData.certified_quantity > 0)) && (
+							<div className="flex flex-col sm:flex-row sm:justify-between items-center sm:items-start gap-3 w-full p-4 rounded-md">
+								<p className="text-lg text-[#014361]">
+									Number of students successfully certified :{' '}
+									<span className="font-semibold">
+										{certifiedQuantity || props.eventData.certified_quantity}
+									</span>
+								</p>
+								<Button
+									onClick={deleteAllCertificate}
+									variant="outlined"
+									color="error"
+									style={{backgroundColor: 'white'}}
+									className="w-72">
+									Delete Existing Certificates
+								</Button>
+							</div>
+						)}
+					<div className="w-full h-full flex justify-center items-center">
+						<FileUpload
+							fileSizeBytes={50 * 1024 * 1024}
+							accepted_files="application/x-compressed,application/zip,application/x-zip-compressed"
+							handleUpload={handleCertUpload}
+							text={certUploadText}
+							handleDelete={handleCertDelete}
+						/>
+					</div>
+				</TabPanel>
 			</div>
 		</div>
 	);
