@@ -127,3 +127,7 @@ body::-webkit-scrollbar-thumb {
 .css-m9glnp-MuiPaper-root-MuiDialog-paper::-webkit-scrollbar-thumb {
 	background-color: #a2a2a2;
 }
+
+.MuiSvgIcon-fontSizeInherit {
+	color: white;
+}

@@ -34,6 +34,7 @@ function TabPanel(props: any) {
 }
 
 export default function AdminTabs(props: {
+	popupMessage: Function;
 	showSuccessPopup: Function;
 	showFailurePopup: Function;
 	eventData: InterfaceData;
@@ -355,6 +356,7 @@ export default function AdminTabs(props: {
 						</div>
 						{!props.eventData.fcfs && (
 							<Applications
+								setPopupMessage={props.popupMessage}
 								applications={props.eventData.participant || []}
 								showSuccessPopup={props.showSuccessPopup}
 								showFailurePopup={props.showFailurePopup}

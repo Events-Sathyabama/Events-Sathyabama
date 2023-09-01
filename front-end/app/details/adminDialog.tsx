@@ -20,6 +20,7 @@ const Transition = React.forwardRef(function Transition(
 });
 
 export default function AdminDialog(props: {
+	popupMessage: Function;
 	adminClose: any;
 	showAdmin: any;
 	eventData: InterfaceData;
@@ -72,6 +73,7 @@ export default function AdminDialog(props: {
 			</AppBar>
 			<List>
 				<AdminTabs
+					popupMessage={props.popupMessage}
 					eventData={props.eventData}
 					showSuccessPopup={() => props.showSuccessPopup()}
 					showFailurePopup={() => props.showFailurePopup()}

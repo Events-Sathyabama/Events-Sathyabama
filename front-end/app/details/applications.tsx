@@ -1,6 +1,5 @@
 'use client';
 import Button from '@mui/material/Button';
-import Pagination from '@mui/material/Pagination';
 import {useState} from 'react';
 import API from '../API';
 import {InterfaceParticipant} from '../datainterface';
@@ -8,6 +7,7 @@ import {InterfaceParticipant} from '../datainterface';
 const axios = new API.Axios();
 
 interface ApplicationProps {
+	setPopupMessage: Function;
 	showSuccessPopup: Function;
 	showFailurePopup: Function;
 	applications: InterfaceParticipant[];
@@ -15,15 +15,9 @@ interface ApplicationProps {
 }
 
 export default function Applications(props: ApplicationProps) {
-	const [page, setPage] = useState(1);
 	const [disabled, setDisabled] = useState(true);
-	const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
-		console.log(value); //Value is the Page Number
-		setPage(value);
-	};
 
 	async function submitApplications() {
-		console.log(updatedApplications);
 		// TODO set the popup messages.
 		try {
 			const response = await axios.post(
@@ -31,9 +25,12 @@ export default function Applications(props: ApplicationProps) {
 				updatedApplications
 			);
 			if (response.status === 200) {
+				setDisabled(true);
+				props.setPopupMessage('Application changes submitted successfully!');
 				props.showSuccessPopup();
 			}
 		} catch (e) {
+			props.setPopupMessage('Something went wrong, try again!');
 			props.showFailurePopup();
 		}
 	}
@@ -65,12 +62,17 @@ export default function Applications(props: ApplicationProps) {
 
 	return (
 		<div className="flex flex-col w-full">
-			<div className="flex flex-col w-full min-h-[54vh]">
+			{updatedApplications.length > 0 && (
+				<p className="text-2xl w-full text-center mr-5">
+					Applicant List for Manual Approval
+				</p>
+			)}
+			<div className="flex flex-col w-full mb-16">
 				{updatedApplications.map((applicant, index) => (
 					<div
 						key={index}
 						className="flex flex-row w-full px-4 justify-between items-center mt-3 border-0 border-b pb-2">
-						<h1 className="text-xl p-2 w-9/12 mr-2">{applicant.name}</h1>
+						<p className="text-lg p-2 w-9/12 mr-2">{applicant.name}</p>
 						{applicant.status === 0 && (
 							<div className="flex flex-row gap-2 w-56 justify-end">
 								<Button
@@ -147,23 +149,18 @@ export default function Applications(props: ApplicationProps) {
 					</div>
 				))}
 			</div>
-			<div className="flex flex-col w-full justify-center items-center mt-4 gap-4">
-				<Button
-					disabled={disabled}
-					variant="contained"
-					size="large"
-					className="bg-[#1976d2]"
-					onClick={submitApplications}>
-					Submit
-				</Button>
-				<Pagination
-					count={10}
-					page={page}
-					onChange={handleChange}
-					color="primary"
-					size="medium"
-				/>
-			</div>
+			{updatedApplications.length > 0 && (
+				<div className="flex flex-col w-full justify-center items-center mt-4 gap-4 fixed bottom-0 py-3 bg-transparent">
+					<Button
+						disabled={disabled}
+						variant="contained"
+						size="large"
+						className="bg-[#1976d2] w-80"
+						onClick={submitApplications}>
+						Submit Changes
+					</Button>
+				</div>
+			)}
 		</div>
 	);
 }

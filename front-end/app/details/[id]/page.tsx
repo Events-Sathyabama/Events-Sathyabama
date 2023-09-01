@@ -199,7 +199,7 @@ export default function details(props: {params: {id: number}}) {
 								)}
 							</div>
 							<div className="flex flex-col w-full justify-center items-center mt-2 gap-3">
-								{data?.report && (isAuthority() || isOrganizer) ? (
+								{data?.report && isAuthority() ? (
 									<ViewReport
 										view="report"
 										reportLink={data?.report}
@@ -237,24 +237,30 @@ export default function details(props: {params: {id: number}}) {
 														</Alert>
 													);
 											})()
-										) : appliedCount < totalStrenth && !isCompleted ? (
+										) : (
 											<div className="flex flex-col lg:flex-row bg-slate-50 border border-slate-300 py-2 justify-between items-center lg:items-start rounded-md w-full">
 												<BatchesComponent
 													batches={data?.branch}
 													fcfs={data?.fcfs || false}
 												/>
-												<Button
-													variant="contained"
-													className="w-10/12 lg:w-5/12 h-10"
-													size="large"
-													style={{backgroundColor: '#1565c0', margin: '0.5rem'}}
-													onClick={() => {
-														setDialog(true);
-													}}>
-													Apply for Event
-												</Button>
+												{appliedCount < totalStrenth &&
+												!isCompleted &&
+												data.is_eligible ? (
+													<Button
+														variant="contained"
+														className="w-10/12 lg:w-5/12 h-10"
+														size="large"
+														style={{backgroundColor: '#1565c0', margin: '0.5rem'}}
+														onClick={() => {
+															setDialog(true);
+														}}>
+														Apply for Event
+													</Button>
+												) : (
+													<></>
+												)}
 											</div>
-										) : null}
+										)}
 									</>
 								) : (
 									<></>
@@ -318,6 +324,7 @@ export default function details(props: {params: {id: number}}) {
 									showSuccessPopup={() => setSpopup(true)}
 									showFailurePopup={() => setFpopup(true)}
 									isOrganizer={isOrganizer}
+									popupMessage={setPopupMessage}
 									sPopUp={{show: setSpopup, message: setPopupMessage}}
 									fPopUp={{show: setFpopup, message: setPopupMessage}}
 								/>
