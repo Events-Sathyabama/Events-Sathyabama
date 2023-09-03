@@ -62,24 +62,26 @@ export default function AdminTabs(props: {
 
 	async function deleteEvent() {
 		setIsDeleting(true);
-		//BUG Popup is not showing.
 		try {
 			const response = await axios.get(
 				API.get_url('event:delete', props.eventData.pk)
 			);
 			if (response.data && response.data.status === 200) {
-				props.sPopUp.message(response.data.message);
-				props.sPopUp.show();
-				router.push('/home/upcoming');
+				props.popupMessage('Event Deletion Successful!');
+				props.showSuccessPopup();
+				setTimeout(() => {
+					router.push('/home/upcoming');
+				}, 3000);
 			} else {
 				props.fPopUp.message('Something Went Wrong!!');
 				props.fPopUp.show();
+				setIsDeleting(false);
 			}
-		} catch (e) {
-			props.fPopUp.message('Could Not Delete the Event!!');
-			props.fPopUp.show();
+		} catch (e: any) {
+			props.popupMessage(e.response.data.detail);
+			props.showFailurePopup();
+			setIsDeleting(false);
 		}
-		setIsDeleting(false);
 	}
 
 	const deleteAllCertificate = async () => {
@@ -229,7 +231,7 @@ export default function AdminTabs(props: {
 					}
 				/>
 				<Tab
-					disabled={props.eventData.status_code < 3}
+					disabled={props.eventData.status_code < 5}
 					label={
 						<div className="flex flex-col md:flex-row md:gap-2 justify-center items-center">
 							<svg

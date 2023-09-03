@@ -51,12 +51,17 @@ export default function Timeline(props: {history: TimeLineHistory[] | undefined}
 	// completed = 2;
 	// rejected = -1;
 	console.log(props.history);
+	console.log(props.history?.length);
 
 	if (props.history) {
-		for (let i = 0; i < props.history.length; i++) {
-			if (i == 9) currentStep = i;
-			if (props.history[i].status === -1 || props.history[i].status === 0) {
-				currentStep = i - 1;
+		for (let i = props.history.length - 1; i >= 0; i--) {
+			if (props.history[i].status === 2) {
+				console.log(props.history[i].success_title);
+				currentStep = i + 1;
+				break;
+			}
+			if (props.history[i].status === -1 || props.history[i].status === 1) {
+				currentStep = i;
 				break;
 			}
 		}

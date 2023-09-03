@@ -78,7 +78,7 @@ class Message:
 
     class delete_event:
         success = "'{0}' Deleted!"
-        already_completed = 'This Event is already Completed it cannot be deleted'
+        already_completed = 'Deletion is not permitted for completed events!'
 
     class delete_report:
         success = "Report Deleted!"
