@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'event',
     'mail',
     'django_cleanup.apps.CleanupConfig',
+    'adminpanel'
 
 ]
 

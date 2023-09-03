@@ -406,6 +406,9 @@ const url: {[key: string]: (...args: any[]) => string} = {
 	'user:report_bug': () => {
 		return 'user/bug_report/';
 	},
+	'admin:report': () => {
+		return 'admin/report/';
+	},
 } as const;
 
 const check_role = (role: string) => {

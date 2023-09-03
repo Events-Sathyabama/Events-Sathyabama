@@ -7,7 +7,8 @@ app_name = 'event'
 
 
 urlpatterns = [
-    path('completed/list/', views.CompletedEventList.as_view()),
+    path('completed/list/', views.CompletedEventList.as_view(),
+         name='complete_list'),
     path('ongoing/list/', views.OngoingEventList.as_view()),
     path('upcoming/list/', views.UpcomingEventList.as_view()),
     path('detail/<int:pk>/', views.EventDetail.as_view()),
