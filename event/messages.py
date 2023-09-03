@@ -1,7 +1,7 @@
 class Message:
     class reject_report:
         report_reject_message = 'The Report was rejected by {0} ({1})'
-        success = 'Report Rejected'
+        success = 'Report Rejected Successfully!'
 
     class event_creat:
         event_created = "Event Created Successfully"
