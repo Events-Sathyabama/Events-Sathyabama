@@ -201,16 +201,20 @@ export default function details(props: {params: {id: number}}) {
 							<div className="flex flex-col w-full justify-center items-center mt-2 gap-3">
 								{data?.report && isAuthority() ? (
 									<ViewReport
+										eventData={data}
+										showFPopUp={setFpopup}
+										showSPopUp={setSpopup}
+										setPopUpMessage={setPopupMessage}
 										view="report"
-										reportLink={data?.report}
-										eventId={props.params.id}
 									/>
 								) : null}
 								{data?.certificate != null ? (
 									<ViewReport
+										eventData={data}
+										showFPopUp={setFpopup}
+										showSPopUp={setSpopup}
+										setPopUpMessage={setPopupMessage}
 										view="cert"
-										reportLink={data?.certificate}
-										eventId={props.params.id}
 									/>
 								) : null}
 								{!isOrganizer && data?.vc_verified ? (

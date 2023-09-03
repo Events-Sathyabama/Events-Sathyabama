@@ -382,6 +382,9 @@ const url: {[key: string]: (...args: any[]) => string} = {
 	'event:report_approve': (id: number) => {
 		return `event/report/approve/${id}/`;
 	},
+	'event:report_deny': (id: number) => {
+		return `event/report/deny/${id}/`;
+	},
 	'event:delete_report': (id: number) => {
 		return `event/report/${id}/`;
 	},

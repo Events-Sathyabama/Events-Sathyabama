@@ -39,7 +39,8 @@ from .throttle import RequestEvery10Seconds
 message = Message()
 
 User = get_user_model()
-Portal_User = {"name": "Events@Sathyabama Team", "college_id": -1, "branch": "Miscellaneous"}
+Portal_User = {"name": "Events@Sathyabama Team",
+               "college_id": -1, "branch": "Miscellaneous"}
 
 
 class CompletedEventList(SearchQueryMixins, generics.ListAPIView):
@@ -176,7 +177,8 @@ class EventUpdate(generics.UpdateAPIView, PermissionAllowOrganizerMixin):
                 {"detail": msg.event_is_completed},
                 status=400
             )
-        lock_fields = {'title': event.title, 'club': event.club, 'short_description': event.short_description}
+        lock_fields = {'title': event.title, 'club': event.club,
+                       'short_description': event.short_description}
 
         data = {}
         data['branch'] = []
@@ -226,11 +228,11 @@ class CompletedEvent(generics.ListAPIView, PermissionAllowAllRoleMixin):
         q = (Q(participants__id=self.request.user.pk)
              & Q(status__gte=3)
              & (
-                     (Q(eventparticipant__status='3') & Q(eventparticipant__owner=False) & Q(
-                         eventparticipant__organizer=False))
-                     | (Q(eventparticipant__owner=True) | Q(eventparticipant__organizer=True))
-             )
-             )
+            (Q(eventparticipant__status='3') & Q(eventparticipant__owner=False) & Q(
+                eventparticipant__organizer=False))
+            | (Q(eventparticipant__owner=True) | Q(eventparticipant__organizer=True))
+        )
+        )
         event = Event.objects.filter(q)
         return event
 
@@ -266,22 +268,24 @@ class PendingEvent(generics.ListAPIView, PermissionAllowAllRoleMixin):
     # TODO not allowed for role 0
 
     def get_queryset(self):
+        user = self.request.user
         if self.request.user.role == 2:  # HOD
             q = Q(status=1) & Q(hod_verified=False)
+            if user.branch:
+                q = q & ((Q(eventparticipant__owner=True) & Q(eventparticipant__user__branch__name=user.branch.name)) | Q(
+                    eventparticipant__user__branch__isnull=True))
         elif self.request.user.role == 3:  # Dean
             q = Q(status=1) & Q(dean_verified=False) & Q(hod_verified=True)
         elif self.request.user.role == 4:  # VC
-            q = Q(status=1) & Q(vc_verified=False) & Q(dean_verified=True)
+            q = (Q(status=1) & Q(vc_verified=False) &
+                 Q(dean_verified=True)) | Q(status=4)
         else:
             q = (Q(participants__id=self.request.user.pk)
                  & (Q(eventparticipant__owner=True) | Q(eventparticipant__organizer=True))
                  & Q(status=1)
 
                  )
-        if self.request.user.branch:
-            q = q & (Q(branch__in=[self.request.user.branch]) | Q(
-                branch__isnull=True))
-        q = q & Q(start_date__gte=timezone.now())
+
         event = Event.objects.filter(q)
         return event
 
@@ -362,6 +366,12 @@ def approve_event(request, event_id):
             if event.hod_verified:
                 return response_already_approved
             event.hod_verified = True
+
+            if event.owner.branch:
+                if user.branch and event.owner.branch.name == user.branch.name:
+                    pass
+                else:
+                    return Response(data={'detail': msg.branch_didnt_matched.format(event.owner.branch.name)}, status=400)
             if not event.create_timeline(level=1, user=user_data, msg=approve_message, status=TimeLineStatus.completed):
                 raise Exception
             event.save()
@@ -468,7 +478,7 @@ def upload_report(request, event_id):
     try:
         user_data = user_serializer.UserDetail(request.user).data
         event.report = report_file
-
+        event.clear_timeline()
         if not event.create_timeline(level=7, user=user_data, status=TimeLineStatus.completed):
             raise Exception
         event.status = 4
@@ -626,9 +636,9 @@ def delete_report(request, event_id):
     event.clear_timeline()
     if not event.create_timeline(level=7, user=None,
                                  status=TimeLineStatus.ongoing) and event.create_timeline(level=8, user=None,
-                                 status=TimeLineStatus.not_visited):
+                                                                                          status=TimeLineStatus.not_visited):
         raise Exception
-    
+
     event.report = None
     event.status = 3
 
@@ -638,7 +648,7 @@ def delete_report(request, event_id):
 
 @api_view(['GET'])
 @required_roles([4])
-def reject_report(request, event_id):
+def deny_report(request, event_id):
     msg = message.reject_report
     event = get_object_or_404(Event, pk=event_id)
     if not event.report:
