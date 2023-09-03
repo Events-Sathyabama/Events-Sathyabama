@@ -56,7 +56,8 @@ class BaseEventDetailSerializer(serializers.ModelSerializer):
 
     def get_is_eligible(self, obj):
         user = self.context.get('request').user
-        if user.role in obj.accepted_role:
+
+        if user.role in obj.accepted_role and (obj.branch.filter(pk=user.branch.pk).exists() or obj.branch.all().exists()):
             return True
         return False
 

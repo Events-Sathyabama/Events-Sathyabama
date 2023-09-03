@@ -33,6 +33,7 @@ class Message:
         approval_process_done = 'Displayed to Student'
 
         server_error = 'Something Went Wrong!!'
+        branch_didnt_matched = 'Your cannot approve an {0} branch event'
 
         success = 'Approved Successfully'
 
