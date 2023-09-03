@@ -409,6 +409,9 @@ const url: {[key: string]: (...args: any[]) => string} = {
 	'admin:report': () => {
 		return 'admin/report/';
 	},
+	'admin:sync_user': () => {
+		return 'admin/sync_user/';
+	},
 } as const;
 
 const check_role = (role: string) => {
