@@ -111,9 +111,10 @@ export default function AdminPanel() {
 							variant="outlined"
 							style={{
 								textTransform: 'none',
+								marginTop: '1rem',
 							}}
 							color="primary"
-							className="font-roboto shadow-md w-72 mt-4">
+							className="font-roboto shadow-md w-72">
 							OPEN ADMIN PANEL
 						</Button>
 					</Link>
@@ -128,9 +129,10 @@ export default function AdminPanel() {
 						onClick={() => handleSync()}
 						style={{
 							textTransform: 'none',
+							marginTop: '1rem',
 						}}
 						color="primary"
-						className="font-roboto shadow-md w-72 mt-4">
+						className="font-roboto shadow-md w-72">
 						CLICK TO SYNC USERS
 					</Button>
 				</div>
