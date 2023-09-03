@@ -11,9 +11,9 @@ from rest_framework.decorators import api_view, permission_classes
 def event_last_twelve_month(request):
     twelve_months_ago = timezone.now() - timezone.timedelta(days=365)
     events = Event.objects.filter(start_date__gte=twelve_months_ago)
-
+    curr_month = timezone.now().month - 1
     event_count = {timezone.datetime.strptime(
-        str(i), '%m').strftime('%b'): 0 for i in range(1, 13)}
+        str(((curr_month + i) % 12) + 1), '%m').strftime('%b'): 0 for i in range(1, 13)}
     total_count = 0
     pending_count = 0
     rejected_count = 0
@@ -36,5 +36,12 @@ def event_last_twelve_month(request):
         'total_event': total_count,
         'pending_count': pending_count,
         'rejected_count': rejected_count,
-        'time_interval': time_interval
+        'time_interval': time_interval,
+        'django_admin_panel_url': admin_link,
     }, status=200)
+
+
+@api_view(['GET'])
+def sync_user(request):
+
+    return Response(data={'detail': 'Feature Not Implemented'}, status=501)

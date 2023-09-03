@@ -24,13 +24,15 @@ interface ChartData {
 
 export default function AdminPanel() {
 	const [syncing, setSyncing] = React.useState(false);
-	const [sPopupMessage, setSPopupMessage] = React.useState('');
+	const [PopupMessage, setPopupMessage] = React.useState('');
 	const [sPopup, setSPopup] = React.useState(false);
+	const [fPopup, setFPopup] = React.useState(false);
 	const [chartData, setChartData] = React.useState<ChartData[]>([]);
 	const [organizedEvent, setOrganizedEvent] = React.useState(0);
 	const [pendingEvent, setPendingEvent] = React.useState(0);
 	const [RejectedEvent, setRejectedEvent] = React.useState(0);
 	const [timeInterval, setTimeInterval] = React.useState('');
+	const [djangoAdminPanel, setDjangoAdminPanel] = React.useState('#');
 
 	React.useEffect(() => {
 		const timer = setTimeout(async () => {
@@ -51,7 +53,7 @@ export default function AdminPanel() {
 			setOrganizedEvent(data.total_event);
 			setPendingEvent(data.pending_count);
 			setRejectedEvent(data.rejected_count);
-
+			setDjangoAdminPanel(data.django_admin_panel_url);
 			console.log(response);
 		}, 1);
 		return () => {
@@ -59,14 +61,19 @@ export default function AdminPanel() {
 		};
 	}, []);
 
-	function handleSync() {
-		// TODO axios call to sync users db
+	async function handleSync() {
 		setSyncing(true);
-		setTimeout(() => {
-			setSyncing(false);
-			setSPopupMessage("Users' Sync Successful!");
+		try {
+			const response = await axios.get(API.get_url('admin:sync_user'));
+			setPopupMessage("Users' Sync Successful!");
 			setSPopup(true);
-		}, 5000);
+		} catch (error: any) {
+			console.error(error);
+			setPopupMessage(error.response?.data?.detail || 'Something Went Wrong');
+			setFPopup(true);
+		}
+
+		setSyncing(false);
 	}
 
 	return (
@@ -74,7 +81,8 @@ export default function AdminPanel() {
 			{syncing && (
 				<WebBackdrop message="Syncing Users, this may take a while, please be patient..." />
 			)}
-			{sPopup && <Popup.Success message={sPopupMessage} showpopup={setSPopup} />}
+			{sPopup && <Popup.Success message={PopupMessage} showpopup={setSPopup} />}
+			{fPopup && <Popup.Error message={PopupMessage} showpopup={setFPopup} />}
 			<div className="flex flex-col w-11/12 items-center my-5 gap-5">
 				<h1 className="text-2xl text-center animateFadeIn">EMS Admin Panel</h1>
 				<div className="h-96 w-full sm:p-3 sm:border sm:border-gray-300 sm:rounded-md">
@@ -104,7 +112,7 @@ export default function AdminPanel() {
 						(students, teachers, HODs, Deans, and VC) here. You are advised to use
 						this panel with utmost care.
 					</p>
-					<Link href={'http://localhost:8000/admin'}>
+					<Link href={djangoAdminPanel}>
 						<Button
 							size="medium"
 							type="submit"
