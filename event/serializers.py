@@ -53,12 +53,17 @@ class BaseEventDetailSerializer(serializers.ModelSerializer):
     club = serializers.SerializerMethodField()
     status = serializers.CharField(source="get_status_display")
 
-
     def get_is_eligible(self, obj):
         user = self.context.get('request').user
 
-        if user.role in obj.accepted_role and (obj.branch.filter(pk=user.branch.pk).exists() or obj.branch.all().exists()):
-            return True
+        if user.role in obj.accepted_role:
+            if user.role > 0:
+                condition = obj.branch.filter(name=user.branch.name).exists()
+            else:
+                condition = obj.branch.filter(pk=user.branch.pk).exists()
+            condition = condition or obj.branch.all().count() == 0
+            if condition:
+                return True
         return False
 
     def get_accepted_role(self, obj):
@@ -294,12 +299,16 @@ class EventCreateSerializer(serializers.ModelSerializer):
         organizer_list = self.context['request'].data.getlist('organizer[]')
         existing_participants = EventParticipant.objects.filter(
             event=event).exclude(user__pk__in=organizer_list).exclude(owner=True)
-        existing_participants.delete()
+
+        branch = self.context['request'].data.getlist('branch[]')
+        event.branch.set(branch)
+
         new_participants = [EventParticipant(
             event=event, user_id=user_pk, organizer=True, status='0') for user_pk in organizer_list]
         with transaction.atomic():
             EventParticipant.objects.bulk_create(
                 new_participants, ignore_conflicts=True)
+
         return event
 
     def validate_title(self, value):

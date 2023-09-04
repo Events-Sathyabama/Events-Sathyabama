@@ -61,6 +61,7 @@ export default function Page(props: {params: {id: string}}) {
 		};
 
 		const sendData = () => {
+			debugger;
 			const organizer = () => {
 				const rv: number[] = [];
 				for (let i = 0; i < coordinator.length; i++) {
@@ -97,7 +98,12 @@ export default function Page(props: {params: {id: string}}) {
 			for (let val in data) {
 				// @ts-expect-error
 				const value = data[val];
-				if (value === null || value === '' || value === undefined) {
+				if (
+					value === null ||
+					value === '' ||
+					value === undefined ||
+					(Array.isArray(value) && value.length === 0)
+				) {
 					//@ts-expect-error
 					delete data[val];
 				}
