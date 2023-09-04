@@ -1,7 +1,9 @@
 echo "Starting Build"
+python3 --version
+python3.10 --version
 python --version
 pip --version
 pip install -r requirements.txt
-python manage.py migrate
-python manage.py collectstatic --noinput
+python3.10 manage.py migrate
+python3.10 manage.py collectstatic --noinput
 echo "Build End"
