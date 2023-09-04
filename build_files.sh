@@ -1,4 +1,8 @@
 echo "Starting Build"
+cat /etc/os-release
+lsb_release -a
+uname -r
+hostnamectl
 python3 --version
 python --version
 pip3 --version
