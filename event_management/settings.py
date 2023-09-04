@@ -125,11 +125,13 @@ if config('MYSQL_DATABASE', cast=bool, default=False):
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
-            'NAME': config("MYSQL_DATABASE_NAME"),
-            'USER': config("MYSQL_DATABASE_USER"),
-            'PASSWORD': config("MYSQL_DATABASE_PASSWORD"),
-            'HOST': config('MYSQL_DATABASE_HOST'),
-            'PORT': config('MYSQL_DATABASE_PORT', cast=int),
+            'OPTIONS': {
+                'host': config('MYSQL_DATABASE_HOST'),
+                'port': config('MYSQL_DATABASE_PORT', cast=int),
+                'database': config('MYSQL_DATABASE_DATABASE'),
+                'user': config('MYSQL_DATABASE_USER'),
+                'password': config('MYSQL_DATABASE_PASSWORD'),
+            }
         }
     }
 else:
