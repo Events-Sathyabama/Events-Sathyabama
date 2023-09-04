@@ -12,7 +12,30 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 
 from pathlib import Path
 from datetime import timedelta
-from decouple import config
+from decouple import config as conf
+import os
+
+
+def empty_fun(val):
+    return val
+
+
+def config(key, cast=empty_fun, default=None):
+
+    envfile = conf(key, cast=cast, default=default)
+    if envfile:
+        return envfile
+
+    value = os.getenv(key)
+    if value is None:
+        return default
+    else:
+        if callable(cast):
+            return cast(value)
+        else:
+            value
+    return default
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -102,13 +125,11 @@ if config('MYSQL_DATABASE', cast=bool, default=False):
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
-            'OPTIONS': {
-                'host': config('MYSQL_DATABASE_HOST'),
-                'port': config('MYSQL_DATABASE_PORT', cast=int),
-                'database': config('MYSQL_DATABASE_DATABASE'),
-                'user': config('MYSQL_DATABASE_USER'),
-                'password': config('MYSQL_DATABASE_PASSWORD'),
-            },
+            'NAME': config("MYSQL_DATABASE_NAME"),
+            'USER': config("MYSQL_DATABASE_USER"),
+            'PASSWORD': config("MYSQL_DATABASE_PASSWORD"),
+            'HOST': config('MYSQL_DATABASE_HOST'),
+            'PORT': config('MYSQL_DATABASE_PORT', cast=int),
         }
     }
 else:
@@ -152,9 +173,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
 STATIC_URL = 'static/'
+STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles_build', 'static')
 
 MEDIA_ROOT = BASE_DIR / 'media'
-
 MEDIA_URL = '/media/'
 
 # Default primary key field type
