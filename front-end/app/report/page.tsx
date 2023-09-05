@@ -1,6 +1,9 @@
 'use client';
 import {TextField} from '@mui/material';
-import Autocomplete from '@mui/material/Autocomplete';
+import Autocomplete, {
+	AutocompleteChangeReason,
+	AutocompleteChangeDetails,
+} from '@mui/material/Autocomplete';
 import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
 import React, {useState} from 'react';
@@ -8,6 +11,7 @@ import API from '../API';
 import WebBackdrop from '../backdrop';
 import CircularLoader from '../circularLoader';
 import Popup from '../popup';
+import {SyntheticEvent} from 'react';
 import useEffect from '../useEffect';
 
 interface LabelOption {
@@ -31,7 +35,7 @@ export default function Report() {
 		'feature suggestion',
 	];
 
-	const [selected, setSelected] = useState<string[]>([]);
+	const [selected, setSelected] = useState([]);
 	const [subjectError, setSubjectError] = useState(false);
 	const [longDescriptionError, setLongDescriptionError] = useState(false);
 
@@ -43,11 +47,7 @@ export default function Report() {
 
 	const [url, setUrl] = useState('');
 
-	const handleLabelSelection = (
-		event: React.ChangeEvent<{}>,
-		newValue: string[]
-	) => {
-		const removedLabel = selected.find((label) => !newValue.includes(label));
+	const handleAutocompleteChange = (event, newValue) => {
 		setSelected(newValue);
 	};
 
@@ -166,23 +166,16 @@ export default function Report() {
 								/>
 								<Autocomplete
 									multiple
-									value={selected}
-									className="w-full"
-									filterSelectedOptions
-									onChange={handleLabelSelection}
 									options={labels}
-									getOptionLabel={(option) => `${option}`}
-									renderTags={(tagValue, getTagProps) =>
-										tagValue.map((option, index) => (
-											<Chip label={option} {...getTagProps({index})} />
-										))
-									}
+									className="w-full"
+									getOptionLabel={(option) => option}
+									filterSelectedOptions
+									value={selected}
+									onChange={handleAutocompleteChange}
 									renderInput={(params) => (
 										<TextField
 											{...params}
-											label={
-												'Select the labels which are relevant to the issue / enhancement'
-											}
+											label="Select the labels which are relevant to the issue / enhancement"
 											placeholder="Select a label or start typing..."
 										/>
 									)}
