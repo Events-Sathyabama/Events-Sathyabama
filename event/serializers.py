@@ -56,7 +56,8 @@ class BaseEventDetailSerializer(serializers.ModelSerializer):
 
     def get_is_eligible(self, obj):
         user = self.context.get('request').user
-        obj.branch_data = FakeQuerySet(self.BaseMeta.model, *obj.branch.all())
+        obj.branch_data = FakeQuerySet(
+            self.BaseMeta.model, [*obj.branch.all()])
         if user.role in obj.accepted_role:
             if user.role > 0:
                 condition = obj.branch_data.filter(

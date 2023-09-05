@@ -98,17 +98,15 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     role = models.PositiveIntegerField(choices=ROLE_CHOICE)
 
-    branch = models.ForeignKey(Branch, on_delete=models.CASCADE, blank=True, null=True)
-
-    joining_year = models.PositiveIntegerField(
-        default=current_year(), validators=[MinValueValidator(1950), MaxValueValidator(current_year())])
-    leaving_year = models.PositiveIntegerField(blank=True, null=True, validators=[MinValueValidator(1950)])
+    branch = models.ForeignKey(
+        Branch, on_delete=models.CASCADE, blank=True, null=True)
 
     objects = UserManager()
 
     EMAIL_FIELD = "email"
     USERNAME_FIELD = 'college_id'
-    REQUIRED_FIELDS = ['email', 'role']  # Email & Password are required by default.
+    # Email & Password are required by default.
+    REQUIRED_FIELDS = ['email', 'role']
 
     class Meta(AbstractUser.Meta):
         swappable = "AUTH_USER_MODEL"
@@ -118,7 +116,10 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     @property
     def batch(self):
-        return f'{self.joining_year if self.joining_year else "TBD"} - {self.leaving_year if self.leaving_year else "TBD"}'
+        if self.role == 0 and self.branch is not None:
+            return f'{self.branch.batch_start_date} - {self.branch.batch_end_date}'
+
+        return ''
 
     @property
     def full_name(self):
