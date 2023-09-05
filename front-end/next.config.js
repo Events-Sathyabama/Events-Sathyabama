@@ -21,10 +21,7 @@ const nextConfig = {
 	},
 	compiler: {
 		removeConsole: REMOVE_CONSOLE_LOG ? {exclude: ['error']} : false,
-	},
-	eslint: {
-		ignoreDuringBuilds: true,
-	},
+	}
 };
 
 module.exports = nextConfig;
