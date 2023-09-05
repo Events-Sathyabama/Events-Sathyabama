@@ -7,6 +7,6 @@ app_name = 'mail'
 
 
 urlpatterns = [
-    path('forgot_password/', views.forgot_password, name='forgot_password'),
+    path('mail_template/', views.render_template, name='forgot_password'),
 
 ]

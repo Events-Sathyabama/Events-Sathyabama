@@ -97,6 +97,7 @@ MIDDLEWARE = [
     'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
+
 ROOT_URLCONF = 'event_management.urls'
 AUTH_USER_MODEL = 'user.User'
 
