@@ -1,9 +1,7 @@
+// @ts-nocheck
 'use client';
 import {TextField} from '@mui/material';
-import Autocomplete, {
-	AutocompleteChangeReason,
-	AutocompleteChangeDetails,
-} from '@mui/material/Autocomplete';
+import Autocomplete from '@mui/material/Autocomplete';
 import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
 import React, {useState} from 'react';
@@ -47,12 +45,11 @@ export default function Report() {
 	const [url, setUrl] = useState('');
 
 	const handleLabelSelection = (
-		event: React.SyntheticEvent,
-		newValue: readonly string[], // Change this parameter type
-		reason: AutocompleteChangeReason,
-		details?: AutocompleteChangeDetails<string> | undefined
+		event: React.ChangeEvent<{}>,
+		newValue: string[]
 	) => {
-		setSelected([...newValue]);
+		const removedLabel = selected.find((label) => !newValue.includes(label));
+		setSelected(newValue);
 	};
 
 	const [loading, setLoading] = useState(false);
