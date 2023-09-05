@@ -1,9 +1,6 @@
 'use client';
 import {TextField} from '@mui/material';
-import Autocomplete, {
-	AutocompleteChangeReason,
-	AutocompleteChangeDetails,
-} from '@mui/material/Autocomplete';
+import Autocomplete from '@mui/material/Autocomplete';
 import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
 import React, {useState} from 'react';
@@ -47,7 +44,7 @@ export default function Report() {
 
 	const [url, setUrl] = useState('');
 
-	const handleAutocompleteChange = (event, newValue) => {
+	const handleAutocompleteChange = (event: any, newValue: any) => {
 		setSelected(newValue);
 	};
 
