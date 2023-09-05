@@ -54,7 +54,7 @@ export default function Report() {
 	) => {
 		const removedLabel = selected.find((label) => !newValue.includes(label));
 
-		setSelected(newValue as string[]);
+		setSelected([...newValue]);
 	};
 
 	const [loading, setLoading] = useState(false);
