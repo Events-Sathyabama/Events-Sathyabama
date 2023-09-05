@@ -48,12 +48,10 @@ export default function Report() {
 
 	const handleLabelSelection = (
 		event: React.SyntheticEvent,
-		newValue: string[],
+		newValue: readonly string[], // Change this parameter type
 		reason: AutocompleteChangeReason,
 		details?: AutocompleteChangeDetails<string> | undefined
 	) => {
-		const removedLabel = selected.find((label) => !newValue.includes(label));
-
 		setSelected([...newValue]);
 	};
 
