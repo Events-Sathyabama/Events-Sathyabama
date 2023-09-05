@@ -5,6 +5,7 @@ from django.core.exceptions import ValidationError
 import user.serializers as user_serializer
 from django.db import transaction
 from .messages import Validation
+from .fakequeryset import FakeQuerySet
 
 message = Validation()
 
@@ -55,13 +56,14 @@ class BaseEventDetailSerializer(serializers.ModelSerializer):
 
     def get_is_eligible(self, obj):
         user = self.context.get('request').user
-
+        obj.branch_data = FakeQuerySet(self.BaseMeta.model, *obj.branch.all())
         if user.role in obj.accepted_role:
             if user.role > 0:
-                condition = obj.branch.filter(name=user.branch.name).exists()
+                condition = obj.branch_data.filter(
+                    name=user.branch.name).exists()
             else:
-                condition = obj.branch.filter(pk=user.branch.pk).exists()
-            condition = condition or obj.branch.all().count() == 0
+                condition = obj.branch_data.find(user.branch)
+            condition = condition or obj.branch_data.all().count() == 0
             if condition:
                 return True
         return False

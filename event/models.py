@@ -249,18 +249,30 @@ class Event(models.Model):
 
     def get_participant_data(self):
         if not hasattr(self, '_participants_dict'):
-            all_participant = EventParticipant.objects.select_related('user').filter(event=self.pk)
+            all_participant = EventParticipant.objects.select_related(
+                'user').filter(event=self.pk)
             data = {
-                'accepted': all_participant.filter(status='3'),
-                'applied': all_participant.filter(status='2'),
-                'declined': all_participant.filter(status='1'),
-                'owner': all_participant.filter(owner=True).first(),
-                'organizer': all_participant.filter(organizer=True),
-                'involved_user': all_participant,
-
+                'accepted': FakeQuerySet(Event, []),
+                'applied': FakeQuerySet(Event, []),
+                'declined': FakeQuerySet(Event, []),
+                'owner': None,
+                'organizer': FakeQuerySet(Event, []),
+                'involved_user': FakeQuerySet(Event, []),
             }
-            if data['owner'] is not None:
-                data['owner'] = data['owner'].user
+
+            for participant in all_participant:
+                if participant.status == '3':
+                    data['accepted'].data.append(participant)
+                elif participant.status == '2':
+                    data['applied'].data.append(participant)
+                elif participant.status == '1':
+                    data['declined'].data.append(participant)
+                if participant.owner:
+                    data['owner'] = participant.user
+                if participant.organizer:
+                    data['organizer'].data.append(participant)
+                data['involved_user'].data.append(participant)
+
             self._participants_dict = data
 
         return self._participants_dict

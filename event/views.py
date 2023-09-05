@@ -81,10 +81,14 @@ class EventDetail(generics.RetrieveAPIView, PermissionAllowAllRoleMixin):
     # 3 SQL queries
 
     def get_object(self):
+        try:
+            return self.__event_data
+        except AttributeError:
+            pass
         event_id = self.kwargs.get('pk')
         try:
-            event = Event.objects.prefetch_related(
-                'eventparticipant_set__user').get(pk=event_id)
+            event = Event.objects.prefetch_related('branch').get(pk=event_id)
+            self.__event_data = event
             return event
         except:
             raise Http404(message.detail.not_found)
