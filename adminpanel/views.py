@@ -4,8 +4,8 @@ from django.utils import timezone
 from django.urls import reverse
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
-import pandas as pd
-import numpy as np
+# import pandas as pd
+# import numpy as np
 from django.core.validators import validate_email
 from rest_framework.views import APIView
 from django.db import transaction
