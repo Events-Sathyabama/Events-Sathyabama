@@ -56,6 +56,10 @@ SESSION_EXP_TIME = config('SESSION_EXP_TIME', cast=int,
 
 ALLOWED_HOSTS = ["*"]
 CORS_ALLOW_ALL_ORIGINS = True
+CSRF_TRUSTED_ORIGINS = config(
+    'CSRF_TRUSTED_ORIGINS',
+    cast=lambda x: x.split(','),
+    default='http://localhost:8000/')
 
 
 CORS_URLS_REGEX = r"^/api/.*"
@@ -97,7 +101,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
-
 
 ROOT_URLCONF = 'event_management.urls'
 AUTH_USER_MODEL = 'user.User'
