@@ -9,7 +9,7 @@ echo "End of image information"
 echo "Installing Linux Packages"
 yum install git -y
 yum install gcc -y
-yum install libpq-devel -y
+yum install postgresql-libs -y
 echo "Done installing Linux Packages"
 
 echo "Settings Up Python Environment"
