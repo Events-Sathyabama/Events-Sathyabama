@@ -250,11 +250,11 @@ class UploadExcel(APIView):
                 )
                 user_create_list.append(user)
         data = {}
-        # try:
-        #     with transaction.atomic():
-        #         User.objects.bulk_create(user_create_list)
-        # except Exception as e:
-        #     data.update({'detail': "Something went Wrong!!", 'status': 500})
+        try:
+            with transaction.atomic():
+                User.objects.bulk_create(user_create_list)
+        except Exception as e:
+            data.update({'detail': "Something went Wrong!!", 'status': 500})
         data.update({
             'updated_count': len(user_create_list),
             'duplicate_values': df[df['college_id'].isin(list(already_exists_users))].to_csv()})
