@@ -170,14 +170,21 @@ class UploadExcel(APIView):
         valid_data = df[mask]
         invalid_data = df[~mask]
 
-        duplicate_values = valid_data[valid_data['college_id'].duplicated(
+        duplicate_values_college_id = valid_data[valid_data['college_id'].duplicated(
             keep=False)]
-        invalid_data = pd.concat([invalid_data, duplicate_values])
+        duplicate_values_email = valid_data[valid_data['email'].duplicated(
+            keep=False)]
+        invalid_data = pd.concat(
+            [invalid_data, duplicate_values_college_id, duplicate_values_email])
 
-        reason.extend(["Duplicate College Id's"] * len(duplicate_values))
+        reason.extend(["Duplicate College Id's"] *
+                      len(duplicate_values_college_id))
+        reason.extend(["Duplicate Email Id's"] * len(duplicate_values_email))
 
         valid_data.drop_duplicates(
             subset=['college_id'], keep=False,  inplace=True)
+        valid_data.drop_duplicates(
+            subset=['email'], keep=False,  inplace=True)
 
         # Find duplicate college_id values in invalid_data and add them to reason
 
