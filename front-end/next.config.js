@@ -21,7 +21,8 @@ const nextConfig = {
 	},
 	compiler: {
 		removeConsole: REMOVE_CONSOLE_LOG ? {exclude: ['error']} : false,
-	}
+	},
+	distDir: 'build',
 };
 
 module.exports = nextConfig;
