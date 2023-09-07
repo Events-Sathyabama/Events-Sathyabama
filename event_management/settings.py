@@ -135,7 +135,19 @@ if config('MYSQL_DATABASE', cast=bool, default=False):
             }
         }
     }
+elif config("POSTGRES_DATABASE", cast=bool, default=False):
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': config('POSTGRES_DATABASE_DATABASE'),
+            'USER': config('POSTGRES_DATABASE_USER'),
+            'PASSWORD': config('POSTGRES_DATABASE_PASSWORD'),
+            'HOST': config('POSTGRES_DATABASE_HOST'),
+            'PORT': config('POSTGRES_DATABASE_PORT', cast=int),
+        }
+    }
 else:
+
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',

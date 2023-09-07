@@ -1,14 +1,5 @@
 echo "Starting Build"
-cat /etc/os-release
-lsb_release -a
-uname -r
-hostnamectl
-python3 --version
-python --version
-pip3 --version
-pip3 install pymysql
-pip3 install dj_database_url
-pip3 install -r requirements.txt
-python3 manage.py migrate
-python3 manage.py collectstatic --noinput
+python3.9 -m pip install -r requirements.txt
+python3.9 manage.py collectstatic --noinput --clear
+python3.9 manage.py migrate
 echo "Build End"
