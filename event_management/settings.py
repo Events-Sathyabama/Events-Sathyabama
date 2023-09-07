@@ -21,7 +21,6 @@ def empty_fun(val):
 
 
 def config(key, cast=empty_fun, default=None):
-
     envfile = conf(key, cast=cast, default=default)
     if envfile:
         return envfile
@@ -31,7 +30,10 @@ def config(key, cast=empty_fun, default=None):
         return default
     else:
         if callable(cast):
-            return cast(value)
+            try:
+                return cast(value)
+            except:
+                return value
         else:
             value
     return default
@@ -48,10 +50,10 @@ SECRET_KEY = 'django-insecure-7!7*qbl(#kv!#e6!7n=&(56a-5wa2k!v-nz=f)5ush0+f4)b==
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', cast=bool, default=True)
-SESSION_EXP_TIME = config('SESSION_EXP_TIME', cast=eval,
-                          default="1 * 24 * 60 * 60")
+SESSION_EXP_TIME = config('SESSION_EXP_TIME', cast=int,
+                          default=1 * 24 * 60 * 60)
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ["*", '.vercel.app', '*.vercel.app']
 INTERNAL_IPS = ['127.0.0.1']
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOWED_ORIGINS = [
@@ -122,20 +124,30 @@ WSGI_APPLICATION = 'event_management.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-if config('MYSQL_DATABASE', cast=bool, default=False):
+if (config('MYSQL_DATABASE', cast=bool, default=False) and
+    config('MYSQL_DATABASE_HOST', default=False) and
+    config('MYSQL_DATABASE_PORT', default=False) and
+    config('MYSQL_DATABASE_DATABASE', default=False) and
+    config('MYSQL_DATABASE_USER', default=False) and
+        config('MYSQL_DATABASE_PASSWORD', default=False)):
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
             'OPTIONS': {
                 'host': config('MYSQL_DATABASE_HOST'),
-                'port': config('MYSQL_DATABASE_PORT', cast=int),
+                'port': config('MYSQL_DATABASE_PORT', cast=int, default=3600),
                 'database': config('MYSQL_DATABASE_DATABASE'),
                 'user': config('MYSQL_DATABASE_USER'),
                 'password': config('MYSQL_DATABASE_PASSWORD'),
             }
         }
     }
-elif config("POSTGRES_DATABASE", cast=bool, default=False):
+elif (config('POSTGRES_DATABASE', cast=bool, default=False) and
+      config('POSTGRES_DATABASE_HOST', default=False) and
+      config('POSTGRES_DATABASE_PORT', default=False) and
+      config('POSTGRES_DATABASE_DATABASE', default=False) and
+      config('POSTGRES_DATABASE_USER', default=False) and
+      config('POSTGRES_DATABASE_PASSWORD', default=False)):
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
@@ -143,7 +155,7 @@ elif config("POSTGRES_DATABASE", cast=bool, default=False):
             'USER': config('POSTGRES_DATABASE_USER'),
             'PASSWORD': config('POSTGRES_DATABASE_PASSWORD'),
             'HOST': config('POSTGRES_DATABASE_HOST'),
-            'PORT': config('POSTGRES_DATABASE_PORT', cast=int),
+            'PORT': config('POSTGRES_DATABASE_PORT', cast=int, default=5670),
         }
     }
 else:
@@ -219,8 +231,8 @@ REST_FRAMEWORK = {
 
 SIMPLE_JWT = {
     "TOKEN_OBTAIN_SERIALIZER": "event_management.serializers.TokenObtain",
-    "ACCESS_TOKEN_LIFETIME": timedelta(seconds=config('ACCESS_TOKEN_EXP_TIME', cast=int)),
-    "REFRESH_TOKEN_LIFETIME": timedelta(seconds=config('REFRESH_TOKEN_EXP_TIME', cast=int)),
+    "ACCESS_TOKEN_LIFETIME": timedelta(seconds=config('ACCESS_TOKEN_EXP_TIME', cast=int, default=15)),
+    "REFRESH_TOKEN_LIFETIME": timedelta(seconds=config('REFRESH_TOKEN_EXP_TIME', cast=int, default=86400)),
     "UPDATE_LAST_LOGIN": True,
     "ALGORITHM": "HS256",
     "SIGNING_KEY": config('JWT_SECRET_KEY', default=SECRET_KEY),
