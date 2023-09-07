@@ -22,6 +22,9 @@ const nextConfig = {
 	compiler: {
 		removeConsole: REMOVE_CONSOLE_LOG ? {exclude: ['error']} : false,
 	},
+	env: {
+		BACKEND_URL: process.env.BACKEND_URL,
+	},
 	distDir: 'build',
 };
 
