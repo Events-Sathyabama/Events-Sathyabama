@@ -125,9 +125,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     def full_name(self):
         return f"{self.first_name} {self.last_name}".strip()
 
-    def clean(self, *args, **kwargs):
-        if self.leaving_year is not None and self.leaving_year < self.joining_year:
-            raise ValidationError('Leaving Year cannot be before joining year')
 
     def has_email(self):
         return True

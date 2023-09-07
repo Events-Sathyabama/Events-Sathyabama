@@ -8,6 +8,7 @@ import LineChart from './chart';
 import ExcelUploader from './excelUploader';
 import StatsCard from './statsCard';
 import API from '../API';
+import FileUploader from '../details/fileUploader';
 
 const axios = new API.Axios();
 
@@ -76,6 +77,35 @@ export default function AdminPanel() {
 		setSyncing(false);
 	}
 
+	const handleExcelUpload = async (formData: FormData) => {
+		let file_link = undefined;
+		try {
+			const response = await axios.post(
+				API.get_url('admin:upload_db_excel'),
+				formData,
+				{
+					'Content-Type': 'multipart/form-data',
+				}
+			);
+			if (response.data?.detail) {
+				setPopupMessage(response.data.detail);
+			} else {
+				setPopupMessage('File Uploaded Successfully!');
+			}
+			console.log(response.data);
+			setSPopup(true);
+		} catch (error: any) {
+			if (error?.response?.data?.detail) {
+				setPopupMessage(error.response.data.detail);
+			} else {
+				setPopupMessage('Error Uploading File!!');
+			}
+			setFPopup(true);
+			console.error(error);
+		}
+		return file_link;
+	};
+
 	return (
 		<div className="flex flex-col w-full justify-center items-center">
 			{syncing && (
@@ -128,7 +158,17 @@ export default function AdminPanel() {
 					</Link>
 				</div>
 				<div className="flex flex-col w-full items-center">
-					<ExcelUploader eventId="1" />
+					<FileUploader
+						accepted_files="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/csv"
+						handleUpload={handleExcelUpload}
+						handleDelete={async () => {
+							return true;
+						}}
+						notAllowedMessage={'Only CSV Files are Allowed'}
+						text="Drag and drop (or) click here to upload New Users' CSV file"
+						fileSizeBytes={1024 * 1024 * 1024 * 1024}
+					/>
+					{/* <ExcelUploader eventId="1" /> */}
 					<p className="mt-2">(or)</p>
 					<Button
 						size="medium"

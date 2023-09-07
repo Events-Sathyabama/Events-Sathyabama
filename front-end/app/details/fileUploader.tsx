@@ -2,14 +2,16 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import React, {useRef, useState} from 'react';
 import API from '../API';
 import Popup from '../popup';
+import {AxiosResponse} from 'axios';
 
 interface FileUploaderProps {
 	accepted_files: string;
-	handleUpload: Function;
+	handleUpload: (formData: FormData) => Promise<string | undefined>;
 	path?: string;
 	setPath?: Function;
 	fileSizeBytes: number;
-	handleDelete: Function;
+	handleDelete: () => Promise<boolean>;
+	notAllowedMessage: string;
 	text?: string;
 }
 
@@ -88,7 +90,7 @@ const FileUploader: React.FC<FileUploaderProps> = (props: FileUploaderProps) => 
 				setPopupMessage(`File size exceeds ${convertKBToWords(fileSize)} limit.`);
 				setShowErrorPopup(true);
 			} else if (accepted_files.match(file.type) === null) {
-				setPopupMessage(`Only ${accepted_files} files are allowed!`);
+				setPopupMessage(props.notAllowedMessage);
 				setShowErrorPopup(true);
 			} else {
 				await fileUpload(file);
@@ -96,34 +98,6 @@ const FileUploader: React.FC<FileUploaderProps> = (props: FileUploaderProps) => 
 		}
 
 		setDragText(props.text || 'Drag and drop (or) click here to upload file');
-	};
-
-	const fileUpload = async (file: File) => {
-		try {
-			setUploading(true);
-			const formData = new FormData();
-			formData.append('file', file);
-			const response = await props.handleUpload(formData);
-			console.log(response);
-			if (response.data.link) {
-				setPath(response.data.link);
-				setFileUploaded(true);
-				setUploadedFileName(file.name);
-			}
-			setPopupMessage('File Uploaded Successfully!');
-			setShowSuccessPopup(true);
-			setUploading(false);
-			// console.log('File uploaded successfully:', response.data);
-		} catch (error: any) {
-			if (error.response.data?.detail) {
-				setPopupMessage(error.response.data.detail);
-			} else {
-				setPopupMessage('Error Uploading File!!');
-			}
-			setShowErrorPopup(true);
-			setUploading(false);
-			console.error(error);
-		}
 	};
 
 	const handleFileInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -134,24 +108,35 @@ const FileUploader: React.FC<FileUploaderProps> = (props: FileUploaderProps) => 
 				setPopupMessage(`File size exceeds ${convertKBToWords(fileSize)} limit.`);
 				setShowErrorPopup(true);
 			} else if (accepted_files.match(file.type) === null) {
-				setPopupMessage(`Only ${accepted_files} files are allowed!`);
+				setPopupMessage(props.notAllowedMessage);
 				setShowErrorPopup(true);
 			} else {
 				await fileUpload(file);
 			}
 		}
 	};
+	const fileUpload = async (file: File) => {
+		setUploading(true);
+		const formData = new FormData();
+		formData.append('file', file);
+		const file_link = await props.handleUpload(formData);
 
-	const deleteUploadedFile = async () => {
-		setFileUploaded(false);
-		setUploadedFileName('');
-		setDeleting(false);
-		const response = await props.handleDelete();
-		if (response.status === 200) {
-			setPopupMessage(`Report Deleted!!`);
-			setShowSuccessPopup(true);
+		if (file_link) {
+			setPath(file_link);
+			setFileUploaded(true);
+			setUploadedFileName(file.name);
 		}
-		console.log(response);
+
+		setUploading(false);
+	};
+	const deleteUploadedFile = async () => {
+		setDeleting(true);
+		const is_deleted = await props.handleDelete();
+		if (is_deleted) {
+			setFileUploaded(false);
+			setUploadedFileName('');
+		}
+		setDeleting(false);
 	};
 
 	const openFileInput = () => {

@@ -38,6 +38,9 @@ function Success(props: SuccessProps) {
 					autoHideDuration={6000}
 					//@ts-expect-error
 					onClose={handleClose}
+					onClick={(event) => {
+						event.stopPropagation();
+					}}
 					anchorOrigin={anchorOrigin || {vertical: 'top', horizontal: 'right'}}>
 					<Alert className="mt-20 sm:mt-16" onClose={handleClose} severity="success">
 						{message}
@@ -75,6 +78,9 @@ function Error(props: ErrorProps) {
 					autoHideDuration={6000}
 					//@ts-expect-error
 					onClose={handleClose}
+					onClick={(event) => {
+						event.stopPropagation();
+					}}
 					anchorOrigin={anchorOrigin || {vertical: 'top', horizontal: 'right'}}>
 					<Alert className="mt-20 sm:mt-16" onClose={handleClose} severity="error">
 						{message}

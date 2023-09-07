@@ -12,6 +12,8 @@ import {InterfaceData} from '../datainterface';
 import Timeline from '../profile/timeline';
 import Applications from './applications';
 import FileUpload from './fileUploader';
+import Popup from '../popup';
+import {AxiosResponse} from 'axios';
 
 const axios = new API.Axios();
 
@@ -50,6 +52,9 @@ export default function AdminTabs(props: {
 		setValue(newValue);
 	};
 	const router = useRouter();
+	const [PopupMessage, setPopupMessage] = React.useState('');
+	const [sPopup, setSPopup] = React.useState(false);
+	const [fPopup, setFPopup] = React.useState(false);
 	const [isDeleting, setIsDeleting] = React.useState(false);
 	const [deleteVal, setDeleteVal] = React.useState('');
 	const [certDeleted, setCertDeleted] = React.useState(false);
@@ -97,18 +102,53 @@ export default function AdminTabs(props: {
 			'event:upload_report',
 			props.eventData.pk.toString()
 		);
+		let file_link = undefined;
+		try {
+			const response = await axios.post(uploadLink, formData, {
+				'Content-Type': 'multipart/form-data',
+			});
+			file_link = response.data?.link;
 
-		const response = await axios.post(uploadLink, formData, {
-			'Content-Type': 'multipart/form-data',
-		});
-		return response;
+			if (response.data?.detail) {
+				response.data.detail;
+			} else {
+				setPopupMessage('File Uploaded Successfully!');
+			}
+			setSPopup(true);
+		} catch (error: any) {
+			if (error?.response?.data?.detail) {
+				setPopupMessage(error.response.data.detail);
+			} else {
+				setPopupMessage('Error Uploading File!!');
+			}
+			setFPopup(true);
+			console.error(error);
+		}
+
+		return file_link;
 	};
 
 	const handleReportDelete = async () => {
-		const response = await axios.get(
-			API.get_url('event:delete_report', props.eventData.pk.toString())
-		);
-		return response;
+		let rv = false;
+		try {
+			const response: AxiosResponse = await axios.get(
+				API.get_url('event:delete_report', props.eventData.pk.toString())
+			);
+			if (response.data?.detail) {
+				setPopupMessage(response.data.detail);
+				setSPopup(true);
+			}
+			rv = true;
+		} catch (error: any) {
+			if (error?.response?.data?.detail) {
+				setPopupMessage(error.response.data.detail);
+			} else {
+				setPopupMessage('Error Uploading File!!');
+			}
+			setFPopup(true);
+			console.error(error);
+		}
+		return rv;
 	};
 
 	const handleCertUpload = async (formData: FormData) => {
@@ -116,23 +156,60 @@ export default function AdminTabs(props: {
 			'event:upload_cert',
 			props.eventData.pk.toString()
 		);
-		const response = await axios.post(uploadLink, formData, {
-			'Content-Type': 'multipart/form-data',
-		});
-		setCertUploadText('Update Certificate');
 
-		setCertDeleted(false);
-		setCertifiedQuantity(response.data.certified_quantity);
-		return response;
+		let file_link = undefined;
+
+		try {
+			const response = await axios.post(uploadLink, formData, {
+				'Content-Type': 'multipart/form-data',
+			});
+			setCertDeleted(false);
+			setCertifiedQuantity(response.data?.certified_quantity);
+
+			if (response.data?.detail) {
+				setPopupMessage(response.data.detail);
+			} else {
+				setPopupMessage('File Uploaded Successfully!');
+			}
+			setSPopup(true);
+		} catch (error: any) {
+			if (error?.response?.data?.detail) {
+				setPopupMessage(error.response.data.detail);
+			} else {
+				setPopupMessage('Error Uploading File!!');
+			}
+			setFPopup(true);
+			console.error(error);
+		}
+
+		return file_link;
 	};
 	const handleCertDelete = async () => {
-		const response = await axios.get(
-			API.get_url('event:delete_cert', props.eventData.pk.toString())
-		);
-		return response;
+		let rv = false;
+		try {
+			const response = await axios.get(
+				API.get_url('event:delete_cert', props.eventData.pk.toString())
+			);
+			rv = true;
+			if (response.data?.detail) {
+				setPopupMessage(response.data.detail);
+				setSPopup(true);
+			}
+		} catch (error: any) {
+			if (error?.response?.data?.detail) {
+				setPopupMessage(error.response.data.detail);
+			} else {
+				setPopupMessage('Error Uploading File!!');
+			}
+			setFPopup(true);
+			console.error(error);
+		}
+		return rv;
 	};
 	return (
 		<div className="flex flex-col w-full sm:items-center">
+			{sPopup && <Popup.Success message={PopupMessage} showpopup={setSPopup} />}
+			{fPopup && <Popup.Error message={PopupMessage} showpopup={setFPopup} />}
 			<TabsContainer
 				value={value}
 				onChange={handleChange}
@@ -375,6 +452,7 @@ export default function AdminTabs(props: {
 							handleUpload={handleReportUpload}
 							handleDelete={handleReportDelete}
 							path={reportPath}
+							notAllowedMessage={'Only PDF Files Allowed'}
 							setPath={setReportPath}
 						/>
 					</div>
@@ -407,6 +485,7 @@ export default function AdminTabs(props: {
 							accepted_files="application/x-compressed,application/zip,application/x-zip-compressed"
 							handleUpload={handleCertUpload}
 							text={certUploadText}
+							notAllowedMessage={'Only Zip Files Allowed'}
 							handleDelete={handleCertDelete}
 						/>
 					</div>

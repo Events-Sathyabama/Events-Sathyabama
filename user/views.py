@@ -33,8 +33,7 @@ class GetOrganizer(generics.ListAPIView):
     def get_active_user_query(self):
         return (Q(is_active=True) &
                 Q(role__in=[0, 1, 2, 3]) &
-                ~Q(pk=self.request.user.pk) &
-                (Q(leaving_year__isnull=True) | Q(leaving_year__gte=timezone.now().year)))
+                ~Q(pk=self.request.user.pk))
 
     def get_queryset(self, *args, **kwargs):
         search = self.request.GET.get('q')

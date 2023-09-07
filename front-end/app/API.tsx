@@ -414,6 +414,9 @@ const url: {[key: string]: (...args: any[]) => string} = {
 	'admin:sync_user': () => {
 		return 'admin/sync_user/';
 	},
+	'admin:upload_db_excel': () => {
+		return 'admin/upload_excel/';
+	},
 } as const;
 
 const check_role = (role: string) => {
