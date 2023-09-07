@@ -23,7 +23,7 @@ To start contributing, follow these steps:
 2. **Clone the Repository**: Clone the forked repository to your local machine using the following command:
    
    ```bash
-   git clone https://github.com/Surya-Kumar-03/Event-Management.git
+   git clone https://github.com/sathyabama-event-management/Events-Sathyabama
    ```
 
 3. **Set Up**: Follow the setup process outlined below to configure your development environment.
