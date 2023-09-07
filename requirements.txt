@@ -14,7 +14,7 @@ mongoengine==0.27.0
 numpy==1.25.2
 pandas==2.1.0
 Pillow==9.4.0
-psycopg2==2.9.7
+psycopg2-binary==2.9.7
 pycparser==2.21
 PyJWT==2.6.0
 pymongo==3.12.3
