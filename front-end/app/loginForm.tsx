@@ -63,9 +63,9 @@ export default function LoginForm(props: {
 				} else {
 					debugger;
 					const response = await axios.login(values.id, values.password);
-					if (typeof window !== 'undefined') {
-						router.push('/home/upcoming');
-					}
+					// if (typeof window !== 'undefined') {
+					// 	router.push('/home/upcoming');
+					// }
 				}
 			} catch (err: any) {
 				console.error(err);
