@@ -64,7 +64,7 @@ def send_otp(request):
         if user.send_otp():
             return Response({'detail': 'OTP Sent', 'email': modified_username, 'status': 200})
     except:
-        return Response({'detail': "Something Went Wrong", 'status': 200}, status=500)
+        return Response({'detail': "User Does not Exist!", 'status': 404}, status=404)
     return Response({'detail': "Couldn't send OTP try again later", 'status': 200}, status=400)
 
 
@@ -116,7 +116,8 @@ def bug_report(request):
         'Branch': request.user.branch,
     }
     user = request.user
-    info_str = '\n\n' + f'## Issue (or) enhancement suggestion created on behalf of: \n{user.full_name} \n{user.college_id} \n{user.branch} \n{user.batch}'
+    info_str = '\n\n' + \
+        f'## Issue (or) enhancement suggestion created on behalf of: \n{user.full_name} \n{user.college_id} \n{user.branch} \n{user.batch}'
 
     # for key in personal_info:
     #     info_str += get_card(key, personal_info[key])
