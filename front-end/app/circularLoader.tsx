@@ -10,7 +10,6 @@ const CircularLoader: React.FC<CircularProgressBarProps> = ({
 	remainingHeight,
 	remainingWidth,
 }) => {
-	debugger;
 	return (
 		<div
 			className="flex justify-center items-center"

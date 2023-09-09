@@ -130,8 +130,11 @@ export default function Applicants(props: {params: {id: number}}) {
 		true
 	);
 	console.log(rows);
-	return (
-		<div className="flex flex-col w-full items-center">
+	return <>Hi</>;
+}
+
+
+{/* <div className="flex flex-col w-full items-center">
 			<div className="flex flex-col gap-2 sm:flex-row sm:justify-between py-3 items-center w-full bg-[#1976d2]">
 				<div className="flex flex-row justify-center items-center ml-6">
 					<IconButton href={backUrl}>
@@ -256,6 +259,4 @@ export default function Applicants(props: {params: {id: number}}) {
 				onPageChange={handleChangePage}
 				onRowsPerPageChange={handleChangeRowsPerPage}
 			/>
-		</div>
-	);
-}
+		</div> */}
