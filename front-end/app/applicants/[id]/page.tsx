@@ -113,7 +113,6 @@ export default function Applicants(props: {params: {id: number}}) {
 
 	useEffect(
 		async () => {
-			debugger
 			const response = await axios.get(
 				API.get_url('event:participant_list', props.params.id)
 			);
