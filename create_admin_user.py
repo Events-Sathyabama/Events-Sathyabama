@@ -7,14 +7,14 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'event_management.settings')
 django.setup()
 
 User = get_user_model()
-if not User.objects.filter(college_id='-1').exists():
+if not User.objects.filter(college_id='0').exists():
     call_command('createsuperuser', interactive=False, college_id='-1',
                  email='aryanamish385@gmail.com', role=4)
 else:
-    print("Admin User Already Exists with -1")
-if not User.objects.filter(college_id='-2').exists():
+    print("Admin User Already Exists with 0")
+if not User.objects.filter(college_id='1').exists():
     call_command('createsuperuser', interactive=False, college_id='-2',
                  email='bsuryakumar03@gmail.com', role=4)
 else:
-    print("Admin User Already Exists with -2")
+    print("Admin User Already Exists with 1")
 # User()
