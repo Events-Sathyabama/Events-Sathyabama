@@ -1,0 +1,6 @@
+frontend/
+# Exclude hidden folders starting with a dot
+.* 
+
+# Exclude all folders named __pycache__ in subdirectories
+**/__pycache__/
