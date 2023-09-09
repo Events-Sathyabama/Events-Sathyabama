@@ -116,7 +116,7 @@ export default function Applicants(props: {params: {id: number}}) {
 			const response = await axios.get(
 				API.get_url('event:participant_list', props.params.id)
 			);
-			// console.log(response.data);
+			console.log('Data got: ' + response.data);
 			if (response.data.count > 0) {
 				setEventName(response.data.results[0].event_name);
 				document.title =
@@ -133,8 +133,8 @@ export default function Applicants(props: {params: {id: number}}) {
 	return <>Hi</>;
 }
 
-
-{/* <div className="flex flex-col w-full items-center">
+{
+	/* <div className="flex flex-col w-full items-center">
 			<div className="flex flex-col gap-2 sm:flex-row sm:justify-between py-3 items-center w-full bg-[#1976d2]">
 				<div className="flex flex-row justify-center items-center ml-6">
 					<IconButton href={backUrl}>
@@ -259,4 +259,5 @@ export default function Applicants(props: {params: {id: number}}) {
 				onPageChange={handleChangePage}
 				onRowsPerPageChange={handleChangeRowsPerPage}
 			/>
-		</div> */}
+		</div> */
+}
