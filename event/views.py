@@ -484,7 +484,7 @@ def upload_report(request, event_id):
         user_data = user_serializer.UserDetail(request.user).data
         event.report = report_file
         event.clear_timeline()
-        if not event.create_timeline(level=7, user=user_data, status=TimeLineStatus.completed):
+        if not event.create_timeline(level=7, user=user_data,  status=TimeLineStatus.completed):
             raise Exception
         event.status = 4
         event.save()
@@ -546,10 +546,7 @@ def upload_certs(request, event_id):
         with transaction.atomic():
             EventParticipant.objects.bulk_update(
                 participants_to_update, ['certificate'])
-        if not event.create_timeline(level=9, user=user_serializer.UserDetail(request.user).data,
-                                     msg=msg.certified_by.format(
-                                         request.user.first_name, request.user.college_id),
-                                     status=TimeLineStatus.completed):
+        if not event.create_timeline(level=9, user=user_serializer.UserDetail(request.user).data, status=TimeLineStatus.completed):
             raise Exception
         event.status = 6
         event.save()
@@ -663,8 +660,6 @@ def deny_report(request, event_id):
 
     if not event.create_timeline(
             level=8, user=user_serializer.UserDetail(request.user).data,
-            msg=msg.report_reject_message.format(
-                request.user.first_name, request.user.college_id),
             status=TimeLineStatus.rejected):
         return Response(data={'detail': 'Something Went Wrong'}, status=200)
     event.report = None
