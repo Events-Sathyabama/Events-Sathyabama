@@ -130,11 +130,8 @@ export default function Applicants(props: {params: {id: number}}) {
 		true
 	);
 	console.log(rows);
-	return <>Hi</>;
-}
-
-{
-	/* <div className="flex flex-col w-full items-center">
+	return (
+		<div className="flex flex-col w-full items-center">
 			<div className="flex flex-col gap-2 sm:flex-row sm:justify-between py-3 items-center w-full bg-[#1976d2]">
 				<div className="flex flex-row justify-center items-center ml-6">
 					<IconButton href={backUrl}>
@@ -182,7 +179,7 @@ export default function Applicants(props: {params: {id: number}}) {
 			{loader ? (
 				rows.length > 0 ? (
 					<TableContainer className="mb-16 px-5">
-						<Table
+						{/* <Table
 							stickyHeader
 							aria-label="sticky table"
 							className="border border-gray-300 mt-4 rounded-sm">
@@ -241,7 +238,7 @@ export default function Applicants(props: {params: {id: number}}) {
 										);
 									})}
 							</TableBody>
-						</Table>
+						</Table> */}
 					</TableContainer>
 				) : (
 					<div className="text-center text-xl mt-4">No accepted applicants!</div>
@@ -249,7 +246,7 @@ export default function Applicants(props: {params: {id: number}}) {
 			) : (
 				<CircularLoader remainingHeight="70vh" remainingWidth="" />
 			)}
-			<TablePagination
+			{/* <TablePagination
 				rowsPerPageOptions={[10, 25, 100]}
 				component="div"
 				count={rows.length}
@@ -258,6 +255,8 @@ export default function Applicants(props: {params: {id: number}}) {
 				page={page}
 				onPageChange={handleChangePage}
 				onRowsPerPageChange={handleChangeRowsPerPage}
-			/>
-		</div> */
+			/> */}
+		</div>
+	);
 }
+
