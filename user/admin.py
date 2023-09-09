@@ -49,7 +49,13 @@ class CustomUserAdmin(UserAdmin):
             None,
             {
                 "classes": ("wide",),
-                "fields": ("college_id", "password1", "password2"),
+                "fields": (
+                    "college_id",
+                    "role",
+                    'first_name',
+                    'last_name',
+                    "email",
+                ),
             },
         ),
     )
