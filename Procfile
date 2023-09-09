@@ -1,1 +1,1 @@
-web: gunicorn 'event_management.wsgi'
+bash build.sh && gunicorn 'event_management.wsgi'
