@@ -1,6 +1,7 @@
 python manage.py migrate
 python manage.py collectstatic --noinput --clear
-
+echo "MYSQL_DATABASE: $MYSQL_DATABASE"
+echo "POSTGRES_DATABASE: $POSTGRES_DATABASE"
 if [ -z "$MYSQL_DATABASE" ] && [ -z "$POSTGRES_DATABASE" ] && [ "${MYSQL_DATABASE,,}" != "True" ] && [ "${POSTGRES_DATABASE,,}" != "True" ]; then
     # Run the createsuperuser command with the desired parameters
     python manage.py createsuperuser createsuperuser --college_id=0 --email=aryanamish385@gmail.com --role=4 --noinput
