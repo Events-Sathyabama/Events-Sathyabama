@@ -1,4 +1,5 @@
 ((undefined) => {
+	debugger;
 	const backDrop = document.getElementById('global-backdrop');
 	if (backDrop === undefined || backDrop === null) {
 		return;
