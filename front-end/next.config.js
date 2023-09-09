@@ -7,6 +7,7 @@ const nextConfig = {
 		config,
 		{buildId, dev, isServer, defaultLoaders, nextRuntime, webpack}
 	) => {
+		config.optimization.minimize = false;
 		// Important: return the modified config
 		config.resolve = {
 			...config.resolve,

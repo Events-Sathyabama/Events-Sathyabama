@@ -61,6 +61,7 @@ export default function LoginForm(props: {
 					props.userMail(response.data.email);
 					props.changetoOtp();
 				} else {
+					debugger;
 					const response = await axios.login(values.id, values.password);
 					if (typeof window !== 'undefined') {
 						router.push('/home/upcoming');
