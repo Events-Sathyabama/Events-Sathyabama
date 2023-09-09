@@ -246,7 +246,7 @@ export default function Applicants(props: {params: {id: number}}) {
 			) : (
 				<CircularLoader remainingHeight="70vh" remainingWidth="" />
 			)}
-			{/* <TablePagination
+			<TablePagination
 				rowsPerPageOptions={[10, 25, 100]}
 				component="div"
 				count={rows.length}
@@ -255,8 +255,7 @@ export default function Applicants(props: {params: {id: number}}) {
 				page={page}
 				onPageChange={handleChangePage}
 				onRowsPerPageChange={handleChangeRowsPerPage}
-			/> */}
+			/>
 		</div>
 	);
 }
-
