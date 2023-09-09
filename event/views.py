@@ -307,6 +307,7 @@ class EventTimeLine(generics.RetrieveAPIView, PermissionDenyStudentMixin):
 class ParticipantList(generics.ListAPIView, PermissionAllowOrganizerMixin):
     serializer_class = serializers.EventParticipantList
     lookup_field = 'event_id'
+    pagination_class = None
 
     def get_queryset(self):
         return EventParticipant.objects.filter(event_id=self.kwargs['event_id'], owner=False, organizer=False,
