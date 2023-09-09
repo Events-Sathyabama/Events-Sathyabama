@@ -246,16 +246,18 @@ export default function Applicants(props: {params: {id: number}}) {
 			) : (
 				<CircularLoader remainingHeight="70vh" remainingWidth="" />
 			)}
-			{/* <TablePagination
-				rowsPerPageOptions={[10, 25, 100]}
-				component="div"
-				count={rows.length}
-				className="fixed bottom-0 right-0"
-				rowsPerPage={rowsPerPage}
-				page={page}
-				onPageChange={handleChangePage}
-				onRowsPerPageChange={handleChangeRowsPerPage}
-			/> */}
+			{rows.length > 0 && (
+				<TablePagination
+					rowsPerPageOptions={[10, 25, 100]}
+					component="div"
+					count={rows.length}
+					className="fixed bottom-0 right-0"
+					rowsPerPage={rowsPerPage}
+					page={page}
+					onPageChange={handleChangePage}
+					onRowsPerPageChange={handleChangeRowsPerPage}
+				/>
+			)}
 		</div>
 	);
 }
