@@ -13,7 +13,7 @@ import TableRow from '@mui/material/TableRow';
 import * as React from 'react';
 
 const axios = new API.Axios();
-
+debugger;
 interface Column {
 	id: 'name' | 'register_number' | 'branch' | 'batch' | 'certificate';
 	label: string;
@@ -113,7 +113,7 @@ export default function Applicants(props: {params: {id: number}}) {
 
 	useEffect(
 		async () => {
-			debugger
+			debugger;
 			const response = await axios.get(
 				API.get_url('event:participant_list', props.params.id)
 			);
