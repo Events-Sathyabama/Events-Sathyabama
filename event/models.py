@@ -190,14 +190,14 @@ class Event(models.Model):
     fcfs = models.BooleanField(default=True)
 
     image = models.ImageField(upload_to='poster/', max_length=500)
-    title = models.CharField(max_length=250)
+    title = models.CharField(max_length=50)
     short_description = models.CharField(max_length=100)
     long_description = models.TextField(null=True, blank=True)
     club = models.CharField(max_length=CLUB_LENGTH)
     venue = models.CharField(blank=True, null=True, max_length=100)
 
-    start_date = models.DateField(blank=True, null=True)
-    end_date = models.DateField(blank=True, null=True)
+    start_date = models.DateField()
+    end_date = models.DateField()
     date = models.TextField(blank=True, null=True)
     time = models.TextField(blank=True, null=True)
 

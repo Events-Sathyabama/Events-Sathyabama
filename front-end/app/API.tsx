@@ -1,16 +1,7 @@
 import axios from 'axios';
 
 const instance = axios.create({
-	baseURL: (() => {
-		if (typeof window !== 'undefined') {
-			return (
-				(process.env.BACKEND_URL ||
-					window.location.protocol + '//' + window.location.hostname + ':8000') +
-				'/api/'
-			);
-		}
-		return '';
-	})(),
+	baseURL: process.env.BACKEND_URL + '/api/',
 	// withCredentials: true,
 	headers: {
 		'Content-Type': 'application/json',
@@ -72,12 +63,12 @@ class AxiosInstance {
 		pathname: string,
 		data: {[key: string]: string},
 		headers?: {},
-		setLoadingCode?: Function
+		setLoadingCode?: Function,
 	) {
 		return await this.__make_call(
 			async (config: any) => await instance.post(pathname, data, config),
 			() => this.get_config(headers),
-			setLoadingCode
+			setLoadingCode,
 		);
 	}
 
@@ -85,12 +76,12 @@ class AxiosInstance {
 		pathname: string,
 		data: {[key: string]: string},
 		headers: {},
-		setLoadingCode?: Function
+		setLoadingCode?: Function,
 	) {
 		return await this.__make_call(
 			async (config: any) => await instance.put(pathname, data, config),
 			() => this.get_config(headers),
-			setLoadingCode
+			setLoadingCode,
 		);
 	}
 
@@ -98,12 +89,12 @@ class AxiosInstance {
 		pathname: string,
 		data: {[key: string]: string},
 		headers: {},
-		setLoadingCode?: Function
+		setLoadingCode?: Function,
 	) {
 		return await this.__make_call(
 			async (config: any) => await instance.patch(pathname, data, config),
 			() => this.get_config(headers),
-			setLoadingCode
+			setLoadingCode,
 		);
 	}
 
@@ -111,7 +102,7 @@ class AxiosInstance {
 		pathname: string,
 		data?: {[key: string]: string},
 		headers?: any,
-		setLoadingCode?: Function
+		setLoadingCode?: Function,
 	) {
 		let data_str = '?';
 		if (data !== null) {
@@ -122,7 +113,7 @@ class AxiosInstance {
 		return await this.__make_call(
 			async (config: any) => await instance.get(pathname + data_str, config),
 			() => this.get_config(headers),
-			setLoadingCode
+			setLoadingCode,
 		);
 	}
 
@@ -159,7 +150,7 @@ class AxiosInstance {
 		password1: string,
 		passwrod2: string,
 		college_id: number,
-		otp: number
+		otp: number,
 	) {
 		const response = await instance.post(get_url('user:reset_password'), {
 			college_id: college_id,
@@ -233,10 +224,10 @@ function parseJwt(token: string) {
 		window
 			.atob(base64)
 			.split('')
-			.map(function (c) {
+			.map(function(c) {
 				return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
 			})
-			.join('')
+			.join(''),
 	);
 	return JSON.parse(jsonPayload);
 }
@@ -319,7 +310,7 @@ const url: {[key: string]: (...args: any[]) => string} = {
 		return 'user/token/';
 	},
 	'profile_detail': (id: string) => {
-		return `user/detail/${id}/`;
+		return `user/detail/`;
 	},
 	'token_refresh': () => {
 		return `user/token/refresh/`;

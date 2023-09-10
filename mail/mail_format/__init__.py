@@ -55,7 +55,6 @@ class Mail:
             recipients = message['recipients']
 
             html_content = self.get_rendered_html(message.get('context', {}))
-            print(message.get('context', {}))
             if not isinstance(recipients, list):
                 recipients = [recipients]
 

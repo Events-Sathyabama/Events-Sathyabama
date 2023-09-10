@@ -1,14 +1,19 @@
 from django.shortcuts import render
+from rest_framework.permissions import IsAuthenticated
+
+from event.mixins import PermissionAllowOnlyVCMixin
 from event.models import Event
 from django.utils import timezone
 from django.urls import reverse
 from rest_framework.response import Response
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view
 import pandas as pd
 import numpy as np
 from django.core.validators import validate_email
 from rest_framework.views import APIView
 from django.db import transaction
+
+from event.permissions import required_roles, IsVC
 from user.models import Branch
 from django.contrib.auth import get_user_model
 from django.db.models import Q
@@ -18,6 +23,7 @@ User = get_user_model()
 
 # Create your views here.
 @api_view(['GET'])
+@required_roles([4])
 def event_last_twelve_month(request):
     twelve_months_ago = timezone.now() - timezone.timedelta(days=365)
     events = Event.objects.filter(start_date__gte=twelve_months_ago)
@@ -52,14 +58,14 @@ def event_last_twelve_month(request):
 
 
 @api_view(['GET'])
+@required_roles([4])
 def sync_user(request):
-
     return Response(data={'detail': 'Feature Not Implemented'}, status=501)
 
 
 class UploadExcel(APIView):
-
     required_fields = ['college_id', 'first_name', 'email', 'branch', 'batch']
+    permission_classes = [IsAuthenticated & IsVC]
 
     def read_file(self, file):
         try:
@@ -125,6 +131,11 @@ class UploadExcel(APIView):
                 missing_columns.append(col)
         return missing_columns
 
+    def sanitize_data(self, df):
+        df['college_id'] = df['college_id'].fillna(0).astype(int).astype(str)
+        df['email'] = df['email'].apply(lambda x: x.replace(" ", "").strip() if isinstance(x, str) else x)
+        df.replace({np.nan: None, 'nan': None}, inplace=True)
+
     def validate_data(self):
         df = self.df
 
@@ -160,7 +171,7 @@ class UploadExcel(APIView):
 
             # validate email id
             try:
-                validate_email(row['email'])
+                validate_email(row['email'].strip())
             except:
                 reason.append('Incorrect E-mail')
                 return False
@@ -181,10 +192,8 @@ class UploadExcel(APIView):
                       len(duplicate_values_college_id))
         reason.extend(["Duplicate Email Id's"] * len(duplicate_values_email))
 
-        valid_data.drop_duplicates(
-            subset=['college_id'], keep=False,  inplace=True)
-        valid_data.drop_duplicates(
-            subset=['email'], keep=False,  inplace=True)
+        valid_data = valid_data.drop_duplicates(subset=['college_id'], keep=False)
+        valid_data = valid_data.drop_duplicates(subset=['email'], keep=False)
 
         # Find duplicate college_id values in invalid_data and add them to reason
 
@@ -261,7 +270,7 @@ class UploadExcel(APIView):
             with transaction.atomic():
                 User.objects.bulk_create(user_create_list)
         except Exception as e:
-            data.update({'detail': "Something went Wrong!!", 'status': 500})
+            data.update({'detail': "Something went Wrong, while inserting the Data!!", 'status': 500})
         data.update({
             'updated_count': len(user_create_list),
             'duplicate_values': df[df['college_id'].isin(list(already_exists_users))].to_csv()})
@@ -279,7 +288,7 @@ class UploadExcel(APIView):
             missing_column_string = ", ".join(
                 [" ".join(i.split('_')) for i in missing_columns])
             return Response(data={'detail': f"Missing required columns {missing_column_string}"}, status=422)
-
+        self.sanitize_data(df)
         valid_data, invalid_data = self.validate_data()
 
         response_with_data = {'valid_data': valid_data.to_csv(),

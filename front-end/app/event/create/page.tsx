@@ -12,6 +12,8 @@ import {
 	InterfaceOrganizer,
 } from '../../datainterface';
 import Create from '../create';
+import Popup from '@/app/popup';
+import * as React from 'react';
 
 const axios = new API.Axios();
 
@@ -114,7 +116,7 @@ export default function Page() {
 		const [titleError, setTitleError] = useState<null | string>(null);
 		const [fcfsError, setFcfsError] = useState<null | string>(null);
 		const [totalStrengthError, setTotalStrengthError] = useState<null | string>(
-			null
+			null,
 		);
 		const [clubNameError, setClubNameError] = useState<null | string>(null);
 		const [imageError, setImageError] = useState<null | string>(null);
@@ -162,7 +164,9 @@ export default function Page() {
 		};
 		return [setData, getData, getError, setError, sendData];
 	})();
-
+	const [PopupMessage, setPopupMessage] = useState<string>('');
+	const [sPopup, setSPopup] = useState<boolean>(false);
+	const [fPopup, setFPopup] = useState<boolean>(false);
 	const [errorSubmit, setErrorSubmit] = useState<boolean>(false);
 	const submitForm = async () => {
 		try {
@@ -173,13 +177,26 @@ export default function Page() {
 			});
 			router.push(`/details/${request.data.pk}`);
 		} catch (error: any) {
+			console.error(error);
 			setErrorSubmit(true);
+			if (error.message === 'Network Error') {
+				setPopupMessage('Check your Internet Connection!!');
+				setSPopup(false);
+				setFPopup(true);
+			}
 			for (let field in setError) {
 				setError[field](null);
 			}
 			for (let field in error.response.data) {
-				setError[field](API.extract_error(error.response.data[field]));
+				if (setError.hasOwnProperty(field))
+					setError[field](API.extract_error(error.response.data[field]));
 			}
+			setPopupMessage(error?.response?.data?.detail || 'Fix the errors!!');
+			setFPopup(true);
+			window.scrollTo({
+				top: 0,
+				behavior: 'smooth', // This makes the scrolling smooth
+			});
 		}
 	};
 	const [Loader, setLoader] = useState(0);
@@ -196,7 +213,7 @@ export default function Page() {
 			setData.organizer([obj]);
 		},
 		[],
-		setLoader
+		setLoader,
 	);
 
 	// useEffect(() => {
@@ -212,6 +229,8 @@ export default function Page() {
 
 	return (
 		<>
+			{sPopup === true && <Popup.Success message={PopupMessage} showpopup={setSPopup} />}
+			{fPopup === true && <Popup.Error message={PopupMessage} showpopup={setFPopup} />}
 			<Create
 				errorState={errorSubmit}
 				getData={getData}
