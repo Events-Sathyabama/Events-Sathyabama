@@ -2,6 +2,8 @@ from django.shortcuts import render
 from rest_framework import generics
 from django.contrib.auth import get_user_model
 from django.db.models import Q
+
+from event.mixins import PermissionDenyStudentMixin
 from . import serializers
 from django.utils import timezone
 # Create your views here.
@@ -22,12 +24,14 @@ User = get_user_model()
 
 
 class UserListView(generics.RetrieveAPIView):
-    queryset = get_user_model().objects.all()
     serializer_class = serializers.UserProfile
-    lookup_field = 'pk'
+
+    def get_object(self):
+        # Get the currently authenticated user
+        return self.request.user
 
 
-class GetOrganizer(generics.ListAPIView):
+class GetOrganizer(generics.ListAPIView, PermissionDenyStudentMixin):
     serializer_class = serializers.UserDetail
 
     def get_active_user_query(self):
@@ -113,11 +117,11 @@ def bug_report(request):
     personal_info = {
         'Name': request.user.full_name,
         'College_Id': request.user.college_id,
-        'Branch': request.user.branch,
+        'Branch': request.user.branch or '',
     }
     user = request.user
     info_str = '\n\n' + \
-        f'## Issue (or) enhancement suggestion created on behalf of: \n{user.full_name} \n{user.college_id} \n{user.branch} \n{user.batch}'
+               f'## Issue (or) enhancement suggestion created on behalf of: \n{user.full_name} \n{user.college_id} \n{user.branch or ""} \n{user.batch}'
 
     # for key in personal_info:
     #     info_str += get_card(key, personal_info[key])
@@ -136,9 +140,10 @@ def bug_report(request):
         conn.request(
             "POST", "/repos/Surya-Kumar-03/Event-Management/issues", payload, headers)
         res = conn.getresponse()
+        if res.code > 299:
+            return Response(data={'detail': 'Something Went Wrong try again after sometime!!'}, status=res.code)
         data = res.read()
         data = json.loads(data)
     except:
         return Response(data={'detail': 'Something Went Wrong'}, status=400)
-    # print(data)
     return Response(data={'detail': 'Bug reported', 'data': data}, status=200)

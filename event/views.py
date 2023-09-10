@@ -18,7 +18,7 @@ from django.contrib.auth import get_user_model
 from django.db import transaction
 from .messages import Message
 import zipfile
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
 from io import BytesIO
 import os
 from PIL import Image
@@ -70,12 +70,13 @@ class UpcomingEventList(SearchQueryMixins, generics.ListAPIView):
         return query.filter(start_date__gt=timezone.now(), status=2).order_by('start_date')
 
 
-class EventDetail(generics.RetrieveAPIView, PermissionAllowAllRoleMixin):
+class EventDetail(generics.RetrieveAPIView):
     serializers = {
         'student': serializers.EventDetailSerializerStudent,
         'organizer': serializers.EventDetailSerializerOrganizer,
         'HOD_DEAN_VC': serializers.EventDetailSerializerHodDeanVC,
     }
+    permission_classes = [IsAuthenticated]
 
     # TODO return null of the event is not in displayed state for role 0
     # 3 SQL queries
@@ -110,16 +111,17 @@ class EventDetail(generics.RetrieveAPIView, PermissionAllowAllRoleMixin):
     # serializer_class = serializers.EventDetailSerializer
 
 
-class EventCreate(generics.CreateAPIView, PermissionDenyStudentMixin):
+class EventCreate(generics.CreateAPIView):
     msg = message.event_creat
     queryset = Event.objects.all()
     serializer_class = serializers.EventCreateSerializer
     throttle_classes = [RequestEvery10Seconds]
+    permission_classes = [IsAuthenticated & (IsTeacher | IsHOD | IsDean | IsVC)]
 
     def throttle_failure(self, request, wait_time):
         return Response(
             {
-                'error': 'Rate limit exceeded. Please wait for {} seconds.'.format(wait_time)
+                'error': f'Rate limit exceeded. Please wait for {wait_time} seconds.'
             },
             status=429
         )
@@ -165,10 +167,11 @@ class EventCreate(generics.CreateAPIView, PermissionDenyStudentMixin):
         event.set_owner(user)
 
 
-class EventUpdate(generics.UpdateAPIView, PermissionAllowOrganizerMixin):
+class EventUpdate(generics.UpdateAPIView):
     queryset = Event.objects.all()
     serializer_class = serializers.EventUpdateSerializer
     lookup_field = 'pk'
+    permission_classes = [IsAuthenticated & (IsOrganizer | IsOwner)]
 
     # TODO not allowd if the user is not Organizer
 
@@ -206,8 +209,9 @@ class EventUpdate(generics.UpdateAPIView, PermissionAllowOrganizerMixin):
         return x
 
 
-class RegisteredEvent(generics.ListAPIView, PermissionAllowAllRoleMixin):
+class RegisteredEvent(generics.ListAPIView):
     serializer_class = serializers.EventRegisterdCompletedPending
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         q = (Q(participants__id=self.request.user.pk)
@@ -225,18 +229,19 @@ class RegisteredEvent(generics.ListAPIView, PermissionAllowAllRoleMixin):
         return context
 
 
-class CompletedEvent(generics.ListAPIView, PermissionAllowAllRoleMixin):
+class CompletedEvent(generics.ListAPIView):
     serializer_class = serializers.EventRegisterdCompletedPending
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         q = (Q(participants__id=self.request.user.pk)
              & Q(status__gte=3)
              & (
-            (Q(eventparticipant__status='3') & Q(eventparticipant__owner=False) & Q(
-                eventparticipant__organizer=False))
-            | (Q(eventparticipant__owner=True) | Q(eventparticipant__organizer=True))
-        )
-        )
+                     (Q(eventparticipant__status='3') & Q(eventparticipant__owner=False) & Q(
+                         eventparticipant__organizer=False))
+                     | (Q(eventparticipant__owner=True) | Q(eventparticipant__organizer=True))
+             )
+             )
         event = Event.objects.filter(q)
         return event
 
@@ -246,8 +251,9 @@ class CompletedEvent(generics.ListAPIView, PermissionAllowAllRoleMixin):
         return context
 
 
-class OrganizingEvent(generics.ListAPIView, PermissionAllowAllRoleMixin):
+class OrganizingEvent(generics.ListAPIView):
     serializer_class = serializers.EventOrganizer
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         q = (Q(participants__id=self.request.user.pk)
@@ -266,8 +272,9 @@ class OrganizingEvent(generics.ListAPIView, PermissionAllowAllRoleMixin):
 # pending for approval
 
 
-class PendingEvent(generics.ListAPIView, PermissionAllowAllRoleMixin):
+class PendingEvent(generics.ListAPIView):
     serializer_class = serializers.EventRegisterdCompletedPending
+    permission_classes = [IsAuthenticated]
 
     # TODO not allowed for role 0
 
@@ -276,7 +283,8 @@ class PendingEvent(generics.ListAPIView, PermissionAllowAllRoleMixin):
         if self.request.user.role == 2:  # HOD
             q = Q(status=1) & Q(hod_verified=False)
             if user.branch:
-                q = q & ((Q(eventparticipant__owner=True) & Q(eventparticipant__user__branch__name=user.branch.name)) | Q(
+                q = q & ((Q(eventparticipant__owner=True) & Q(
+                    eventparticipant__user__branch__name=user.branch.name)) | Q(
                     eventparticipant__user__branch__isnull=True))
         elif self.request.user.role == 3:  # Dean
             q = Q(status=1) & Q(dean_verified=False) & Q(hod_verified=True)
@@ -299,15 +307,17 @@ class PendingEvent(generics.ListAPIView, PermissionAllowAllRoleMixin):
         return context
 
 
-class EventTimeLine(generics.RetrieveAPIView, PermissionDenyStudentMixin):
+class EventTimeLine(generics.RetrieveAPIView):
     serializer_class = serializers.EventTimeLine
     queryset = Event.objects.all()
+    permission_classes = [IsAuthenticated & (IsOrganizer | IsOwner)]
 
 
-class ParticipantList(generics.ListAPIView, PermissionAllowOrganizerMixin):
+class ParticipantList(generics.ListAPIView):
     serializer_class = serializers.EventParticipantList
     lookup_field = 'event_id'
     pagination_class = None
+    permission_classes = [IsAuthenticated & (IsOrganizer | IsOwner)]
 
     def get_queryset(self):
         return EventParticipant.objects.filter(event_id=self.kwargs['event_id'], owner=False, organizer=False,
@@ -376,7 +386,8 @@ def approve_event(request, event_id):
                 if user.branch and event.owner.branch.name == user.branch.name:
                     pass
                 else:
-                    return Response(data={'detail': msg.branch_didnt_matched.format(event.owner.branch.name)}, status=400)
+                    return Response(data={'detail': msg.branch_didnt_matched.format(event.owner.branch.name)},
+                                    status=400)
             if not event.create_timeline(level=1, user=user_data, msg=approve_message, status=TimeLineStatus.completed):
                 raise Exception
             event.save()
@@ -484,7 +495,7 @@ def upload_report(request, event_id):
         user_data = user_serializer.UserDetail(request.user).data
         event.report = report_file
         event.clear_timeline()
-        if not event.create_timeline(level=7, user=user_data,  status=TimeLineStatus.completed):
+        if not event.create_timeline(level=7, user=user_data, status=TimeLineStatus.completed):
             raise Exception
         event.status = 4
         event.save()
@@ -546,7 +557,8 @@ def upload_certs(request, event_id):
         with transaction.atomic():
             EventParticipant.objects.bulk_update(
                 participants_to_update, ['certificate'])
-        if not event.create_timeline(level=9, user=user_serializer.UserDetail(request.user).data, status=TimeLineStatus.completed):
+        if not event.create_timeline(level=9, user=user_serializer.UserDetail(request.user).data,
+                                     status=TimeLineStatus.completed):
             raise Exception
         event.status = 6
         event.save()
