@@ -133,7 +133,8 @@ class UploadExcel(APIView):
 
     def sanitize_data(self, df):
         df['college_id'] = df['college_id'].fillna(0).astype(int).astype(str)
-        df['email'] = df['email'].apply(lambda x: x.replace(" ", "").strip() if isinstance(x, str) else x)
+        df['email'] = df['email'].apply(lambda x: x.replace(
+            " ", "").strip() if isinstance(x, str) else x)
         df.replace({np.nan: None, 'nan': None}, inplace=True)
 
     def validate_data(self):
@@ -192,7 +193,8 @@ class UploadExcel(APIView):
                       len(duplicate_values_college_id))
         reason.extend(["Duplicate Email Id's"] * len(duplicate_values_email))
 
-        valid_data = valid_data.drop_duplicates(subset=['college_id'], keep=False)
+        valid_data = valid_data.drop_duplicates(
+            subset=['college_id'], keep=False)
         valid_data = valid_data.drop_duplicates(subset=['email'], keep=False)
 
         # Find duplicate college_id values in invalid_data and add them to reason
@@ -270,10 +272,11 @@ class UploadExcel(APIView):
             with transaction.atomic():
                 User.objects.bulk_create(user_create_list)
         except Exception as e:
-            data.update({'detail': "Something went Wrong, while inserting the Data!!", 'status': 500})
+            data.update(
+                {'detail': "Something went Wrong, while inserting the Data!!", 'status': 500})
         data.update({
             'updated_count': len(user_create_list),
-            'duplicate_values': df[df['college_id'].isin(list(already_exists_users))].to_csv()})
+            'duplicate_values': df[df['college_id'].isin(list(already_exists_users))].to_json()})
         return data
 
     def post(self, request):
@@ -291,8 +294,8 @@ class UploadExcel(APIView):
         self.sanitize_data(df)
         valid_data, invalid_data = self.validate_data()
 
-        response_with_data = {'valid_data': valid_data.to_csv(),
-                              'invalid_data': invalid_data.to_csv()}
+        response_with_data = {'valid_data': valid_data.to_json(),
+                              'invalid_data': invalid_data.to_json()}
 
         if len(valid_data) == 0:
             data = {'detail': 'Nothing to Update'}

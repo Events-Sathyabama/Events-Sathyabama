@@ -190,7 +190,7 @@ class Event(models.Model):
     fcfs = models.BooleanField(default=True)
 
     image = models.ImageField(upload_to='poster/', max_length=500)
-    title = models.CharField(max_length=50)
+    title = models.CharField(max_length=250)
     short_description = models.CharField(max_length=100)
     long_description = models.TextField(null=True, blank=True)
     club = models.CharField(max_length=CLUB_LENGTH)
