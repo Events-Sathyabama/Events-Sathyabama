@@ -57,7 +57,6 @@ export default function LoginForm(props: {
 					}
 					props.setBackdrop(false);
 					// if the register number exists share their mail to me and change to otp page (Success)
-					// debugger;
 					props.userMail(response.data.email);
 					props.changetoOtp();
 				} else {

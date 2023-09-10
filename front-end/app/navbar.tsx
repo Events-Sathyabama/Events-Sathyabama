@@ -5,8 +5,8 @@ import Link from 'next/link';
 import {usePathname, useRouter} from 'next/navigation';
 import {Fragment, useState} from 'react';
 import LetterAvatar from './avatar';
-import Notifications from './notificationPop';
-import NotificationIconButton from './notifications';
+// import Notifications from './notificationPop';
+// import NotificationIconButton from './notifications';
 import useEffect from './useEffect';
 
 function classNames(...classes: any) {
@@ -114,7 +114,7 @@ export default function Navbar() {
 							</div>
 							<div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
 								{/* Profile dropdown */}
-								<Menu as="div">
+								{/* <Menu as="div">
 									<Menu.Button>
 										<NotificationIconButton notificationCount={notificationCount} />
 									</Menu.Button>
@@ -130,7 +130,7 @@ export default function Navbar() {
 											<Notifications />
 										</Menu.Items>
 									</Transition>
-								</Menu>
+								</Menu> */}
 								<Menu as="div" className="relative ml-3">
 									<div>
 										<Menu.Button className="flex rounded-full text-sm">

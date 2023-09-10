@@ -8,6 +8,7 @@ const nextConfig = {
 		{buildId, dev, isServer, defaultLoaders, nextRuntime, webpack}
 	) => {
 		// Important: return the modified config
+		config.optimization.minimize = false;
 		config.resolve = {
 			...config.resolve,
 			preferRelative: true,
@@ -21,6 +22,9 @@ const nextConfig = {
 	},
 	compiler: {
 		removeConsole: REMOVE_CONSOLE_LOG ? {exclude: ['error']} : false,
+	},
+	env: {
+		BACKEND_URL: process.env.BACKEND_URL,
 	},
 	distDir: 'build',
 };

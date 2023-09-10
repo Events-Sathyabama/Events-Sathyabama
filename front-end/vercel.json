@@ -2,9 +2,5 @@
 	"outputDirectory": "build",
 	"buildCommand": "next build",
 	"framework": "nextjs",
-	"installCommand": "npm install",
-	"trailingSlash": true,
-	"env": {
-		"BACKEND_URL": "http://localhost:8000"
-	}
+	"installCommand": "npm install"
 }

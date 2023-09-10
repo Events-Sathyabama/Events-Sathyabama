@@ -18,3 +18,6 @@ class RequestEvery10Seconds(UserRateThrottle):
             tuple:  <allowed number of requests>, <period of time in seconds>
         """
         return (1, 10)
+
+    def get_message(self):
+        return 'Too Many requests!!'

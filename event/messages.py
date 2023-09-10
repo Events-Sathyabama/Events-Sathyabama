@@ -1,6 +1,5 @@
 class Message:
     class reject_report:
-        report_reject_message = 'The Report was rejected by {0} ({1})'
         success = 'Report Rejected Successfully!'
 
     class event_creat:
@@ -57,7 +56,6 @@ class Message:
         report_approved = 'Report is already Approved you cannot change it'
 
         # inside Timeline Report submitted by 'first_name' 'college_id'
-        report_submitted_message = 'Report Submitted by {0} ({1})'
 
     class cert_upload:
         success = 'Certificates Uploaded!!'
@@ -69,7 +67,6 @@ class Message:
         report_approval_required = 'First Get the report Approved'
 
         # certified by 'first_name' 'college_id'
-        certified_by = 'Certified by {0} ({1})'
 
     class apply_event:
         success = 'Event application successful'
@@ -94,14 +91,7 @@ class Message:
         report_already_approved = 'Report already Approved'
 
         # in timeline Report Approved 'first_name' 'college_id'
-        report_approved_message = 'Report Approved By {0} ({1})'
         success = 'Report Approved'
-
-    class deny_report:
-        report_not_submitted = 'No report was submitted for this event'
-
-        # in timeline Report Rejected 'first_name' 'college_id'
-        report_approved_message = 'Report Rejected By {0} ({1})'
 
 
 class Validation:

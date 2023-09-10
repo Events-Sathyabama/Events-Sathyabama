@@ -116,20 +116,18 @@ export default function Applicants(props: {params: {id: number}}) {
 			const response = await axios.get(
 				API.get_url('event:participant_list', props.params.id)
 			);
-			// console.log(response.data);
-			if (response.data.count > 0) {
-				setEventName(response.data.results[0].event_name);
+			console.log('Data got: ' + response.data);
+			if (response.data.length > 0) {
+				setEventName(response.data[0].event_name);
 				document.title =
-					response.data.results[0].event_name +
-					' - Accepted Applicants | Events@Sathyabama';
+					response.data[0].event_name + ' - Accepted Applicants | Events@Sathyabama';
 			}
-			setRows(response.data.results);
+			setRows(response.data);
 		},
 		[],
 		setLoader,
 		true
 	);
-	console.log(rows);
 	return (
 		<div className="flex flex-col w-full items-center">
 			<div className="flex flex-col gap-2 sm:flex-row sm:justify-between py-3 items-center w-full bg-[#1976d2]">
@@ -246,16 +244,18 @@ export default function Applicants(props: {params: {id: number}}) {
 			) : (
 				<CircularLoader remainingHeight="70vh" remainingWidth="" />
 			)}
-			<TablePagination
-				rowsPerPageOptions={[10, 25, 100]}
-				component="div"
-				count={rows.length}
-				className="fixed bottom-0 right-0"
-				rowsPerPage={rowsPerPage}
-				page={page}
-				onPageChange={handleChangePage}
-				onRowsPerPageChange={handleChangeRowsPerPage}
-			/>
+			{rows.length > 0 && (
+				<TablePagination
+					rowsPerPageOptions={[10, 25, 100]}
+					component="div"
+					count={rows.length}
+					className="fixed bottom-0 right-0"
+					rowsPerPage={rowsPerPage}
+					page={page}
+					onPageChange={handleChangePage}
+					onRowsPerPageChange={handleChangeRowsPerPage}
+				/>
+			)}
 		</div>
 	);
 }

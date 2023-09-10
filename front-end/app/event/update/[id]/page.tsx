@@ -61,7 +61,6 @@ export default function Page(props: {params: {id: string}}) {
 		};
 
 		const sendData = () => {
-			debugger;
 			const organizer = () => {
 				const rv: number[] = [];
 				for (let i = 0; i < coordinator.length; i++) {
@@ -131,7 +130,7 @@ export default function Page(props: {params: {id: string}}) {
 		const [titleError, setTitleError] = useState<null | string>(null);
 		const [fcfsError, setFcfsError] = useState<null | string>(null);
 		const [totalStrengthError, setTotalStrengthError] = useState<null | string>(
-			null
+			null,
 		);
 		const [clubNameError, setClubNameError] = useState<null | string>(null);
 		const [imageError, setImageError] = useState<null | string>(null);
@@ -189,7 +188,7 @@ export default function Page(props: {params: {id: string}}) {
 			return (async () => {
 				try {
 					const request = await axios.get(
-						API.get_url('event:detail', [props.params.id])
+						API.get_url('event:detail', [props.params.id]),
 					);
 					console.log(request.data);
 					const data = request.data;
@@ -220,7 +219,7 @@ export default function Page(props: {params: {id: string}}) {
 		},
 		[],
 		setLoader,
-		runOnce
+		runOnce,
 	);
 
 	const [errorSubmit, setErrorSubmit] = useState<boolean>(false);
@@ -231,7 +230,7 @@ export default function Page(props: {params: {id: string}}) {
 				sendData(),
 				{
 					'Content-Type': 'multipart/form-data',
-				}
+				},
 			);
 			setErrorSubmit(false);
 			setMessage('Event Updation Successful, Redirecting...');
@@ -245,12 +244,8 @@ export default function Page(props: {params: {id: string}}) {
 				setMessage('Check your Internet Connection!!');
 				setSuccessPopUp(false);
 				setErrorPopUp(true);
-			} else if (error.response.data.detail) {
-				setMessage(error.response.data.detail);
-				setSuccessPopUp(false);
-				setErrorPopUp(true);
+
 			} else {
-				// debugger
 				for (let field in setError) {
 					setError[field](null);
 				}
@@ -259,7 +254,16 @@ export default function Page(props: {params: {id: string}}) {
 						setError[field](API.extract_error(error.response.data[field]));
 					}
 				}
+
+
 			}
+			setMessage(error?.response?.data?.detail || 'Fix the errors!!');
+			setSuccessPopUp(false);
+			setErrorPopUp(true);
+			window.scrollTo({
+				top: 0,
+				behavior: 'smooth', // This makes the scrolling smooth
+			});
 		}
 	};
 	const [successPopUp, setSuccessPopUp] = useState(false);

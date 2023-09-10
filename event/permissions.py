@@ -28,6 +28,7 @@ class IsDean(permissions.BasePermission):
 
 class IsVC(permissions.BasePermission):
     def has_permission(self, request, view):
+        print(f'checking vc role {request.user.role}')
         return request.user.role == 4
 
 
@@ -48,6 +49,7 @@ def is_authenticated(view_func):
             return view_func(request, *args, **kwargs)
         else:
             return Response(data={'detail': 'You must be authenticated to perform this action.'}, status=401)
+
     return _wrapped_view
 
 
@@ -60,7 +62,9 @@ def required_roles(role_values=[]):
                 return view_func(request, *args, **kwargs)
             else:
                 return Response(data={'detail': 'You do not have permission to perform this action.'}, status=403)
+
         return _wrapped_view
+
     return decorator
 
 
@@ -69,11 +73,12 @@ def is_event_organizer(view_func):
     def _wrapped_view(request, *args, **kwargs):
         event_id = kwargs['event_id']
         q = Q(event_id=event_id) & Q(user=request.user) & (
-            Q(owner=True) | Q(organizer=True))
+                Q(owner=True) | Q(organizer=True))
         if EventParticipant.objects.filter(q).exists():
             return view_func(request, *args, **kwargs)
         else:
             return Response(data={'detail': 'You do not have permission to perform this action.'}, status=403)
+
     return _wrapped_view
 
 
@@ -86,4 +91,5 @@ def is_event_owner(view_func):
             return view_func(request, *args, **kwargs)
         else:
             return Response(data={'detail': 'You do not have permission to perform this action.'}, status=403)
+
     return _wrapped_view

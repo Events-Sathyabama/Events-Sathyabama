@@ -88,9 +88,9 @@ class User(AbstractBaseUser, PermissionsMixin):
         max_length=10,
         unique=True,
     )
-    first_name = models.CharField("First Name", max_length=150, blank=True)
-    last_name = models.CharField("Last Name", max_length=150, blank=True)
-    email = models.EmailField("Email Address", blank=True)
+    first_name = models.CharField("First Name", max_length=150, blank=True, null=True)
+    last_name = models.CharField("Last Name", max_length=150, blank=True, null=True)
+    email = models.EmailField("Email Address", unique=True)
     date_joined = models.DateTimeField(_("date joined"), default=timezone.now)
     forgot_otp = models.CharField(max_length=4096, null=True, blank=True)
     is_active = models.BooleanField(default=True)
@@ -124,7 +124,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     @property
     def full_name(self):
         return f"{self.first_name} {self.last_name}".strip()
-
 
     def has_email(self):
         return True

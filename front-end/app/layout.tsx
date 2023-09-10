@@ -7,6 +7,7 @@ export const metadata = {
 		'Welcome to Events@Sathyabama. The one-stop Event Management System for all events at Sathyabama University',
 };
 export default function RootLayout({children}: {children: React.ReactNode}) {
+	debugger
 	return (
 		<html lang="en">
 			<body>
