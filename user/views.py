@@ -138,7 +138,7 @@ def bug_report(request):
             'Authorization': f'Bearer {settings.GIT_BUG_REPORT_API_KEY}'
         }
         conn.request(
-            "POST", "/repos/Surya-Kumar-03/Event-Management/issues", payload, headers)
+            "POST", "/repos/Events-Sathyabama/Events-Sathyabama/issues", payload, headers)
         res = conn.getresponse()
         if res.code > 299:
             return Response(data={'detail': 'Something Went Wrong try again after sometime!!'}, status=res.code)
