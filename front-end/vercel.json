@@ -2,5 +2,11 @@
 	"outputDirectory": "build",
 	"buildCommand": "next build",
 	"framework": "nextjs",
-	"installCommand": "npm install"
+	"installCommand": "npm install",
+	"crons": [
+		{
+			"path": "@BACKEND_URL/api/event/change_event_status_to_complete",
+			"schedule": "0 0 * * *"
+		}
+	]
 }

@@ -116,7 +116,8 @@ class EventCreate(generics.CreateAPIView):
     queryset = Event.objects.all()
     serializer_class = serializers.EventCreateSerializer
     throttle_classes = [RequestEvery10Seconds]
-    permission_classes = [IsAuthenticated & (IsTeacher | IsHOD | IsDean | IsVC)]
+    permission_classes = [IsAuthenticated &
+                          (IsTeacher | IsHOD | IsDean | IsVC)]
 
     def throttle_failure(self, request, wait_time):
         return Response(
@@ -237,11 +238,11 @@ class CompletedEvent(generics.ListAPIView):
         q = (Q(participants__id=self.request.user.pk)
              & Q(status__gte=3)
              & (
-                     (Q(eventparticipant__status='3') & Q(eventparticipant__owner=False) & Q(
-                         eventparticipant__organizer=False))
-                     | (Q(eventparticipant__owner=True) | Q(eventparticipant__organizer=True))
-             )
-             )
+            (Q(eventparticipant__status='3') & Q(eventparticipant__owner=False) & Q(
+                eventparticipant__organizer=False))
+            | (Q(eventparticipant__owner=True) | Q(eventparticipant__organizer=True))
+        )
+        )
         event = Event.objects.filter(q)
         return event
 
@@ -257,7 +258,8 @@ class OrganizingEvent(generics.ListAPIView):
 
     def get_queryset(self):
         q = (Q(participants__id=self.request.user.pk)
-             & (Q(eventparticipant__owner=True) | Q(eventparticipant__organizer=True)) & Q(status=2)
+             & (Q(eventparticipant__owner=True) | Q(eventparticipant__organizer=True))
+             & Q(status__in=[1, 2])
 
              )
         event = Event.objects.filter(q)
@@ -274,7 +276,7 @@ class OrganizingEvent(generics.ListAPIView):
 
 class PendingEvent(generics.ListAPIView):
     serializer_class = serializers.EventRegisterdCompletedPending
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated & (IsVC | IsDean | IsHOD)]
 
     # TODO not allowed for role 0
 
@@ -697,3 +699,21 @@ def approve_report(request, event_id):
     event.status = 5
     event.save()
     return Response(data={'detail': msg.success}, status=200)
+
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def change_event_status_to_complete(request):
+    get_param = request.GET.get('run_cron_job', '')
+    if get_param.lower() != 'true':
+        raise Http404()
+    events = Event.objects.filter(
+        status=2,
+        start_date__lt=timezone.now(),
+        end_date__lt=timezone.now()
+    )
+    for event in events:
+        event.status = 3
+    with transaction.atomic():
+        Event.objects.bulk_update(events, fields=['status'])
+    return Response(data={'detail': 'Sync Success'}, status=200)
