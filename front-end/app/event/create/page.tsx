@@ -19,6 +19,20 @@ const axios = new API.Axios();
 
 export default function Page() {
 	const router = useRouter();
+
+	const isStudent = () => {
+		const user_detail = API.get_user_detail();
+		if (user_detail.role.toLowerCase() === 'student') {
+			return true;
+		} else return false;
+	};
+
+	React.useEffect(() => {
+		if (isStudent() === true) {
+			window.location.href = '/home/upcoming';
+		}
+	}, []); // Checks if it is a student
+
 	const [owner, setOwner] = useState<InterfaceOrganizer>({
 		name: '-',
 		college_id: '-',
@@ -116,7 +130,7 @@ export default function Page() {
 		const [titleError, setTitleError] = useState<null | string>(null);
 		const [fcfsError, setFcfsError] = useState<null | string>(null);
 		const [totalStrengthError, setTotalStrengthError] = useState<null | string>(
-			null,
+			null
 		);
 		const [clubNameError, setClubNameError] = useState<null | string>(null);
 		const [imageError, setImageError] = useState<null | string>(null);
@@ -213,7 +227,7 @@ export default function Page() {
 			setData.organizer([obj]);
 		},
 		[],
-		setLoader,
+		setLoader
 	);
 
 	// useEffect(() => {
@@ -229,8 +243,12 @@ export default function Page() {
 
 	return (
 		<>
-			{sPopup === true && <Popup.Success message={PopupMessage} showpopup={setSPopup} />}
-			{fPopup === true && <Popup.Error message={PopupMessage} showpopup={setFPopup} />}
+			{sPopup === true && (
+				<Popup.Success message={PopupMessage} showpopup={setSPopup} />
+			)}
+			{fPopup === true && (
+				<Popup.Error message={PopupMessage} showpopup={setFPopup} />
+			)}
 			<Create
 				errorState={errorSubmit}
 				getData={getData}

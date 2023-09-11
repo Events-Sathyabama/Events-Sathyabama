@@ -35,10 +35,22 @@ export default function AdminPanel() {
 	const [timeInterval, setTimeInterval] = React.useState('');
 	const [djangoAdminPanel, setDjangoAdminPanel] = React.useState('#');
 
+	const isVC = () => {
+		const user_detail = API.get_user_detail();
+		if (user_detail.role.toLowerCase() === 'vice-chancellor') {
+			return true;
+		} else return false;
+	};
+
+	React.useEffect(() => {
+		if (isVC() === false) {
+			window.location.href = '/home/upcoming';
+		}
+	}, []); // Checks if it is VC
+
 	React.useEffect(() => {
 		const timer = setTimeout(async () => {
 			try {
-
 				const response = await axios.get(API.get_url('admin:report'));
 				const data = response.data;
 				const cData: DataPoint[] = [];
@@ -60,11 +72,9 @@ export default function AdminPanel() {
 				console.log(response);
 			} catch (error: any) {
 				if (error?.response?.data?.response?.detail) {
-
 					setPopupMessage(error?.response?.data?.response?.detail);
 				} else {
-					setPopupMessage('Couldn\'t Fetch the Data');
-
+					setPopupMessage("Couldn't Fetch the Data");
 				}
 				setFPopup(true);
 			}
@@ -78,7 +88,7 @@ export default function AdminPanel() {
 		setSyncing(true);
 		try {
 			const response = await axios.get(API.get_url('admin:sync_user'));
-			setPopupMessage('Users\' Sync Successful!');
+			setPopupMessage("Users' Sync Successful!");
 			setSPopup(true);
 		} catch (error: any) {
 			console.error(error);
@@ -97,7 +107,7 @@ export default function AdminPanel() {
 				formData,
 				{
 					'Content-Type': 'multipart/form-data',
-				},
+				}
 			);
 			if (response.data?.detail) {
 				setPopupMessage(response.data.detail);
@@ -119,19 +129,18 @@ export default function AdminPanel() {
 	};
 
 	return (
-		<div className='flex flex-col w-full justify-center items-center'>
+		<div className="flex flex-col w-full justify-center items-center">
 			{syncing && (
-				<WebBackdrop message='Syncing Users, this may take a while, please be patient...' />
+				<WebBackdrop message="Syncing Users, this may take a while, please be patient..." />
 			)}
 			{sPopup && <Popup.Success message={PopupMessage} showpopup={setSPopup} />}
 			{fPopup && <Popup.Error message={PopupMessage} showpopup={setFPopup} />}
-			<div className='flex flex-col w-11/12 items-center my-5 gap-5'>
-				<h1 className='text-2xl text-center animateFadeIn'>EMS Admin Panel</h1>
-				<div className='h-96 w-full sm:p-3 sm:border sm:border-gray-300 sm:rounded-md'>
+			<div className="flex flex-col w-11/12 items-center my-5 gap-5">
+				<h1 className="text-2xl text-center animateFadeIn">EMS Admin Panel</h1>
+				<div className="h-96 w-full sm:p-3 sm:border sm:border-gray-300 sm:rounded-md">
 					<LineChart data={chartData} />
 				</div>
-				<div
-					className='flex flex-row w-full flex-grow justify-center items-center gap-4 flex-wrap sm:bg-blue-50 sm:border sm:border-blue-300 sm:py-6 sm:rounded-md'>
+				<div className="flex flex-row w-full flex-grow justify-center items-center gap-4 flex-wrap sm:bg-blue-50 sm:border sm:border-blue-300 sm:py-6 sm:rounded-md">
 					<StatsCard
 						statCount={organizedEvent}
 						statDescription={'Organised Events'}
@@ -148,8 +157,8 @@ export default function AdminPanel() {
 						statPeriod={timeInterval}
 					/>
 				</div>
-				<div className='flex flex-col w-full p-5 border border-gray-300 rounded-md'>
-					<p className='text-2xl'>Django Admin Panel</p>
+				<div className="flex flex-col w-full p-5 border border-gray-300 rounded-md">
+					<p className="text-2xl">Django Admin Panel</p>
 					<p>
 						Access all information regarding events, clubs, branches, and users
 						(students, teachers, HODs, Deans, and VC) here. You are advised to use
@@ -157,22 +166,22 @@ export default function AdminPanel() {
 					</p>
 					<Link href={djangoAdminPanel}>
 						<Button
-							size='medium'
-							type='submit'
-							variant='outlined'
+							size="medium"
+							type="submit"
+							variant="outlined"
 							style={{
 								textTransform: 'none',
 								marginTop: '1rem',
 							}}
-							color='primary'
-							className='font-roboto shadow-md w-72'>
+							color="primary"
+							className="font-roboto shadow-md w-72">
 							OPEN ADMIN PANEL
 						</Button>
 					</Link>
 				</div>
-				<div className='flex flex-col w-full items-center'>
+				<div className="flex flex-col w-full items-center">
 					<FileUploader
-						accepted_files='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/csv'
+						accepted_files="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/csv"
 						handleUpload={handleExcelUpload}
 						handleDelete={async () => {
 							return true;
@@ -182,18 +191,18 @@ export default function AdminPanel() {
 						fileSizeBytes={1024 * 1024 * 1024 * 1024}
 					/>
 					{/* <ExcelUploader eventId="1" /> */}
-					<p className='mt-2'>(or)</p>
+					<p className="mt-2">(or)</p>
 					<Button
-						size='medium'
-						type='submit'
-						variant='outlined'
+						size="medium"
+						type="submit"
+						variant="outlined"
 						onClick={() => handleSync()}
 						style={{
 							textTransform: 'none',
 							marginTop: '1rem',
 						}}
-						color='primary'
-						className='font-roboto shadow-md w-72'>
+						color="primary"
+						className="font-roboto shadow-md w-72">
 						CLICK TO SYNC USERS
 					</Button>
 				</div>

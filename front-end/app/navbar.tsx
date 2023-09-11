@@ -41,7 +41,12 @@ export default function Navbar() {
 	const [isVC, setIsVC] = useState(false);
 	useEffect(() => {
 		const role: String = localStorage.getItem('role_name') || '';
-		if (role === 'Teacher' || role === 'HOD' || role === 'Vice-Chancellor') {
+		if (
+			role === 'Teacher' ||
+			role === 'HOD' ||
+			role === 'Vice-Chancellor' ||
+			role === 'Dean'
+		) {
 			setAdmin(true);
 			if (role === 'Vice-Chancellor') {
 				setIsVC(true);

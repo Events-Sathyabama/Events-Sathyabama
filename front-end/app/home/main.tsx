@@ -8,6 +8,7 @@ import handleError from '../handleError';
 import Paginator from '../pagination';
 import useEffect from '../useEffect';
 import HomeCard from './card';
+import ImageLoader from '../loader';
 
 const axios = new API.Axios();
 
@@ -177,13 +178,13 @@ export default function Main(props: {url: string; heading: string}) {
 							))
 						) : (
 							<div className="flex flex-col justify-center items-center w-full h-[61vh] animateFadeIn">
-								<Image
+								<ImageLoader
+									component="img"
+									className="w-full h-96 animateFadeIn"
 									src="/eventsNotFound.svg"
-									width={500}
-									height={500}
-									priority
-									alt=""
-								/>
+									alt="No Events Found">
+									<div className="flex items-center w-full h-96"> </div>
+								</ImageLoader>
 								<p className="text-2xl font-light text-[#017efc] mt-4">
 									No events found!!
 								</p>
