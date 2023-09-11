@@ -39,58 +39,58 @@ export default function ProfilePage(): JSX.Element {
 		},
 		[],
 		setLoader,
-		runOnce,
+		runOnce
 	);
 
 	return (
 		<div>
 			<Navbar />
-			<div className='container mx-auto p-5 min-h-[85vh]'>
-				<div className='md:flex no-wrap md:-mx-2 '>
+			<div className="container mx-auto p-5 min-h-[85vh]">
+				<div className="md:flex no-wrap md:-mx-2 ">
 					{role === '-' ? (
-						<div className='flex flex-col justify-center items-center w-full min-h-[65vh] sm:min-h-[75vh]'>
+						<div className="flex flex-col justify-center items-center w-full min-h-[65vh] sm:min-h-[75vh]">
 							<CircularProgress />
 						</div>
 					) : null}
 					{role === 'Student' && (
-						<div className='flex w-full flex-col md:flex-row gap-3 justify-center items-center md:items-start'>
+						<div className="flex w-full flex-col md:flex-row gap-3 justify-center items-center md:items-start">
 							<Profile
 								id={id}
 								branch={branch}
 								name={fullName}
 								batch={batch}
-								role='Student'
+								role="Student"
 							/>
 							<TabsProfile.Student />
 						</div>
 					)}
 					{role === 'Teacher' && (
-						<div className='flex w-full flex-col md:flex-row gap-3 justify-center items-center md:items-start'>
-							<Profile id={id} branch={branch} name={fullName} role='Teacher' />
-							<TabsProfile.TeacherHODVC />
+						<div className="flex w-full flex-col md:flex-row gap-3 justify-center items-center md:items-start">
+							<Profile id={id} branch={branch} name={fullName} role="Teacher" />
+							<TabsProfile.Teacher />
 						</div>
 					)}
 					{role === 'HOD' && (
-						<div className='flex w-full flex-col md:flex-row gap-3 justify-center items-center md:items-start'>
-							<Profile id={id} branch={branch} name={fullName} role='HOD' />
-							<TabsProfile.TeacherHODVC />
+						<div className="flex w-full flex-col md:flex-row gap-3 justify-center items-center md:items-start">
+							<Profile id={id} branch={branch} name={fullName} role="HOD" />
+							<TabsProfile.HOD_VC_DEAN />
 						</div>
 					)}
 					{role === 'Dean' && (
-						<div className='flex w-full flex-col md:flex-row gap-3 justify-center items-center md:items-start'>
-							<Profile id={id} branch={branch} name={fullName} role='Dean' />
-							<TabsProfile.TeacherHODVC />
+						<div className="flex w-full flex-col md:flex-row gap-3 justify-center items-center md:items-start">
+							<Profile id={id} branch={branch} name={fullName} role="Dean" />
+							<TabsProfile.HOD_VC_DEAN />
 						</div>
 					)}
 					{role === 'Vice-Chancellor' && (
-						<div className='flex w-full flex-col md:flex-row gap-3 justify-center items-center md:items-start'>
+						<div className="flex w-full flex-col md:flex-row gap-3 justify-center items-center md:items-start">
 							<Profile
 								id={id}
 								branch={branch}
 								name={fullName}
-								role='Vice-Chancellor'
+								role="Vice-Chancellor"
 							/>
-							<TabsProfile.TeacherHODVC />
+							<TabsProfile.HOD_VC_DEAN />
 						</div>
 					)}
 				</div>
