@@ -6,7 +6,7 @@
 	"crons": [
 		{
 			"path": "/change_event_status_to_complete?sync_backend_db_to_updated=true",
-			"schedule": "* * * * *"
+			"schedule": "1 0 * * *"
 		}
 	]
 }
