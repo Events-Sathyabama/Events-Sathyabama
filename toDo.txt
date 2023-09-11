@@ -1,1 +1,5 @@
 - Assign Approval Lock for Pre-Production Branch
+
+Enhancements
+- Sign Out Transition
+- Network Error Handle in Front-End
