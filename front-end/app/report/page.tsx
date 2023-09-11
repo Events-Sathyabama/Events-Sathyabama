@@ -229,7 +229,7 @@ export default function Report() {
 								TypeScript, Tailwind CSS, Material UI, Django, Django REST Framework,
 								JWT or MySQL. Kindly click on this
 								<a
-									href="https://github.com/Surya-Kumar-03/Event-Management"
+									href="https://github.com/Events-Sathyabama/Events-Sathyabama"
 									target="_blank"
 									className="mx-1 cursor-pointer underline text-blue-600 hover:text-red-700 transition-all duration-750">
 									link
