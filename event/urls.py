@@ -35,6 +35,8 @@ urlpatterns = [
 
     path('report/approve/<int:event_id>/', views.approve_report),
     path('report/deny/<int:event_id>/', views.deny_report),
+    path('change_event_status_to_complete/',
+         views.change_event_status_to_complete),
 
 
 ]
