@@ -5,8 +5,8 @@
 	"installCommand": "npm install",
 	"crons": [
 		{
-			"path": "@BACKEND_URL/api/event/change_event_status_to_complete",
-			"schedule": "0 0 * * *"
+			"path": "/change_event_status_to_complete?sync_backend_db_to_updated=true",
+			"schedule": "* * * * *"
 		}
 	]
 }
