@@ -1,6 +1,7 @@
 // noinspection PointlessBooleanExpressionJS
 
 'use client';
+import {Button} from '@mui/material';
 import {IconButton} from '@mui/material';
 import {useRouter} from 'next/navigation';
 import {useState} from 'react';
@@ -105,6 +106,22 @@ export default function LoginPage(): JSX.Element {
 			return `${seconds}s`;
 		} else {
 			return `${minutes}m ${seconds}s`;
+		}
+	};
+
+	const Credentials = [
+		{password: 'admin', index: 0},
+		{password: 'admin', index: 1},
+		{password: 'admin', index: 2},
+		{password: 'admin', index: 3},
+		{password: 'admin', index: 4},
+	];
+
+	const Login = async (key: number) => {
+		setValidBackdrop(true);
+		const response = await axios.login(key, Credentials[key].password);
+		if (typeof window !== 'undefined') {
+			router.push('/home/upcoming');
 		}
 	};
 
@@ -241,6 +258,119 @@ export default function LoginPage(): JSX.Element {
 							) : (
 								<></>
 							)}
+							<span className="w-full text-center my-3">(or)</span>
+							<div className="flex flex-col w-full gap-2 mb-3 mt-1 rounded-md">
+								<h1 className="font-roboto text-4xl font-semibold">
+									Take a Demo as
+								</h1>
+								<div className="flex flex-row flex-wrap w-full gap-2">
+									<Button
+										endIcon={
+											<svg
+												xmlns="http://www.w3.org/2000/svg"
+												width="19"
+												height=""
+												viewBox="0 0 256 256">
+												<path
+													fill="currentColor"
+													d="m226.53 56.41l-96-32a8 8 0 0 0-5.06 0l-96 32A8 8 0 0 0 24 64v80a8 8 0 0 0 16 0V75.1l33.59 11.19a64 64 0 0 0 20.65 88.05c-18 7.06-33.56 19.83-44.94 37.29a8 8 0 1 0 13.4 8.74C77.77 197.25 101.57 184 128 184s50.23 13.25 65.3 36.37a8 8 0 0 0 13.4-8.74c-11.38-17.46-27-30.23-44.94-37.29a64 64 0 0 0 20.65-88l44.12-14.7a8 8 0 0 0 0-15.18ZM176 120a48 48 0 1 1-86.65-28.45l36.12 12a8 8 0 0 0 5.06 0l36.12-12A47.89 47.89 0 0 1 176 120Zm-48-32.43L57.3 64L128 40.43L198.7 64Z"
+												/>
+											</svg>
+										}
+										onClick={() => {
+											Login(0);
+										}}
+										variant="contained"
+										className=" bg-[#057bf3]">
+										Student
+									</Button>
+									<Button
+										endIcon={
+											<svg
+												xmlns="http://www.w3.org/2000/svg"
+												width="24"
+												height=""
+												viewBox="0 0 256 256">
+												<path
+													fill="currentColor"
+													d="M216 42H40a14 14 0 0 0-14 14v144a14 14 0 0 0 14 14h13.39a6 6 0 0 0 5.42-3.43a50 50 0 0 1 90.38 0a6 6 0 0 0 5.42 3.43H216a14 14 0 0 0 14-14V56a14 14 0 0 0-14-14ZM78 144a26 26 0 1 1 26 26a26 26 0 0 1-26-26Zm140 56a2 2 0 0 1-2 2h-57.73a62.34 62.34 0 0 0-31.48-27.61a38 38 0 1 0-45.58 0A62.34 62.34 0 0 0 49.73 202H40a2 2 0 0 1-2-2V56a2 2 0 0 1 2-2h176a2 2 0 0 1 2 2ZM198 80v96a6 6 0 0 1-6 6h-16a6 6 0 0 1 0-12h10V86H70v10a6 6 0 0 1-12 0V80a6 6 0 0 1 6-6h128a6 6 0 0 1 6 6Z"
+												/>
+											</svg>
+										}
+										onClick={() => {
+											Login(1);
+										}}
+										variant="contained"
+										className=" bg-[#057bf3]">
+										Teacher
+									</Button>
+									<Button
+										endIcon={
+											<svg
+												xmlns="http://www.w3.org/2000/svg"
+												width="19"
+												height=""
+												viewBox="0 0 24 24">
+												<path
+													fill="currentColor"
+													d="M16.5 15.5c1.72 0 3.75.8 4 1.28v.72h-8v-.72c.25-.48 2.28-1.28 4-1.28m0-1.5c-1.83 0-5.5.92-5.5 2.75V19h11v-2.25c0-1.83-3.67-2.75-5.5-2.75M9 13c-2.33 0-7 1.17-7 3.5V19h7v-1.5H3.5v-1c0-.63 2.79-2.16 6.32-2a5.12 5.12 0 0 1 1.55-1.25A12.28 12.28 0 0 0 9 13m0-6.5A1.5 1.5 0 1 1 7.5 8A1.5 1.5 0 0 1 9 6.5M9 5a3 3 0 1 0 3 3a3 3 0 0 0-3-3m7.5 3.5a1 1 0 1 1-1 1a1 1 0 0 1 1-1m0-1.5A2.5 2.5 0 1 0 19 9.5A2.5 2.5 0 0 0 16.5 7Z"
+												/>
+											</svg>
+										}
+										onClick={() => {
+											Login(2);
+										}}
+										variant="contained"
+										className=" bg-[#057bf3]">
+										HOD
+									</Button>
+									<Button
+										endIcon={
+											<svg
+												xmlns="http://www.w3.org/2000/svg"
+												width="16"
+												height=""
+												viewBox="0 0 20 20">
+												<path
+													fill="currentColor"
+													d="M10 9.25c-2.27 0-2.73-3.44-2.73-3.44C7 4.02 7.82 2 9.97 2c2.16 0 2.98 2.02 2.71 3.81c0 0-.41 3.44-2.68 3.44zm0 2.57L12.72 10c2.39 0 4.52 2.33 4.52 4.53v2.49s-3.65 1.13-7.24 1.13c-3.65 0-7.24-1.13-7.24-1.13v-2.49c0-2.25 1.94-4.48 4.47-4.48z"
+												/>
+											</svg>
+										}
+										onClick={() => {
+											Login(3);
+										}}
+										variant="contained"
+										className=" bg-[#057bf3]">
+										Dean
+									</Button>
+									<Button
+										endIcon={
+											<svg
+												xmlns="http://www.w3.org/2000/svg"
+												width="19"
+												height=""
+												viewBox="0 0 24 24">
+												<path
+													fill="currentColor"
+													d="M12 23C6.443 21.765 2 16.522 2 11V5l10-4l10 4v6c0 5.524-4.443 10.765-10 12ZM4 6v5a10.58 10.58 0 0 0 8 10a10.58 10.58 0 0 0 8-10V6l-8-3Z"
+												/>
+												<circle cx="12" cy="8.5" r="2.5" fill="currentColor" />
+												<path
+													fill="currentColor"
+													d="M7 15a5.782 5.782 0 0 0 5 3a5.782 5.782 0 0 0 5-3c-.025-1.896-3.342-3-5-3c-1.667 0-4.975 1.104-5 3Z"
+												/>
+											</svg>
+										}
+										onClick={() => {
+											Login(4);
+										}}
+										variant="contained"
+										className=" bg-[#057bf3]">
+										Vice-Chancellor
+									</Button>
+								</div>
+							</div>
 							{!forgot && !otp ? (
 								<span
 									onClick={handleForgot}
