@@ -72,6 +72,7 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'cloudinary_storage',
     'django.contrib.staticfiles',
     'whitenoise.runserver_nostatic',
     'corsheaders',
@@ -84,7 +85,6 @@ INSTALLED_APPS = [
     'mail',
     'django_cleanup.apps.CleanupConfig',
     'adminpanel',
-    'cloudinary_storage',
     'cloudinary'
 
 ]
@@ -206,7 +206,7 @@ USE_TZ = True
 STATIC_URL = 'static/'
 STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+STATICFILES_STORAGE = 'cloudinary_storage.storage.StaticHashedCloudinaryStorage'
 
 
 # Default primary key field type

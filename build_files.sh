@@ -1,3 +1,4 @@
+
 python3.9 -m pip install -r requirements.txt 
 python3.9 manage.py migrate
 python3.9 manage.py collectstatic --noinput --clear
@@ -10,3 +11,8 @@ if [ -z "$MYSQL_DATABASE" ] || [ "${MYSQL_DATABASE,,}" != "true" ] && [ -z "$POS
 else
     echo "MYSQL_DATABASE and POSTGRES_DATABASE are set or at least one of them is set to true, so the superuser creation is skipped."
 fi
+echo "Removing all unrequired files"
+rm -r .git
+rm -r .vscode
+rm -r .idea
+rm -r front-end
