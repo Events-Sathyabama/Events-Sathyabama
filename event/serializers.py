@@ -42,7 +42,7 @@ class BaseEventDetailSerializer(serializers.ModelSerializer):
     long_description = serializers.SerializerMethodField()
 
     organizer = user_serializer.OrganizerSerializer(many=True)
-    owner = user_serializer.UserDetail()
+    owner = user_serializer.OrganizerSerializer(source='event.owner')
 
     applied_count = serializers.SerializerMethodField()
     accepted_count = serializers.SerializerMethodField()
