@@ -255,21 +255,21 @@ OTP_VALIDITY_DURATION = 5 * 60  # in seconds
 
 GIT_BUG_REPORT_API_KEY = config('GIT_BUG_REPORT_API_KEY', cast=str)
 
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'file': {
-            'level': 'DEBUG',  # Set the desired logging level
-            'class': 'logging.FileHandler',
-            'filename': 'db_queries.log',  # Set the file path for logging
-        },
-    },
-    'loggers': {
-        'django.db.backends': {
-            'level': 'DEBUG',
-            'handlers': ['file'],
-            'propagate': False,
-        },
-    },
-}
+# LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': False,
+#     'handlers': {
+#         'file': {
+#             'level': 'DEBUG',  # Set the desired logging level
+#             'class': 'logging.FileHandler',
+#             'filename': 'db_queries.log',  # Set the file path for logging
+#         },
+#     },
+#     'loggers': {
+#         'django.db.backends': {
+#             'level': 'DEBUG',
+#             'handlers': ['file'],
+#             'propagate': False,
+#         },
+#     },
+# }
