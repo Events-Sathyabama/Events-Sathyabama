@@ -248,7 +248,7 @@ export default function LoginPage(): JSX.Element {
 										className="text-blue-600 w-max cursor-pointer font-roboto text-sm hover:underline">
 										Forgot Password?
 									</span>
-									<a href="" target="_blank">
+									<a href="https://youtu.be/iLgYvN-qO4c" target="_blank">
 										<span className="text-blue-600 w-max cursor-pointer font-roboto text-sm hover:underline mr-1">
 											Watch Demo Video
 										</span>
