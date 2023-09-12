@@ -22,6 +22,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
 from io import BytesIO
 import os
 from PIL import Image
+from django.conf import settings
 from .permissions import (IsStudent,
                           IsTeacher,
                           IsHOD,
@@ -727,7 +728,7 @@ def approve_report(request, event_id):
 @permission_classes([AllowAny])
 def change_event_status_to_complete(request):
     get_param = request.GET.get('run_cron_job', '')
-    if get_param.lower() != 'true':
+    if get_param != settings.CRON_SECRET:
         raise Http404()
     events = Event.objects.filter(
         status=2,
