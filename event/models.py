@@ -38,7 +38,7 @@ def default_accepted_role():
 def FileToLarge(value):
     size_in_mb = 10
     limit = size_in_mb * 1024 * 1024
-    if value.size > limit:
+    if value.size is not None and value.size > limit:
         raise ValidationError(event.report_file_limit.format(size_in_mb))
 
 
