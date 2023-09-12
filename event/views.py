@@ -22,6 +22,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
 from io import BytesIO
 import os
 from PIL import Image
+from django.conf import settings
 from .permissions import (IsStudent,
                           IsTeacher,
                           IsHOD,
@@ -360,11 +361,12 @@ def application_approval(request, event_id):
     for user_id, status in data_dict.items():
         participant = participant_dict.get(user_id)
         if participant:
-            if accepted_count >= event.total_strength:
-                status = '1'
-                application_overflow = True
             if status == '3':
                 accepted_count += 1
+            if accepted_count > event.total_strength:
+                status = '2'
+                accepted_count -= 1
+                application_overflow = True
             participant.status = status
             participants_to_update.append(participant)
 
@@ -374,7 +376,7 @@ def application_approval(request, event_id):
             participants_to_update,
             fields=['status']
         )
-    detail_message = message.application_approval.success if application_overflow is False else message.application_approval.application_overflow
+    detail_message = message.application_approval.success if application_overflow is False else message.application_approval.application_overflow.format(accepted_count)
     return Response({'detail': detail_message}, status=200 if application_overflow is False else 409)
 
 
@@ -727,12 +729,12 @@ def approve_report(request, event_id):
 @permission_classes([AllowAny])
 def change_event_status_to_complete(request):
     get_param = request.GET.get('run_cron_job', '')
-    if get_param.lower() != 'true':
+    if get_param != settings.CRON_SECRET:
         raise Http404()
     events = Event.objects.filter(
         status=2,
-        start_date__lt=timezone.now() + timzone.timedelta(hours=5, minutes=30),
-        end_date__lt=timezone.now() + timzone.timedelta(hours=5, minutes=30)
+        start_date__lt=timezone.now() + timezone.timedelta(hours=5, minutes=30),
+        end_date__lt=timezone.now() + timezone.timedelta(hours=5, minutes=30)
     )
     for event in events:
         event.create_timeline(level=5, user=Portal_User, status=2)

@@ -269,6 +269,8 @@ MEDIA_ROOT = BASE_DIR / 'media'
 MEDIA_URL = '/media/'
 
 
+CRON_SECRET=config('CRON_SECRET', default='')
+
 
 # LOGGING = {
 #     'version': 1,
