@@ -64,7 +64,7 @@ export default function ProfileCards(props: {
 	description?: string;
 	failed?: number;
 	failedLabel?: string | string[];
-	variant?: string;
+	variant?: 'organiser' | '';
 	history?: TimeLineHistory[];
 }) {
 	const [expanded, setExpanded] = React.useState(false);
@@ -123,15 +123,19 @@ export default function ProfileCards(props: {
 					title={
 						<div className="flex flex-row items-center">
 							<span>{props.title}</span>
-							<span className="text-sm p-1 pb-0 rounded-sm text-[#017efc]">{`(${props.eventStatus})`}</span>
+							{props.variant === 'organiser' && (
+								<span className="text-sm p-1 pb-0 rounded-sm text-[#017efc]">{`(${props.eventStatus})`}</span>
+							)}
 						</div>
 					}
 					subheader={
 						<div className="flex flex-col">
 							<p>{props.club}</p>
-							<p className={isRejected ? 'text-red-600' : 'text-[#017efc]'}>
-								{label}
-							</p>
+							{props.variant === 'organiser' && (
+								<p className={isRejected ? 'text-red-600' : 'text-[#017efc]'}>
+									{label}
+								</p>
+							)}
 						</div>
 					}
 				/>
