@@ -202,6 +202,8 @@ class EventUpdate(generics.UpdateAPIView):
                     key = [x.capitalize() for x in key.split('-')]
                     key = " ".join(key)
                     return Response(data={'detail': msg.fields_not_changed_after_approved.format(key)}, status=400)
+            if int(data.get('total_strength', event.accepted_participant.count())) < event.accepted_participant.count():
+                return Response(data={'detail': msg.total_strength_too_short.format(event.accepted_participant.count())}, status=400)
         request._data = data
         return super().patch(request, *args, **kwargs)
 

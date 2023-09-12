@@ -11,6 +11,7 @@ class Message:
     class event_update:
         event_is_completed = 'Event cannot be updated at this point of time'
         fields_not_changed_after_approved = "'{0}' Fields cannot be changed after approval"
+        total_strength_too_short = "Total Strength can't be less than current Participant count ({0})"
 
     class applicaition_approval:
         success = 'Application Updated!!'
