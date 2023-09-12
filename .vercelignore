@@ -1,7 +1,6 @@
 front-end/*
 front-end/**
 .dockerignore
-**/static/**
 db.sqlite3db_queries.log
 Procfile
 README.media
