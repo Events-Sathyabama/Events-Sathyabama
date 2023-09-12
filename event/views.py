@@ -220,7 +220,7 @@ class RegisteredEvent(generics.ListAPIView):
         q = (Q(participants__id=self.request.user.pk)
              & Q(eventparticipant__owner=False)
              & Q(eventparticipant__organizer=False)
-             & Q(status__gte=2)
+             & Q(status=2)
              & Q(eventparticipant__status__in=['3', '2', '1'])
              )
         event = Event.objects.filter(q)
@@ -734,6 +734,8 @@ def change_event_status_to_complete(request):
         start_date__lt=timezone.now(),
         end_date__lt=timezone.now()
     )
+    event.create_timeline(level=5, user=Portal_User, status=2)
+    event.create_timeline(level=6, user=Portal_User, status=2)
     for event in events:
         event.status = 3
     with transaction.atomic():
