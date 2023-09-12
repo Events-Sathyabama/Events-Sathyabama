@@ -1,7 +1,0 @@
-front-end/*
-front-end/**
-.dockerignore
-db.sqlite3db_queries.log
-Procfile
-README.media
-create_dumy_user.py
