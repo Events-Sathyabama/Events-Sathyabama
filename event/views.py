@@ -731,12 +731,12 @@ def change_event_status_to_complete(request):
         raise Http404()
     events = Event.objects.filter(
         status=2,
-        start_date__lt=timezone.now(),
-        end_date__lt=timezone.now()
+        start_date__lt=timezone.now() + timzone.timedelta(hours=5, minutes=30),
+        end_date__lt=timezone.now() + timzone.timedelta(hours=5, minutes=30)
     )
-    event.create_timeline(level=5, user=Portal_User, status=2)
-    event.create_timeline(level=6, user=Portal_User, status=2)
     for event in events:
+        event.create_timeline(level=5, user=Portal_User, status=2)
+        event.create_timeline(level=6, user=Portal_User, status=2)
         event.status = 3
     with transaction.atomic():
         Event.objects.bulk_update(events, fields=['status'])
