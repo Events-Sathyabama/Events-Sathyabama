@@ -13,8 +13,9 @@ class Message:
         fields_not_changed_after_approved = "'{0}' Fields cannot be changed after approval"
         total_strength_too_short = "Total Strength can't be less than current Participant count ({0})"
 
-    class applicaition_approval:
+    class application_approval:
         success = 'Application Updated!!'
+        application_overflow = "Some applicants were not accpeted: Maximum strength reached"
 
     class event_approval:
         forbidden = 'Operation Not Allowed!!'
