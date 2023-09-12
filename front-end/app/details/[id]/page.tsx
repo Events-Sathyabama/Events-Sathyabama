@@ -96,7 +96,7 @@ export default function details(props: {params: {id: number}}) {
 			const endDate = new Date(data.end_date);
 			const currentDate = new Date();
 			setCompleted(endDate.getTime() <= currentDate.getTime());
-			setAppliedCount(data.applied_count);
+			setAppliedCount(data.accepted_count); //using accepted count to make it work for fcfs
 			setTotalStrenth(data.total_strength);
 
 			setData(data);

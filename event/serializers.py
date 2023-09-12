@@ -42,7 +42,7 @@ class BaseEventDetailSerializer(serializers.ModelSerializer):
     long_description = serializers.SerializerMethodField()
 
     organizer = user_serializer.OrganizerSerializer(many=True)
-    owner = user_serializer.OwnerSerializer()
+    owner = user_serializer.UserDetail()
 
     applied_count = serializers.SerializerMethodField()
     accepted_count = serializers.SerializerMethodField()
@@ -113,7 +113,6 @@ class BaseEventDetailSerializer(serializers.ModelSerializer):
             'accepted_count',
             "organizer",
             "branch",
-            "accepted_count",
             "total_strength",
             "image",
             "title",

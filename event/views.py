@@ -262,7 +262,7 @@ class OrganizingEvent(generics.ListAPIView):
              & Q(status__in=[1, 2])
 
              )
-        event = Event.objects.filter(q)
+        event = Event.objects.filter(q).order_by('-pk')
         return event
 
     def get_serializer_context(self):
@@ -330,8 +330,15 @@ class ParticipantList(generics.ListAPIView):
 @is_authenticated
 @is_event_organizer
 def application_approval(request, event_id):
-    data_dict = {data.get('pk'): '3' if data.get(
-        'status') == 1 else '1' for data in request.data}
+    data_dict = {}
+    for data in request.data:
+        if data.get('status') == 1:
+            data_dict[data.get('pk')] = '3'
+        elif data.get('status') == -1:
+            data_dict[data.get('pk')] = '1'
+        else:
+            data_dict[data.get('pk')] = '2'
+    
     participants_to_update = []
 
     # Fetch the existing participants from the database
@@ -339,7 +346,7 @@ def application_approval(request, event_id):
         user_id__in=data_dict.keys(), event=event_id, owner=False, organizer=False)
     participant_dict = {
         participant.user_id: participant for participant in existing_participants}
-
+    print(participant_dict)
     # Update the statuses and store them in the list
     for user_id, status in data_dict.items():
         participant = participant_dict.get(user_id)
