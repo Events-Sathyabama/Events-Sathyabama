@@ -36,7 +36,7 @@ class GetOrganizer(generics.ListAPIView, PermissionDenyStudentMixin):
 
     def get_active_user_query(self):
         return (Q(is_active=True) &
-                Q(role__in=[0, 1, 2, 3]) &
+                Q(role__in=[0, 1, 2, 3, 4]) &
                 ~Q(pk=self.request.user.pk))
 
     def get_queryset(self, *args, **kwargs):

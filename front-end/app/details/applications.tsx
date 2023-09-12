@@ -19,6 +19,7 @@ export default function Applications(props: ApplicationProps) {
 
 	async function submitApplications() {
 		// TODO set the popup messages.
+		console.log(updatedApplications);
 		try {
 			const response = await axios.post(
 				API.get_url('event:update_application', props.eventId),
