@@ -731,8 +731,8 @@ def change_event_status_to_complete(request):
         raise Http404()
     events = Event.objects.filter(
         status=2,
-        start_date__lt=timezone.now() + timzone.timedelta(hours=5, minutes=30),
-        end_date__lt=timezone.now() + timzone.timedelta(hours=5, minutes=30)
+        start_date__lt=timezone.now() + timezone.timedelta(hours=5, minutes=30),
+        end_date__lt=timezone.now() + timezone.timedelta(hours=5, minutes=30)
     )
     for event in events:
         event.create_timeline(level=5, user=Portal_User, status=2)
