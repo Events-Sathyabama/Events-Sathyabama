@@ -32,7 +32,7 @@ const activeStatus = (history: any) => {
 	if (waitingLabel[currentStep] !== '') {
 		label = waitingLabel[currentStep];
 	}
-	if (history && history[currentStep].status === -1) {
+	if (history && currentStep <= 9 && history[currentStep].status === -1) {
 		isRejected = true;
 		label = history[currentStep].failure_title;
 	}

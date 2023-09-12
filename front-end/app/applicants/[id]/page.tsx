@@ -249,7 +249,7 @@ export default function Applicants(props: {params: {id: number}}) {
 					rowsPerPageOptions={[10, 25, 100]}
 					component="div"
 					count={rows.length}
-					className="fixed bottom-0 right-0"
+					className="fixed bottom-0 right-0 bg-white w-full border-t-2 border-blue-300"
 					rowsPerPage={rowsPerPage}
 					page={page}
 					onPageChange={handleChangePage}
