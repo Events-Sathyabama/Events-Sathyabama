@@ -83,7 +83,9 @@ INSTALLED_APPS = [
     'event',
     'mail',
     'django_cleanup.apps.CleanupConfig',
-    'adminpanel'
+    'adminpanel',
+    'cloudinary_storage',
+    'cloudinary'
 
 ]
 
@@ -206,8 +208,6 @@ STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
-MEDIA_ROOT = BASE_DIR / 'media'
-MEDIA_URL = '/media/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
@@ -254,6 +254,21 @@ EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 OTP_VALIDITY_DURATION = 5 * 60  # in seconds
 
 GIT_BUG_REPORT_API_KEY = config('GIT_BUG_REPORT_API_KEY', cast=str)
+
+
+if config('ENABLE_CLOUD_STORAGE', cast=bool, default=False) is True:
+    CLOUDINARY_STORAGE = {
+        'CLOUD_NAME': config('CLOUD_NAME'),
+        'API_KEY': config('API_KEY'),
+        'API_SECRET': config('API_SECRET')
+    }
+    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+
+MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_URL = '/media/'
+
+
 
 # LOGGING = {
 #     'version': 1,
