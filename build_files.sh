@@ -1,7 +1,7 @@
 
 python3.9 -m pip install -r requirements.txt 
 python3.9 manage.py migrate
-python3.9 manage.py collectstatic --noinput --clear
+python3.9 manage.py collectstatic --noinput
 echo "MYSQL_DATABASE: ${MYSQL_DATABASE,,}"
 echo "POSTGRES_DATABASE: ${POSTGRES_DATABASE,,}"
 if [ -z "$MYSQL_DATABASE" ] || [ "${MYSQL_DATABASE,,}" != "true" ] && [ -z "$POSTGRES_DATABASE" ] || [ "${POSTGRES_DATABASE,,}" != "true" ]; then
