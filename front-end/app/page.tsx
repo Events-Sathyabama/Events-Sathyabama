@@ -242,11 +242,18 @@ export default function LoginPage(): JSX.Element {
 								<></>
 							)}
 							{!forgot && !otp ? (
-								<span
-									onClick={handleForgot}
-									className="text-blue-600 mt-2 cursor-pointer font-roboto text-sm hover:underline">
-									Forgot Password?
-								</span>
+								<div className="flex flex-row mt-2 justify-between items-center w-full">
+									<span
+										onClick={handleForgot}
+										className="text-blue-600 w-max cursor-pointer font-roboto text-sm hover:underline">
+										Forgot Password?
+									</span>
+									<a href="" target="_blank">
+										<span className="text-blue-600 w-max cursor-pointer font-roboto text-sm hover:underline mr-1">
+											Watch Demo Video
+										</span>
+									</a>
+								</div>
 							) : (
 								<></>
 							)}
