@@ -361,11 +361,12 @@ def application_approval(request, event_id):
     for user_id, status in data_dict.items():
         participant = participant_dict.get(user_id)
         if participant:
-            if accepted_count >= event.total_strength:
-                status = '1'
-                application_overflow = True
             if status == '3':
                 accepted_count += 1
+            if accepted_count > event.total_strength:
+                status = '2'
+                accepted_count -= 1
+                application_overflow = True
             participant.status = status
             participants_to_update.append(participant)
 
@@ -375,7 +376,7 @@ def application_approval(request, event_id):
             participants_to_update,
             fields=['status']
         )
-    detail_message = message.application_approval.success if application_overflow is False else message.application_approval.application_overflow
+    detail_message = message.application_approval.success if application_overflow is False else message.application_approval.application_overflow.format(accepted_count)
     return Response({'detail': detail_message}, status=200 if application_overflow is False else 409)
 
 
