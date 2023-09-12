@@ -77,8 +77,8 @@ export default function Applications(props: ApplicationProps) {
 						className="flex flex-row w-full px-4 justify-between items-center mt-3 border-0 border-b pb-2">
 						<span className="text-lg p-2 w-9/12 mr-2">
 							{applicant.name}
-							<span className="text-blue-800 underline pl-2">
-								({applicant.college_id})
+							<span className="text-blue-800 pl-2">
+								[{applicant.college_id}]
 							</span>
 						</span>
 						{applicant.status === 0 && (
