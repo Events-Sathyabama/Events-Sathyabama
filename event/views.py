@@ -741,5 +741,5 @@ def change_event_status_to_complete(request):
         event.create_timeline(level=6, user=Portal_User, status=2)
         event.status = 3
     with transaction.atomic():
-        Event.objects.bulk_update(events, fields=['status'])
+        Event.objects.bulk_update(events, fields=['status','history'])
     return Response(data={'detail': 'Sync Success'}, status=200)
