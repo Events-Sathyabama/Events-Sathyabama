@@ -258,15 +258,19 @@ class Event(models.Model):
                 'owner': None,
                 'organizer': FakeQuerySet(Event, []),
                 'involved_user': FakeQuerySet(Event, []),
+                'all_participant': FakeQuerySet(Event, []),
             }
 
             for participant in all_participant:
                 if participant.status == '3':
                     data['accepted'].data.append(participant)
+                    data['all_participant'].data.append(participant)
                 elif participant.status == '2':
                     data['applied'].data.append(participant)
+                    data['all_participant'].data.append(participant)
                 elif participant.status == '1':
                     data['declined'].data.append(participant)
+                    data['all_participant'].data.append(participant)
                 if participant.owner:
                     data['owner'] = participant.user
                 if participant.organizer:
@@ -276,6 +280,10 @@ class Event(models.Model):
             self._participants_dict = data
 
         return self._participants_dict
+
+    @property
+    def all_participant(self):
+        return self.get_participant_data()['all_participant']
 
     @property
     def involved_user(self):

@@ -335,24 +335,36 @@ def application_approval(request, event_id):
     data_dict = {}
     for data in request.data:
         if data.get('status') == 1:
-            data_dict[data.get('pk')] = '3'
+            data_dict[data.get('pk')] = '3'  # accept
         elif data.get('status') == -1:
-            data_dict[data.get('pk')] = '1'
+            data_dict[data.get('pk')] = '1'  # Decliined
         else:
-            data_dict[data.get('pk')] = '2'
-    
+            data_dict[data.get('pk')] = '2'  # Applied
+
     participants_to_update = []
 
     # Fetch the existing participants from the database
-    existing_participants = EventParticipant.objects.filter(
-        user_id__in=data_dict.keys(), event=event_id, owner=False, organizer=False)
+    event = Event.objects.filter(pk=event_id)
+    if not event.exists():
+        return Response(data={'detail': 'No Event Found'}, status=404)
+    event = event.first()
+
+    existing_participants = event.all_participant
+
     participant_dict = {
         participant.user_id: participant for participant in existing_participants}
-    print(participant_dict)
     # Update the statuses and store them in the list
+
+    accepted_count = 0
+    application_overflow = False
     for user_id, status in data_dict.items():
         participant = participant_dict.get(user_id)
         if participant:
+            if accepted_count >= event.total_strength:
+                status = '1'
+                application_overflow = True
+            if status == '3':
+                accepted_count += 1
             participant.status = status
             participants_to_update.append(participant)
 
@@ -362,7 +374,8 @@ def application_approval(request, event_id):
             participants_to_update,
             fields=['status']
         )
-    return Response({'detail': message.applicaition_approval.success, 'status': 200})
+    detail_message = message.application_approval.success if application_overflow is False else message.application_approval.application_overflow
+    return Response({'detail': detail_message}, status=200 if application_overflow is False else 409)
 
 
 @api_view(['POST'])
