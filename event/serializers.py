@@ -167,7 +167,10 @@ class BaseEventDetailSerializer(serializers.ModelSerializer):
         format = "%d %b '%y"
         if obj.start_date is None or obj.end_date is None:
             return ''
-        return f"{obj.start_date.strftime(format)} - {obj.start_date.strftime(format)}"
+        if obj.date:
+            return obj.date
+
+        return f"{obj.start_date.strftime(format)} - {obj.end_date.strftime(format)}"
 
 
 class EventDetailSerializerStudent(BaseEventDetailSerializer):
