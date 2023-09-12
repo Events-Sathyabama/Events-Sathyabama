@@ -326,9 +326,33 @@ class EventUpdateSerializer(EventCreateSerializer):
         instance = super().save(**kwargs)
         instance.clear_timeline()  # Run create_timeline() function
         instance.rejected = False
+
         instance.save()
 
+        self.accept_if_fcfs(instance)
+
         return instance
+
+    def accept_if_fcfs(self, event):
+        if event.fcfs is False:
+            return
+        if event.applied_participant.count() == 0:
+            return
+        seats_left = event.total_strength - event.accepted_participant.count()
+        to_update = []
+        for participant in event.applied_participant:
+            if seats_left <= 0:
+                break
+            seats_left -= 1
+            participant.status = '3'
+            to_update.append(participant)
+
+        with transaction.atomic():
+            EventParticipant.objects.bulk_update(
+                to_update,
+                fields=['status']
+            )
+        return
 
 
 class EventProgressSerializer(serializers.ModelSerializer):
