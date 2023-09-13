@@ -42,7 +42,7 @@ class BaseEventDetailSerializer(serializers.ModelSerializer):
     long_description = serializers.SerializerMethodField()
 
     organizer = user_serializer.OrganizerSerializer(many=True)
-    owner = user_serializer.UserDetail()
+    owner = user_serializer.OwnerSerializer()
 
     applied_count = serializers.SerializerMethodField()
     accepted_count = serializers.SerializerMethodField()
@@ -167,7 +167,10 @@ class BaseEventDetailSerializer(serializers.ModelSerializer):
         format = "%d %b '%y"
         if obj.start_date is None or obj.end_date is None:
             return ''
-        return f"{obj.start_date.strftime(format)} - {obj.start_date.strftime(format)}"
+        if obj.date:
+            return obj.date
+
+        return f"{obj.start_date.strftime(format)} - {obj.end_date.strftime(format)}"
 
 
 class EventDetailSerializerStudent(BaseEventDetailSerializer):
@@ -326,9 +329,33 @@ class EventUpdateSerializer(EventCreateSerializer):
         instance = super().save(**kwargs)
         instance.clear_timeline()  # Run create_timeline() function
         instance.rejected = False
+
         instance.save()
 
+        self.accept_if_fcfs(instance)
+
         return instance
+
+    def accept_if_fcfs(self, event):
+        if event.fcfs is False:
+            return
+        if event.applied_participant.count() == 0:
+            return
+        seats_left = event.total_strength - event.accepted_participant.count()
+        to_update = []
+        for participant in event.applied_participant:
+            if seats_left <= 0:
+                break
+            seats_left -= 1
+            participant.status = '3'
+            to_update.append(participant)
+
+        with transaction.atomic():
+            EventParticipant.objects.bulk_update(
+                to_update,
+                fields=['status']
+            )
+        return
 
 
 class EventProgressSerializer(serializers.ModelSerializer):

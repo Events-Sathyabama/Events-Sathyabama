@@ -72,6 +72,7 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'cloudinary_storage',
     'django.contrib.staticfiles',
     'whitenoise.runserver_nostatic',
     'corsheaders',
@@ -83,7 +84,8 @@ INSTALLED_APPS = [
     'event',
     'mail',
     'django_cleanup.apps.CleanupConfig',
-    'adminpanel'
+    'adminpanel',
+    'cloudinary'
 
 ]
 
@@ -204,10 +206,8 @@ USE_TZ = True
 STATIC_URL = 'static/'
 STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+STATICFILES_STORAGE = 'cloudinary_storage.storage.StaticHashedCloudinaryStorage'
 
-MEDIA_ROOT = BASE_DIR / 'media'
-MEDIA_URL = '/media/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
@@ -255,21 +255,38 @@ OTP_VALIDITY_DURATION = 5 * 60  # in seconds
 
 GIT_BUG_REPORT_API_KEY = config('GIT_BUG_REPORT_API_KEY', cast=str)
 
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'file': {
-            'level': 'DEBUG',  # Set the desired logging level
-            'class': 'logging.FileHandler',
-            'filename': 'db_queries.log',  # Set the file path for logging
-        },
-    },
-    'loggers': {
-        'django.db.backends': {
-            'level': 'DEBUG',
-            'handlers': ['file'],
-            'propagate': False,
-        },
-    },
-}
+
+if config('ENABLE_CLOUD_STORAGE', cast=bool, default=False) is True:
+    CLOUDINARY_STORAGE = {
+        'CLOUD_NAME': config('CLOUD_NAME'),
+        'API_KEY': config('API_KEY'),
+        'API_SECRET': config('API_SECRET')
+    }
+    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+
+MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_URL = '/media/'
+
+
+CRON_SECRET=config('CRON_SECRET', default='')
+
+
+# LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': False,
+#     'handlers': {
+#         'file': {
+#             'level': 'DEBUG',  # Set the desired logging level
+#             'class': 'logging.FileHandler',
+#             'filename': 'db_queries.log',  # Set the file path for logging
+#         },
+#     },
+#     'loggers': {
+#         'django.db.backends': {
+#             'level': 'DEBUG',
+#             'handlers': ['file'],
+#             'propagate': False,
+#         },
+#     },
+# }

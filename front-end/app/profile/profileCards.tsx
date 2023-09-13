@@ -9,7 +9,35 @@ import Link from 'next/link';
 import * as React from 'react';
 import API from '../API';
 import {TimeLineHistory} from '../datainterface';
-import Timeline from './timeline';
+import Timeline, {waitingLabel} from './timeline';
+
+const activeStatus = (history: any) => {
+	let currentStep = 0;
+	if (history) {
+		for (let i = history.length - 1; i >= 0; i--) {
+			if (history[i].status === 2) {
+				console.log(history[i].success_title);
+				currentStep = i + 1;
+				break;
+			}
+			if (history[i].status === -1 || history[i].status === 1) {
+				currentStep = i;
+				break;
+			}
+		}
+	}
+
+	let label = '',
+		isRejected = false;
+	if (waitingLabel[currentStep] !== '') {
+		label = waitingLabel[currentStep];
+	}
+	if (history && currentStep <= 9 && history[currentStep].status === -1) {
+		isRejected = true;
+		label = history[currentStep].failure_title;
+	}
+	return [isRejected, label];
+};
 
 interface ExpandMoreProps extends IconButtonProps {
 	expand: boolean;
@@ -36,7 +64,7 @@ export default function ProfileCards(props: {
 	description?: string;
 	failed?: number;
 	failedLabel?: string | string[];
-	variant?: string;
+	variant?: 'organiser' | '';
 	history?: TimeLineHistory[];
 }) {
 	const [expanded, setExpanded] = React.useState(false);
@@ -50,6 +78,9 @@ export default function ProfileCards(props: {
 
 	const [alert, setAlert] = React.useState(0); // 0 indicates not to show alert, 1 approve, 2 reject
 	const link = '/details/' + props.pk;
+
+	const [isRejected, label] = activeStatus(props.history);
+
 	return (
 		<Link
 			href={props.variant === 'organiser' ? '/profile' : link}
@@ -90,10 +121,23 @@ export default function ProfileCards(props: {
 						)
 					}
 					title={
-						props.title +
-						(props.eventStatus.toLowerCase() === 'canceled' ? ' (Cancelled)' : '')
+						<div className="flex flex-row items-center">
+							<span>{props.title}</span>
+							{props.variant === 'organiser' && (
+								<span className="text-sm p-1 pb-0 rounded-sm text-[#017efc]">{`(${props.eventStatus})`}</span>
+							)}
+						</div>
 					}
-					subheader={props.club}
+					subheader={
+						<div className="flex flex-col">
+							<p>{props.club}</p>
+							{props.variant === 'organiser' && (
+								<p className={isRejected ? 'text-red-600' : 'text-[#017efc]'}>
+									{label}
+								</p>
+							)}
+						</div>
+					}
 				/>
 				{props.variant === 'organiser' ? (
 					<>

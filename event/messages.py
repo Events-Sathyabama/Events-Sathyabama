@@ -11,9 +11,11 @@ class Message:
     class event_update:
         event_is_completed = 'Event cannot be updated at this point of time'
         fields_not_changed_after_approved = "'{0}' Fields cannot be changed after approval"
+        total_strength_too_short = "Total Strength can't be less than current Participant count ({0})"
 
-    class applicaition_approval:
+    class application_approval:
         success = 'Application Updated!!'
+        application_overflow = "Accepted Applicant Count exceeds Event Limit: {0} Applicants Accepted!"
 
     class event_approval:
         forbidden = 'Operation Not Allowed!!'
@@ -133,5 +135,5 @@ class Validation:
             failed_title_ongoing = 'Event not Ongoing',
             failed_title_completed = 'Event not Completed',
             failed_title_report_uploaded = 'Report not Submitted',
-            failed_title_report_approved = 'Report not Approved',
+            failed_title_report_approved = 'Report rejected by Vice-Chancellor.',
             failed_title_certified = 'Certifications not Issued',

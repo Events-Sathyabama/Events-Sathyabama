@@ -131,14 +131,9 @@ class User(AbstractBaseUser, PermissionsMixin):
         return True
 
     def new_password(self, password):
-        self.set_password(password)
-        self.save()
         try:
-            mail = Mail('password_changed')
-            mail.send_email({
-                'recipients': self.email,
-                'context': {'name': self.full_name}
-            })
+            self.set_password(password)
+            self.save()
             return True
         except:
             return False

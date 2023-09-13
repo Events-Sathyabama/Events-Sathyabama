@@ -63,9 +63,10 @@ class OrganizerSerializer(serializers.ModelSerializer):
         ]
 
 
-class OwnerSerializer(serializers.Serializer):
+class OwnerSerializer(serializers.ModelSerializer):
     name = serializers.CharField(source='full_name')
     role = serializers.CharField(source='get_role_display')
+
 
     def to_representation(self, instance):
         data = super().to_representation(instance)

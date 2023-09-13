@@ -4,7 +4,7 @@ import axios from 'axios';
 export async function GET(request: Request) {
   // Define the custom URL you want to send the GET request to.
   
-  const customURL = process.env.BACKEND_URL + '/api/event/change_event_status_to_complete?run_cron_job=true';
+  const customURL = process.env.BACKEND_URL + `/api/event/change_event_status_to_complete?run_cron_job=${process.env.CRON_SECRET}`;
   
   const HTTP404 = new Response(undefined, {
     status:404,

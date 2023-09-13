@@ -110,7 +110,7 @@ export default function AdminTabs(props: {
 			file_link = response.data?.link;
 
 			if (response.data?.detail) {
-				response.data.detail;
+				setPopupMessage(response.data.detail);
 			} else {
 				setPopupMessage('File Uploaded Successfully!');
 			}

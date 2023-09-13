@@ -25,13 +25,15 @@ export default function Applications(props: ApplicationProps) {
 				API.get_url('event:update_application', props.eventId),
 				updatedApplications
 			);
-			if (response.status === 200) {
-				setDisabled(true);
-				props.setPopupMessage('Application changes submitted successfully!');
-				props.showSuccessPopup();
-			}
-		} catch (e) {
-			props.setPopupMessage('Something went wrong, try again!');
+			setDisabled(true);
+			props.setPopupMessage(
+				response?.data?.detail || 'Application changes submitted successfully!'
+			);
+			props.showSuccessPopup();
+		} catch (error: any) {
+			props.setPopupMessage(
+				error?.response?.data?.detail || 'Something went wrong, try again!'
+			);
 			props.showFailurePopup();
 		}
 	}
@@ -73,7 +75,10 @@ export default function Applications(props: ApplicationProps) {
 					<div
 						key={index}
 						className="flex flex-row w-full px-4 justify-between items-center mt-3 border-0 border-b pb-2">
-						<p className="text-lg p-2 w-9/12 mr-2">{applicant.name}</p>
+						<div className="flex flex-col sm:flex-row w-9/12 sm:items-center sm:gap-3 p-2 mr-2">
+							<p className="text-lg">{applicant.name}</p>
+							<p className="text-[#1976d2]">[{applicant.college_id}]</p>
+						</div>
 						{applicant.status === 0 && (
 							<div className="flex flex-row gap-2 w-56 justify-end">
 								<Button

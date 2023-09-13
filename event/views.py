@@ -22,6 +22,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
 from io import BytesIO
 import os
 from PIL import Image
+from django.conf import settings
 from .permissions import (IsStudent,
                           IsTeacher,
                           IsHOD,
@@ -202,6 +203,8 @@ class EventUpdate(generics.UpdateAPIView):
                     key = [x.capitalize() for x in key.split('-')]
                     key = " ".join(key)
                     return Response(data={'detail': msg.fields_not_changed_after_approved.format(key)}, status=400)
+            if int(data.get('total_strength', event.accepted_participant.count())) < event.accepted_participant.count():
+                return Response(data={'detail': msg.total_strength_too_short.format(event.accepted_participant.count())}, status=400)
         request._data = data
         return super().patch(request, *args, **kwargs)
 
@@ -218,7 +221,7 @@ class RegisteredEvent(generics.ListAPIView):
         q = (Q(participants__id=self.request.user.pk)
              & Q(eventparticipant__owner=False)
              & Q(eventparticipant__organizer=False)
-             & Q(status__gte=2)
+             & Q(status=2)
              & Q(eventparticipant__status__in=['3', '2', '1'])
              )
         event = Event.objects.filter(q)
@@ -333,24 +336,37 @@ def application_approval(request, event_id):
     data_dict = {}
     for data in request.data:
         if data.get('status') == 1:
-            data_dict[data.get('pk')] = '3'
+            data_dict[data.get('pk')] = '3'  # accept
         elif data.get('status') == -1:
-            data_dict[data.get('pk')] = '1'
+            data_dict[data.get('pk')] = '1'  # Decliined
         else:
-            data_dict[data.get('pk')] = '2'
-    
+            data_dict[data.get('pk')] = '2'  # Applied
+
     participants_to_update = []
 
     # Fetch the existing participants from the database
-    existing_participants = EventParticipant.objects.filter(
-        user_id__in=data_dict.keys(), event=event_id, owner=False, organizer=False)
+    event = Event.objects.filter(pk=event_id)
+    if not event.exists():
+        return Response(data={'detail': 'No Event Found'}, status=404)
+    event = event.first()
+
+    existing_participants = event.all_participant
+
     participant_dict = {
         participant.user_id: participant for participant in existing_participants}
-    print(participant_dict)
     # Update the statuses and store them in the list
+
+    accepted_count = 0
+    application_overflow = False
     for user_id, status in data_dict.items():
         participant = participant_dict.get(user_id)
         if participant:
+            if status == '3':
+                accepted_count += 1
+            if accepted_count > event.total_strength:
+                status = '2'
+                accepted_count -= 1
+                application_overflow = True
             participant.status = status
             participants_to_update.append(participant)
 
@@ -360,7 +376,8 @@ def application_approval(request, event_id):
             participants_to_update,
             fields=['status']
         )
-    return Response({'detail': message.applicaition_approval.success, 'status': 200})
+    detail_message = message.application_approval.success if application_overflow is False else message.application_approval.application_overflow.format(accepted_count)
+    return Response({'detail': detail_message}, status=200 if application_overflow is False else 409)
 
 
 @api_view(['POST'])
@@ -712,15 +729,17 @@ def approve_report(request, event_id):
 @permission_classes([AllowAny])
 def change_event_status_to_complete(request):
     get_param = request.GET.get('run_cron_job', '')
-    if get_param.lower() != 'true':
+    if get_param != settings.CRON_SECRET:
         raise Http404()
     events = Event.objects.filter(
         status=2,
-        start_date__lt=timezone.now(),
-        end_date__lt=timezone.now()
+        start_date__lt=timezone.now() + timezone.timedelta(hours=5, minutes=30),
+        end_date__lt=timezone.now() + timezone.timedelta(hours=5, minutes=30)
     )
     for event in events:
+        event.create_timeline(level=5, user=Portal_User, status=2)
+        event.create_timeline(level=6, user=Portal_User, status=2)
         event.status = 3
     with transaction.atomic():
-        Event.objects.bulk_update(events, fields=['status'])
+        Event.objects.bulk_update(events, fields=['status','history'])
     return Response(data={'detail': 'Sync Success'}, status=200)

@@ -7,3 +7,4 @@ settings.ini
 **/settings.ini
 db_queries.log
 .vercel
+.vscode

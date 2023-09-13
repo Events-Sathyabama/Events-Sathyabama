@@ -31,7 +31,7 @@ import {TimeLineHistory} from '../datainterface';
 // 	'Certifications not Issued',
 // ];
 
-const waitingLabel = [
+export const waitingLabel = [
 	'',
 	'Awaiting Approval from the Head of Department...',
 	'Awaiting Approval from the Dean...',
