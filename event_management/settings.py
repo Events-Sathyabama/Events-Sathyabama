@@ -91,8 +91,6 @@ INSTALLED_APPS = [i for i in [
     'cloudinary' if check_cdn() else None,
 ] if i is not None]
 
-print(INSTALLED_APPS)
-
 SHELL_PLUS_PRE_IMPORTS = [('event_management.query_count', '*')]
 
 MIDDLEWARE = [
