@@ -21,7 +21,7 @@ def empty_fun(val):
 
 
 def check_cdn():
-    return config('ENABLE_CLOUD_STORAGE', cast=bool, default=False)
+    return config('ENABLE_CLOUD_STORAGE', cast=bool, default=False) is True and config('DEBUG', cast=bool, default=False) is False
 
 def config(key, cast=empty_fun, default=None):
     envfile = conf(key, cast=cast, default=default)
@@ -91,6 +91,7 @@ INSTALLED_APPS = [i for i in [
     'cloudinary' if check_cdn() else None,
 ] if i is not None]
 
+print(INSTALLED_APPS)
 
 SHELL_PLUS_PRE_IMPORTS = [('event_management.query_count', '*')]
 
@@ -209,7 +210,7 @@ USE_TZ = True
 STATIC_URL = 'static/'
 STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_STORAGE = 'event_management.cloudinary_storage_backend.CloudinaryStorage' if check_cdn() else 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_STORAGE = 'cloudinary_storage.storage.StaticHashedCloudinaryStorage' if check_cdn() else 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
