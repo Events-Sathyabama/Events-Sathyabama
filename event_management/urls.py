@@ -21,7 +21,7 @@ from django.conf.urls.static import static
 app_name = 'event_management'
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('adminpanel/', admin.site.urls),
     path('api/user/', include('user.urls')),
     path('api/event/', include('event.urls')),
     path('email/', include('mail.urls')),
