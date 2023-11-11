@@ -20,6 +20,9 @@ def empty_fun(val):
     return val
 
 
+def check_cdn():
+    return config('ENABLE_CLOUD_STORAGE', cast=bool, default=False)
+
 def config(key, cast=empty_fun, default=None):
     envfile = conf(key, cast=cast, default=default)
     if envfile:
@@ -66,13 +69,13 @@ CORS_URLS_REGEX = r"^/api/.*"
 
 # Application definition
 
-INSTALLED_APPS = [
+INSTALLED_APPS = [i for i in [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'cloudinary_storage',
+    'cloudinary_storage' if check_cdn() else None,
     'django.contrib.staticfiles',
     'whitenoise.runserver_nostatic',
     'corsheaders',
@@ -85,9 +88,9 @@ INSTALLED_APPS = [
     'mail',
     'django_cleanup.apps.CleanupConfig',
     'adminpanel',
-    'cloudinary'
+    'cloudinary' if check_cdn() else None,
+] if i is not None]
 
-]
 
 SHELL_PLUS_PRE_IMPORTS = [('event_management.query_count', '*')]
 
@@ -206,8 +209,7 @@ USE_TZ = True
 STATIC_URL = 'static/'
 STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_STORAGE = 'cloudinary_storage.storage.StaticHashedCloudinaryStorage'
-
+STATICFILES_STORAGE = 'event_management.cloudinary_storage_backend.CloudinaryStorage' if check_cdn() else 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
@@ -256,7 +258,7 @@ OTP_VALIDITY_DURATION = 5 * 60  # in seconds
 GIT_BUG_REPORT_API_KEY = config('GIT_BUG_REPORT_API_KEY', cast=str)
 
 
-if config('ENABLE_CLOUD_STORAGE', cast=bool, default=False) is True:
+if check_cdn():
     CLOUDINARY_STORAGE = {
         'CLOUD_NAME': config('CLOUD_NAME'),
         'API_KEY': config('API_KEY'),
