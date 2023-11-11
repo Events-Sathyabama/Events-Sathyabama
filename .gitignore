@@ -9,3 +9,4 @@ db_queries.log
 .vercel
 .vscode
 /staticfiles/**
+/staticfiles_build/**
