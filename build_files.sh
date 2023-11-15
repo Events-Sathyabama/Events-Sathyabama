@@ -16,3 +16,4 @@ rm -r .git
 rm -r .vscode
 rm -r .idea
 rm -r front-end
+rm -r documentation
