@@ -1,4 +1,4 @@
-
+  
 # Event Management System (Events@Sathyabama)
 
 The Event Management System is a web-based application that simplifies the process of managing events within a college campus.
