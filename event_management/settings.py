@@ -50,7 +50,8 @@ SECRET_KEY = config(
     'SECRET_KEY', default='django-insecure-7!7*qbl(#kv!#e6!7n=&(56a-5wa2k!v-nz=f)5ush0+f4)b==')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', cast=bool, default=False)
+# DEBUG = config('DEBUG', cast=bool, default=False)
+DEBUG = False
 SESSION_EXP_TIME = config('SESSION_EXP_TIME', cast=int,
                           default=1 * 24 * 60 * 60)
 
