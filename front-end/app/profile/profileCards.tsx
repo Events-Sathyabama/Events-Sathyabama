@@ -10,6 +10,7 @@ import * as React from 'react';
 import API from '../API';
 import {TimeLineHistory} from '../datainterface';
 import Timeline, {waitingLabel} from './timeline';
+import {useRouter} from 'next/navigation';
 
 const activeStatus = (history: any) => {
 	let currentStep = 0;
@@ -67,6 +68,12 @@ export default function ProfileCards(props: {
 	variant?: 'organiser' | '';
 	history?: TimeLineHistory[];
 }) {
+	const router = useRouter();
+
+	const navigateIfRequired = (variant?: 'organiser' | '') => {
+		variant === 'organiser' ? '' : router.push(link);
+	};
+
 	const [expanded, setExpanded] = React.useState(false);
 	let applicationStatus = '';
 	if (API.get_user_detail().role.toLowerCase() === 'student') {
@@ -82,12 +89,12 @@ export default function ProfileCards(props: {
 	const [isRejected, label] = activeStatus(props.history);
 
 	return (
-		<Link
-			href={props.variant === 'organiser' ? '/profile' : link}
+		<div
+			onClick={() => navigateIfRequired(props.variant)}
 			className={
 				props.variant === 'organiser'
 					? 'w-full border border-gray-300 sm:hover:border-blue-300 sm:hover:shadow-md transition-all duration-300 rounded-sm cursor-default'
-					: 'w-full border border-gray-300 sm:hover:border-blue-300 sm:hover:shadow-md transition-all duration-300 rounded-sm'
+					: 'w-full border border-gray-300 sm:hover:border-blue-300 sm:hover:shadow-md transition-all duration-300 rounded-sm cursor-pointer'
 			}>
 			<Card
 				sx={{boxShadow: 'none'}}
@@ -223,6 +230,6 @@ export default function ProfileCards(props: {
 					</div>
 				)}
 			</Card>
-		</Link>
+		</div>
 	);
 }
