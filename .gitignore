@@ -8,3 +8,5 @@ settings.ini
 db_queries.log
 .vercel
 .vscode
+**/staticfiles_build/**
+**/staticfiles/**
