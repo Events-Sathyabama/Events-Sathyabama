@@ -26,7 +26,6 @@ const nextConfig = {
 	env: {
 		BACKEND_URL: process.env.BACKEND_URL,
 	},
-	distDir: 'build',
 };
 
 module.exports = nextConfig;
