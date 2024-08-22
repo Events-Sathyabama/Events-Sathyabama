@@ -28,11 +28,59 @@ To start contributing, follow these steps:
 
 3. **Set Up**: Follow the setup process outlined below to configure your development environment.
 
+
+
 4. **Create a Branch**: Create a new branch for your contribution. Use a descriptive name that reflects the nature of your work.
 
    ```bash
    git checkout -b feature/your-feature
    ```
+
+## Running the server `Python (3.12.0)`
+It should work with python above `3.7` but if dosent match it with ou version.
+- In the cloned Repo Create a Virtual Environment
+```shell
+python -m venv venv
+```
+- Activate the Virtual Environment
+```shell
+# for windows
+venv\source\activate
+# for mac and linux
+source venv\bin\activate
+```
+- Install all the requirements
+```shell
+pip install -r requirements.txt
+```
+
+- Migrate the DB
+```shell
+python manage.py migrate
+
+```
+- Create Super User
+```shell
+python manage.py createsuperuser
+```
+
+- Running the Server
+```shell
+python manage.py runserver
+```
+## running the Frontend `Node 20.11.0` `npm 10.8.1`
+
+
+- Go to the front-end folder and install the packages
+```shell
+cd front-end
+npm i
+npm run compile
+```
+ // The server should be running on localhost:3000
+
+ #### Note: If the frontend is not working or the backend is not working checkout https://events.aryanamish.in to see the live demo
+
 
 ## Making Changes
 
